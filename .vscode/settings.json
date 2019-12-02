@@ -1,0 +1,7 @@
+{
+  "files.exclude": {
+    ".ionide": true,
+    "bin": true,
+    "obj": true
+  }
+}
