@@ -55,6 +55,26 @@ let tests =
     testCase "Dividing a tuple by a scalar" <| fun _ ->
       let a = (1.0, -2.0, 3.0, -4.0)
       Expect.equal (divide 2.0 a) (0.5, -1.0, 1.5, -2.0) ""
+
+    testCase "Computing the magnitude of vector(1, 0, 0)" <| fun _ ->
+      let a = vector 1.0 0.0 0.0
+      Expect.equal (magnitude a) 1.0 ""
+
+    testCase "Computing the magnitude of vector(0, 1, 0)" <| fun _ ->
+      let a = vector 0.0 1.0 0.0
+      Expect.equal (magnitude a) 1.0 ""
+
+    testCase "Computing the magnitude of vector(0, 0, 1)" <| fun _ ->
+      let a = vector 0.0 0.0 1.0
+      Expect.equal (magnitude a) 1.0 ""
+
+    testCase "Computing the magnitude of vector(1, 2, 3)" <| fun _ ->
+      let a = vector 1.0 2.0 3.0
+      Expect.equal (magnitude a) (sqrt 14.0) ""
+
+    testCase "Computing the magnitude of vector(-1, -2, -3)" <| fun _ ->
+      let a = vector -1.0 -2.0 -3.0
+      Expect.equal (magnitude a) (sqrt 14.0) ""
   ]
 
     // testCase "universe exists (╭ರᴥ•́)" <| fun _ ->

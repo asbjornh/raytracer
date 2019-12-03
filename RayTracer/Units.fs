@@ -34,3 +34,7 @@ let multiply (a: float) (b: Tuple) =
 
 let divide (a: float) (b: Tuple) =
   tupleScalarOp (/) a b
+
+let magnitude (a: Tuple) =
+  let (x, y, z, _) = a
+  sqrt (x ** 2.0 + y ** 2.0 + z ** 2.0)
