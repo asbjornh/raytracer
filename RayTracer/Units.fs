@@ -18,22 +18,16 @@ let scalarTupleOp op (a: float) (b: Tuple) =
   Tuple (op x a, op y a, op z a, op w a)
 
 
+let add = tupleTupleOp (+)
+
+let subtract = tupleTupleOp (-)
+
 let zero = vector 0.0 0.0 0.0
+let negate = tupleTupleOp (-) zero
 
-let add (a: Tuple) (b: Tuple) =
-  tupleTupleOp (+) a b
+let multiply = scalarTupleOp (*)
 
-let subtract (a: Tuple) (b: Tuple) =
-  tupleTupleOp (-) a b
-
-let negate (a: Tuple) =
-  tupleTupleOp (-) zero a
-
-let multiply (a: float) (b: Tuple) =
-  scalarTupleOp (*) a b
-
-let divide (a: float) (b: Tuple) =
-  scalarTupleOp (/) a b
+let divide = scalarTupleOp (/)
 
 let magnitude (a: Tuple) =
   let (x, y, z, _) = a
