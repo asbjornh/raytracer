@@ -38,3 +38,6 @@ let divide (a: float) (b: Tuple) =
 let magnitude (a: Tuple) =
   let (x, y, z, _) = a
   sqrt (x ** 2.0 + y ** 2.0 + z ** 2.0)
+
+let normalize (a: Tuple) =
+  tupleScalarOp (/) (magnitude a) a

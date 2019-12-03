@@ -75,6 +75,15 @@ let tests =
     testCase "Computing the magnitude of vector(-1, -2, -3)" <| fun _ ->
       let a = vector -1.0 -2.0 -3.0
       Expect.equal (magnitude a) (sqrt 14.0) ""
+
+    testCase "Normalizing vector(4, 0, 0) gives (1, 0, 0)" <| fun _ ->
+      let a = vector 4.0 0.0 0.0
+      Expect.equal (normalize a) (vector 1.0 0.0 0.0) ""
+
+    testCase "Normalizing vector(1, 2, 3)" <| fun _ ->
+      let a = vector 1.0 2.0 3.0
+      let m = sqrt 14.0
+      Expect.equal (normalize a) (vector (1.0 / m) (2.0 / m) (3.0 / m)) ""
   ]
 
     // testCase "universe exists (╭ರᴥ•́)" <| fun _ ->
