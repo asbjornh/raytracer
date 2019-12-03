@@ -43,6 +43,14 @@ let tests =
     testCase "Negating a tuple" <| fun _ ->
       let a = (1.0, -2.0, 3.0, -4.0)
       Expect.equal (negate a) (-1.0, 2.0, -3.0, 4.0) ""
+
+    testCase "Multiplying a tuple by a scalar" <| fun _ ->
+      let a = (1.0, -2.0, 3.0, -4.0)
+      Expect.equal (multiply 3.5 a) (3.5, -7.0, 10.5, -14.0) ""
+
+    testCase "Multiplying a tuple by a fraction" <| fun _ ->
+      let a = (1.0, -2.0, 3.0, -4.0)
+      Expect.equal (multiply 0.5 a) (0.5, -1.0, 1.5, -2.0) ""
   ]
 
     // testCase "universe exists (╭ರᴥ•́)" <| fun _ ->
