@@ -51,6 +51,10 @@ let tests =
     testCase "Multiplying a tuple by a fraction" <| fun _ ->
       let a = (1.0, -2.0, 3.0, -4.0)
       Expect.equal (multiply 0.5 a) (0.5, -1.0, 1.5, -2.0) ""
+
+    testCase "Dividing a tuple by a scalar" <| fun _ ->
+      let a = (1.0, -2.0, 3.0, -4.0)
+      Expect.equal (divide 2.0 a) (0.5, -1.0, 1.5, -2.0) ""
   ]
 
     // testCase "universe exists (╭ರᴥ•́)" <| fun _ ->

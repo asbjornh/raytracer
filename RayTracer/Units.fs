@@ -15,7 +15,7 @@ let tupleTupleOp op (a: Tuple) (b: Tuple) =
 
 let tupleScalarOp op (a: float) (b: Tuple) =
   let (x, y, z, w) = b;
-  Tuple (op a x, op a y, op a z, op a w)
+  Tuple (op x a, op y a, op z a, op w a)
 
 
 let zero = vector 0.0 0.0 0.0
@@ -31,3 +31,6 @@ let negate (a: Tuple) =
 
 let multiply (a: float) (b: Tuple) =
   tupleScalarOp (*) a b
+
+let divide (a: float) (b: Tuple) =
+  tupleScalarOp (/) a b
