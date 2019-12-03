@@ -13,7 +13,7 @@ let tupleTupleOp op (a: Tuple) (b: Tuple) =
   let (x2, y2, z2, w2) = b;
   Tuple (op x1 x2, op y1 y2, op z1 z2, op w1 w2)
 
-let tupleScalarOp op (a: float) (b: Tuple) =
+let scalarTupleOp op (a: float) (b: Tuple) =
   let (x, y, z, w) = b;
   Tuple (op x a, op y a, op z a, op w a)
 
@@ -30,14 +30,14 @@ let negate (a: Tuple) =
   tupleTupleOp (-) zero a
 
 let multiply (a: float) (b: Tuple) =
-  tupleScalarOp (*) a b
+  scalarTupleOp (*) a b
 
 let divide (a: float) (b: Tuple) =
-  tupleScalarOp (/) a b
+  scalarTupleOp (/) a b
 
 let magnitude (a: Tuple) =
   let (x, y, z, _) = a
   sqrt (x ** 2.0 + y ** 2.0 + z ** 2.0)
 
 let normalize (a: Tuple) =
-  tupleScalarOp (/) (magnitude a) a
+  scalarTupleOp (/) (magnitude a) a
