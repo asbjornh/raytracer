@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "RayTracer", "RayTracer\RayTracer.fsproj", "{75034A62-C687-459C-87D8-121BA87251F1}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "RayTracer.Tests", "RayTracer.Tests\RayTracer.Tests.fsproj", "{9157B0B9-4604-4E4A-A116-4EB982530855}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,17 @@ Global
 		{75034A62-C687-459C-87D8-121BA87251F1}.Release|x64.Build.0 = Release|Any CPU
 		{75034A62-C687-459C-87D8-121BA87251F1}.Release|x86.ActiveCfg = Release|Any CPU
 		{75034A62-C687-459C-87D8-121BA87251F1}.Release|x86.Build.0 = Release|Any CPU
+		{9157B0B9-4604-4E4A-A116-4EB982530855}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9157B0B9-4604-4E4A-A116-4EB982530855}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9157B0B9-4604-4E4A-A116-4EB982530855}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9157B0B9-4604-4E4A-A116-4EB982530855}.Debug|x64.Build.0 = Debug|Any CPU
+		{9157B0B9-4604-4E4A-A116-4EB982530855}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9157B0B9-4604-4E4A-A116-4EB982530855}.Debug|x86.Build.0 = Debug|Any CPU
+		{9157B0B9-4604-4E4A-A116-4EB982530855}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9157B0B9-4604-4E4A-A116-4EB982530855}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9157B0B9-4604-4E4A-A116-4EB982530855}.Release|x64.ActiveCfg = Release|Any CPU
+		{9157B0B9-4604-4E4A-A116-4EB982530855}.Release|x64.Build.0 = Release|Any CPU
+		{9157B0B9-4604-4E4A-A116-4EB982530855}.Release|x86.ActiveCfg = Release|Any CPU
+		{9157B0B9-4604-4E4A-A116-4EB982530855}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
