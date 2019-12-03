@@ -84,6 +84,11 @@ let tests =
       let a = vector 1.0 2.0 3.0
       let m = sqrt 14.0
       Expect.equal (normalize a) (vector (1.0 / m) (2.0 / m) (3.0 / m)) ""
+
+    testCase "The magnitude of a normalized vector" <| fun _ ->
+      let a = vector 1.0 2.0 3.0
+      let norm = normalize a
+      Expect.equal (magnitude norm) 1.0 ""
   ]
 
     // testCase "universe exists (╭ರᴥ•́)" <| fun _ ->
