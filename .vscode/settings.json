@@ -1,7 +1,7 @@
 {
   "files.exclude": {
     ".ionide": true,
-    "bin": true,
-    "obj": true
+    "**/bin": true,
+    "**/obj": true
   }
 }
