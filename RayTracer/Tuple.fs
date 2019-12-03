@@ -1,4 +1,4 @@
-module Units
+module Tuple
 
 type Tuple = float * float * float * float
 let point x y z = Tuple (x, y, z, 1.0)

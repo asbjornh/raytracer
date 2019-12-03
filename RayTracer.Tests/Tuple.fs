@@ -1,7 +1,7 @@
-module UnitsTest
+module TupleTest
 
 open Expecto
-open Units
+open Tuple
 
 [<Tests>]
 
