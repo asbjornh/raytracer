@@ -18,31 +18,31 @@ let tests =
     testCase "Adding two tuples" <| fun _ ->
       let a = (3.0, -2.0, 5.0, 1.0)
       let b = (-2.0, 3.0, 1.0, 0.0)
-      Expect.equal (a ++ b) (1.0, 1.0, 6.0, 1.0) ""
+      Expect.equal (add a b) (1.0, 1.0, 6.0, 1.0) ""
 
     testCase "Subtracting two points" <| fun _ ->
       let a = point 3.0 2.0 1.0
       let b = point 5.0 6.0 7.0
-      Expect.equal (a -- b) (vector -2.0 -4.0 -6.0) ""
+      Expect.equal (subtract a b) (vector -2.0 -4.0 -6.0) ""
 
     testCase "Subtracting a vector from a point" <| fun _ ->
       let a = point 3.0 2.0 1.0
       let b = vector 5.0 6.0 7.0
-      Expect.equal (a -- b) (point -2.0 -4.0 -6.0) ""
+      Expect.equal (subtract a b) (point -2.0 -4.0 -6.0) ""
 
     testCase "Subtracting two vectors" <| fun _ ->
       let a = vector 3.0 2.0 1.0
       let b = vector 5.0 6.0 7.0
-      Expect.equal (a -- b) (vector -2.0 -4.0 -6.0) ""
+      Expect.equal (subtract a b) (vector -2.0 -4.0 -6.0) ""
 
     testCase "Subtracting a vector from the zero vector" <| fun _ ->
       let zero = vector 0.0 0.0 0.0
       let a = vector 1.0 -2.0 3.0
-      Expect.equal (zero -- a) (vector -1.0 2.0 -3.0) ""
+      Expect.equal (subtract zero a) (vector -1.0 2.0 -3.0) ""
 
     testCase "Negating a tuple" <| fun _ ->
       let a = (1.0, -2.0, 3.0, -4.0)
-      Expect.equal (!!a) (-1.0, 2.0, -3.0, 4.0) ""
+      Expect.equal (negate a) (-1.0, 2.0, -3.0, 4.0) ""
   ]
 
     // testCase "universe exists (╭ರᴥ•́)" <| fun _ ->
