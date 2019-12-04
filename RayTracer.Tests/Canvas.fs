@@ -23,4 +23,10 @@ let tests =
       let c1 = canvas 10 20
       let c2 = write 2 3 red c1
       Expect.equal (read 2 3 c2) (Some red) ""
+
+    testCase "Constructing the PPM header" <| fun _ ->
+      let ppm = toPpm (canvas 5 3)
+      let lines = List.ofArray (ppm.Split "\n")
+      let expected = ["P3"; "5 3"; "255"]
+      Expect.equal (List.take 3 lines) expected ""
   ]

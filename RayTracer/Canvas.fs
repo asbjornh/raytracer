@@ -1,5 +1,6 @@
 module Canvas
 
+open System
 open Color
 open Util
 
@@ -23,3 +24,6 @@ let read x y (canvas: Canvas) =
   match(get2d x y canvas) with
   | Some (row, col) -> Some col
   | None -> None
+
+let ppmHeader w h = String.Format ("P3\n{0} {1}\n255", w, h)
+let toPpm (c: Canvas) = ppmHeader (width c) (height c)
