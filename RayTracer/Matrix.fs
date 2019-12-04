@@ -26,3 +26,6 @@ let toTuple (a: float [,]) =
   match (getColumn 0 a) with
   | [| x; y; z; w |] -> (x, y, z, w)
   | _ -> failwith "Matrix must be 4D"
+
+let multiplyTuple a b =
+  Tuple.toMatrix b |> multiply a |> toTuple

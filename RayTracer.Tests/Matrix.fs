@@ -65,8 +65,7 @@ let tests =
         [ 8. ; 6. ; 4. ; 1. ]
         [ 0. ; 0. ; 0. ; 1. ]
       ]
-      let t = Tuple.toMatrix (Tuple.point 1. 2. 3.)
-      let result = multiply m t
+      let t = Tuple.point 1. 2. 3.
       let expected = Tuple.point 18. 24. 33.
-      Expect.equal (toTuple result) expected ""
+      Expect.equal (multiplyTuple m t) expected ""
   ]
