@@ -26,9 +26,8 @@ let tests =
 
     testCase "Constructing the PPM header" <| fun _ ->
       let ppm = toPpm (canvas 5 3)
-      let lines = List.ofArray (ppm.Split "\n")
       let expected = ["P3"; "5 3"; "255"]
-      Expect.equal (List.take 3 lines) expected ""
+      Expect.equal (List.take 3 ppm) expected ""
 
     testCase "Constructing the PPM pixel data" <| fun _ ->
       let col1 = color 1.5 0.0 0.0
@@ -39,7 +38,6 @@ let tests =
       let c3 = write 2 1 col2 c2
       let c4 = write 4 2 col3 c3
       let ppm = toPpm c4
-      let lines = List.ofArray (ppm.Split "\n")
       let expected = [
         "P3"
         "5 3"
@@ -48,10 +46,9 @@ let tests =
         "0 0 0 0 0 0 0 128 0 0 0 0 0 0 0"
         "0 0 0 0 0 0 0 0 0 0 0 0 0 0 255"
       ]
-      Expect.equal (lines |> List.take 6) expected ""
+      Expect.equal (ppm |> List.take 6) expected ""
 
     testCase "PPM files are terminated by a newline character" <| fun _ ->
       let ppm = toPpm (canvas 5 3)
-      let lines = List.ofArray (ppm.Split "\n")
-      Expect.equal (List.last lines) ("") ""
+      Expect.equal (List.last ppm) ("") ""
   ]

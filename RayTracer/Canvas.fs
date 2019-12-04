@@ -28,9 +28,9 @@ let read x y (canvas: Canvas) =
 let to256 = clamp 0.0 1.0 >> (*) 255.0 >> Math.Round
 
 let ppmRow = List.map (Color.toString to256 " ") >> String.concat " "
-let ppmBody = List.map ppmRow >> String.concat "\n"
-let ppmHeader w h = String.Format ("P3\n{0} {1}\n255", w, h)
+let ppmBody = List.map ppmRow
+let ppmHeader w h = ["P3"; String.Format ("{0} {1}", w, h); "255"]
 let toPpm (c: Canvas) =
   let header = ppmHeader (width c) (height c)
-  let body = ppmBody c
-  header + "\n" + body + "\n"
+  let body = List.map ppmRow c
+  List.append header (List.append body [""])
