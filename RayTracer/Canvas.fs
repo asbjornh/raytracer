@@ -23,18 +23,20 @@ let replace index (newEl: 'a) (list: 'a list)=
     if (i = index) then newEl else el
   )
 
-let write (canvas: Canvas) x y (color: Color) =
-  match (get canvas y) with
+let get2d x y (list: 'a list list) =
+  match (get list y) with
   | Some (rowI, row) ->
     match (get row x) with
-    | Some (colI, col) -> replace rowI (replace colI color row) canvas
-    | None -> canvas
+    | Some (colI, col) -> Some (row, col)
+    | None -> None
+  | None -> None
+
+let write (canvas: Canvas) x y (color: Color) =
+  match (get2d x y canvas) with
+  | Some (row, col) -> replace y (replace x color row) canvas
   | None -> canvas
 
 let read (canvas: Canvas) x y =
-  match (get canvas y) with
-  | Some (rowI, row) ->
-    match (get row x) with
-    | Some (colI, col) -> Some col
-    | None -> None
+  match(get2d x y canvas) with
+  | Some (row, col) -> Some col
   | None -> None
