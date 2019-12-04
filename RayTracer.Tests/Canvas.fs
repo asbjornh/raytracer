@@ -2,6 +2,10 @@ module CanvasTest
 
 open Expecto
 open Canvas
+open Color
+
+let collapse l = List.reduce (List.append) l
+let isBlack = equals (color 0.0 0.0 0.0)
 
 [<Tests>]
 
@@ -11,5 +15,5 @@ let tests =
      let c = canvas 10 20
      Expect.equal (width c) 10 ""
      Expect.equal (height c) 20 ""
-      // ​And​ every pixel of c is color(0, 0, 0)”
+     Expect.isTrue (collapse c |> List.forall isBlack) ""
   ]
