@@ -6,6 +6,8 @@ type Color = float * float * float
 
 let color r g b = (r, g, b)
 
+let toList (r, g, b) = [r; g; b]
+
 let combine op (a: Color) (b: Color) =
   let (x1, y1, z1) = a
   let (x2, y2, z2) = b
@@ -13,7 +15,7 @@ let combine op (a: Color) (b: Color) =
 
 let map fn t =
   let (x, y, z) = t
-  Color (fn x, fn y, fn z)
+  (fn x, fn y, fn z)
 
 let epsilon = 0.00001
 let valueEquals a b = abs (a - b) < epsilon
@@ -32,6 +34,8 @@ let (subtract: Subtract) = combine (-)
 type Multiply = Color -> Color -> Color
 let (multiply: Multiply) = combine (*)
 
-let scale n = map ((*) n)
+type Scale = float -> Color -> Color
+let (scale: Scale) = fun n -> map ((*) n)
 
-let divide n = map (flip (/) n)
+type Divide = float -> Color -> Color
+let (divide: Divide) = fun n -> map (flip (/) n)
