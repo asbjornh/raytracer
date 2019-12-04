@@ -17,7 +17,7 @@ let combine op (a: Tuple) (b: Tuple) =
 
 let map fn t =
   let (x, y, z, w) = t
-  Tuple (fn x, fn y, fn z, fn w)
+  (fn x, fn y, fn z, fn w)
 
 
 let add = combine (+)
@@ -27,9 +27,11 @@ let subtract = combine (-)
 let zero = vector 0.0 0.0 0.0
 let negate = combine (-) zero
 
-let multiply n = map ((*) n)
+let (multiply: float -> Tuple -> Tuple) =
+  map << (*)
 
-let divide n = map (flip (/) n)
+let (divide: float -> Tuple -> Tuple) =
+  map << flip (/)
 
 let sum (x, y, z, w) = x + y + z + w
 let magnitude =
