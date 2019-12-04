@@ -1,5 +1,7 @@
 module Util
 
+let always a _ = a
+
 let pow a b = b ** a
 
 let clamp lower upper n = n |> (min upper) |> (max lower)
