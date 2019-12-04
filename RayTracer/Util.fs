@@ -2,6 +2,8 @@ module Util
 
 let pow a b = b ** a
 
+let clamp lower upper n = n |> (min upper) |> (max lower)
+
 let flip fn a b = fn b a
 
 let toString a = a.ToString ()

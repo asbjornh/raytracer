@@ -6,8 +6,6 @@ type Color = float * float * float
 
 let color r g b = (r, g, b)
 
-let toList (r, g, b) = [r; g; b]
-
 let combine op (a: Color) (b: Color) =
   let (x1, y1, z1) = a
   let (x2, y2, z2) = b
@@ -16,6 +14,13 @@ let combine op (a: Color) (b: Color) =
 let map fn t =
   let (x, y, z) = t
   (fn x, fn y, fn z)
+
+let toList (r, g, b) = [r; g; b]
+
+let toString transform sep =
+  map (transform >> toString)
+  >> toList
+  >> String.concat sep
 
 let epsilon = 0.00001
 let valueEquals a b = abs (a - b) < epsilon

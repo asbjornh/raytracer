@@ -25,15 +25,12 @@ let read x y (canvas: Canvas) =
   | Some (row, col) -> Some col
   | None -> None
 
-let ppmHeader w h = String.Format ("P3\n{0} {1}\n255", w, h)
+let to256 = clamp 0.0 1.0 >> (*) 255.0 >> Math.Round
 
-let clamp lower upper n = n |> (min upper) |> (max lower)
-let colorTo255 (c: Color) =
-  c
-  |> Color.map (clamp 0.0 1.0 >> (*) 255.0 >> Math.Round >> toString)
-  |> Color.toList
-  |> String.concat " "
-
-let ppmRow = List.map colorTo255 >> String.concat " "
+let ppmRow = List.map (Color.toString to256 " ") >> String.concat " "
 let ppmBody = List.map ppmRow >> String.concat "\n"
-let toPpm (c: Canvas) = (ppmHeader (width c) (height c)) + "\n" + (ppmBody c)
+let ppmHeader w h = String.Format ("P3\n{0} {1}\n255", w, h)
+let toPpm (c: Canvas) =
+  let header = ppmHeader (width c) (height c)
+  let body = ppmBody c
+  header + "\n" + body
