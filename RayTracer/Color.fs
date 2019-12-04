@@ -29,6 +29,9 @@ let (add: Add) = combine (+)
 type Subtract = Color -> Color -> Color
 let (subtract: Subtract) = combine (-)
 
-let multiply n = map ((*) n)
+type Multiply = Color -> Color -> Color
+let (multiply: Multiply) = combine (*)
+
+let scale n = map ((*) n)
 
 let divide n = map (flip (/) n)
