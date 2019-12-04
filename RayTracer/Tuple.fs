@@ -12,11 +12,11 @@ let equals a b = abs (a - b) < epsilon
 
 let combine op (a: Tuple) (b: Tuple) =
   let (x1, y1, z1, w1) = a
-  let (x2, y2, z2, w2) = b;
+  let (x2, y2, z2, w2) = b
   Tuple (op x1 x2, op y1 y2, op z1 z2, op w1 w2)
 
 let map fn t =
-  let (x, y, z, w) = t;
+  let (x, y, z, w) = t
   Tuple (fn x, fn y, fn z, fn w)
 
 
@@ -42,7 +42,7 @@ let dot a b = combine (*) a b |> sum
 
 let cross a b =
   let (x1, y1, z1, _) = a
-  let (x2, y2, z2, _) = b;
+  let (x2, y2, z2, _) = b
   let x = y1 * z2 - z1 * y2
   let y = z1 * x2 - x1 * z2
   let z = x1 * y2 - y1 * x2
