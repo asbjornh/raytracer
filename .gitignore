@@ -1,5 +1,7 @@
 .ionide
 
+out.ppm
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/

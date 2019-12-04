@@ -24,3 +24,7 @@ let get2d x y (list: 'a list list) =
     | Some (colI, col) -> Some (row, col)
     | None -> None
   | None -> None
+
+
+let writeFile (path: string) content =
+  System.IO.File.WriteAllLines (path, List.toArray content)
