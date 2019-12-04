@@ -3,17 +3,11 @@ module Matrix
 let equals (a: float [,]) (b: float [,]) = a = b
 
 let multiply (a: float [,]) (b: float [,]) =
-  let w = Array2D.length1 a
-  let h = Array2D.length2 a
-  let m = Array2D.zeroCreate w h
+  let size = Array2D.length1 a
 
-  for col in [0..h - 1] do
-    for row in [0..w - 1] do
-      let v = (
-        a.[row, 0] * b.[0, col]
-        + a.[row, 1] * b.[1, col]
-        + a.[row, 2] * b.[2, col]
-        + a.[row, 3] * b.[3, col]
-      )
-      m.[row, col] <- v
-  m
+  let map row col _ =
+    [0..size-1]
+    |> List.fold (fun acc i -> acc + a.[row, i] * b.[i, col]) 0.0
+
+  Array2D.zeroCreate size size
+  |> Array2D.mapi map
