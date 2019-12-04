@@ -49,3 +49,7 @@ let cross a b =
   let y = z1 * x2 - x1 * z2
   let z = x1 * y2 - y1 * x2
   vector x y z
+
+let toMatrix (a: Tuple) =
+  let (x, y, z, w) = a
+  array2D [ [x]; [y]; [z]; [w] ]

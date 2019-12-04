@@ -3,7 +3,6 @@ module MatrixTest
 open Expecto
 open Matrix
 
-
 [<Tests>]
 
 let tests =
@@ -58,4 +57,16 @@ let tests =
         [ 16. ;  26. ;  46. ;  42. ]
       ]
       Expect.equal (multiply a b) expected ""
+
+    testCase "A matrix multiplied by a tuple" <| fun _ ->
+      let m = array2D [
+        [ 1. ; 2. ; 3. ; 4. ]
+        [ 2. ; 4. ; 4. ; 2. ]
+        [ 8. ; 6. ; 4. ; 1. ]
+        [ 0. ; 0. ; 0. ; 1. ]
+      ]
+      let t = Tuple.toMatrix (Tuple.point 1. 2. 3.)
+      let result = multiply m t
+      let expected = Tuple.point 18. 24. 33.
+      Expect.equal (toTuple result) expected ""
   ]
