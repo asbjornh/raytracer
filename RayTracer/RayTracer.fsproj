@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Util.fs" />
     <Compile Include="Tuple.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
