@@ -1,5 +1,9 @@
 module Matrix
 
+let identity =
+  Array2D.zeroCreate 4 4
+  |> Array2D.mapi (fun row col _ -> if (row = col) then 1.0 else 0.0)
+
 let equals (a: float [,]) (b: float [,]) = a = b
 
 let multiply (a: float [,]) (b: float [,]) =

@@ -68,4 +68,26 @@ let tests =
       let t = Tuple.point 1. 2. 3.
       let expected = Tuple.point 18. 24. 33.
       Expect.equal (multiplyTuple m t) expected ""
+
+    testCase "Identity matrix" <| fun _ ->
+      let expected = array2D [
+        [ 1. ; 0. ; 0. ; 0. ]
+        [ 0. ; 1. ; 0. ; 0. ]
+        [ 0. ; 0. ; 1. ; 0. ]
+        [ 0. ; 0. ; 0. ; 1. ]
+      ]
+      Expect.equal identity expected ""
+
+    testCase "Multiplying a matrix by the identity matrix" <| fun _ ->
+      let m = array2D [
+        [ 0. ; 1. ;  2. ;  4. ]
+        [ 1. ; 2. ;  4. ;  8. ]
+        [ 2. ; 4. ;  8. ; 16. ]
+        [ 4. ; 8. ; 16. ; 32. ]
+      ]
+      Expect.equal (multiply m identity) m ""
+
+    testCase "Multiplying the identity matrix by a tuple" <| fun _ ->
+      let t = (1., 2., 3., 4.)
+      Expect.equal (multiplyTuple identity t) t ""
   ]
