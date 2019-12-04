@@ -37,3 +37,13 @@ let magnitude =
 
 let normalize (a: Tuple) =
   divide (magnitude a) a
+
+let dot a b = combine (*) a b |> sum
+
+let cross a b =
+  let (x1, y1, z1, _) = a
+  let (x2, y2, z2, _) = b;
+  let x = y1 * z2 - z1 * y2
+  let y = z1 * x2 - x1 * z2
+  let z = x1 * y2 - y1 * x2
+  vector x y z

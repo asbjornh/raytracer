@@ -89,6 +89,17 @@ let tests =
       let a = vector 1.0 2.0 3.0
       let norm = normalize a
       Expect.equal (magnitude norm) 1.0 ""
+
+    testCase "The dot product of two tuples" <| fun _ ->
+      let a = vector 1.0 2.0 3.0
+      let b = vector 2.0 3.0 4.0
+      Expect.equal (dot a b) 20.0 ""
+
+    testCase "The cross product of two vectors" <| fun _ ->
+      let a = vector 1.0 2.0 3.0
+      let b = vector 2.0 3.0 4.0
+      Expect.equal (cross a b) (vector -1.0 2.0 -1.0) ""
+      Expect.equal (cross b a) (vector 1.0 -2.0 1.0) ""
   ]
 
     // testCase "universe exists (╭ರᴥ•́)" <| fun _ ->
