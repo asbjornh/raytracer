@@ -49,4 +49,9 @@ let tests =
         "0 0 0 0 0 0 0 0 0 0 0 0 0 0 255"
       ]
       Expect.equal (lines |> List.take 6) expected ""
+
+    testCase "PPM files are terminated by a newline character" <| fun _ ->
+      let ppm = toPpm (canvas 5 3)
+      let lines = List.ofArray (ppm.Split "\n")
+      Expect.equal (List.last lines) ("") ""
   ]

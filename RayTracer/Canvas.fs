@@ -33,4 +33,4 @@ let ppmHeader w h = String.Format ("P3\n{0} {1}\n255", w, h)
 let toPpm (c: Canvas) =
   let header = ppmHeader (width c) (height c)
   let body = ppmBody c
-  header + "\n" + body
+  header + "\n" + body + "\n"
