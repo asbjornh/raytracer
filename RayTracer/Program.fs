@@ -2,7 +2,6 @@
 
 open System
 open Tuple
-open Canvas
 open Util
 
 type Projectile = Tuple * Tuple
@@ -16,31 +15,28 @@ let tick (e: Environment) (p: Projectile) =
   Projectile (newPos, newVel)
 
 let toInt (a: float) = Math.Round a |> int
+let to2d (x, y, _, _) = (x, y)
+let toCanvasPoint = (Tuple.map toInt) >> to2d
 
 [<EntryPoint>]
 let main argv =
-  let projectile = (point 0.0 100.0 0.0), (vector 15.0 -10.0 0.0)
-  let env = (vector 0.0 0.98 0.0), (vector -1.0 0.0 0.0)
+  let projectile = (point 0.0 100.0 0.0), (vector 2.0 -1.5 0.0)
+  let env = (vector 0.0 0.02 0.0), (vector -0.015 0.0 0.0)
 
-  let ticks =
-    [1..20]
+  let points =
+    [1..150]
     |> List.fold (fun a _ -> (tick env (List.head a)) :: a) [projectile]
     |> List.rev
     |> List.map fst
 
-  let pixels =
-    ticks
-    |> List.filter (fun (x, y, _, _) -> y <= 100.0 && y >= 0.0 && x >= 0.0)
-    |> List.map (Tuple.map toInt >> fun (x, y, _, _) -> (x, y))
-
-  printfn "Pixels: %A" pixels
-
   let white = Color.color 1.0 1.0 1.0
-  let c =
-    pixels
-    |> List.fold (fun acc (x, y) -> Canvas.write x y white acc) (canvas 200 100)
 
-  let imageFile = toPpm c
-  writeFile @"./out.ppm" imageFile
+  let canvas = Canvas.canvas 200 100
+
+  points
+  |> List.map toCanvasPoint
+  |> List.fold (fun canv (x, y) -> Canvas.write x y white canv) canvas
+  |> Canvas.toPpm
+  |> writeFile @"./out.ppm"
 
   0
