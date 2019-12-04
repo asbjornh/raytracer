@@ -9,6 +9,7 @@
     <Compile Include="Color.fs" />
     <Compile Include="Tuple.fs" />
     <Compile Include="Canvas.fs" />
+    <Compile Include="Matrix.fs" />
     <Compile Include="Main.fs" />
   </ItemGroup>
 
