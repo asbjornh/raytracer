@@ -22,4 +22,24 @@ let tests =
       Expect.equal (m.[2].[2]) 11. ""
       Expect.equal (m.[3].[0]) 13.5 ""
       Expect.equal (m.[3].[2]) 15.5 ""
+
+    testCase "A 2x2 matrix ought to be representable" <| fun _ ->
+      let m = matrix [
+        [ -3.; 5. ]
+        [ 1.; -2. ]
+      ]
+      Expect.equal (m.[0].[0]) -3. ""
+      Expect.equal (m.[1].[0]) 1. ""
+      Expect.equal (m.[0].[1]) 5. ""
+      Expect.equal (m.[1].[1]) -2. ""
+
+    testCase "A 3x3 matrix ought to be representable" <| fun _ ->
+      let m = matrix [
+        [ -3.;  5.;  0. ]
+        [  1.; -2.; -7. ]
+        [  0.;  1.;  1. ]
+      ]
+      Expect.equal (m.[0].[0]) -3. ""
+      Expect.equal (m.[1].[1]) -2. ""
+      Expect.equal (m.[2].[2]) 1. ""
   ]
