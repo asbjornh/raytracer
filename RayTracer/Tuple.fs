@@ -29,9 +29,10 @@ let multiply = scalarTupleOp (*)
 
 let divide = scalarTupleOp (/)
 
-let magnitude (a: Tuple) =
-  let (x, y, z, _) = a
-  sqrt (x ** 2.0 + y ** 2.0 + z ** 2.0)
+let pow a b = a ** b
+let sum (x, y, z, w) = x + y + z + w
+let magnitude =
+  scalarTupleOp pow 2.0 >> sum >> sqrt
 
 let normalize (a: Tuple) =
   scalarTupleOp (/) (magnitude a) a
