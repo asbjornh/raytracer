@@ -31,12 +31,12 @@ let get2d x y (list: 'a list list) =
     | None -> None
   | None -> None
 
-let write (canvas: Canvas) x y (color: Color) =
+let write x y (color: Color) (canvas: Canvas) =
   match (get2d x y canvas) with
   | Some (row, col) -> replace y (replace x color row) canvas
   | None -> canvas
 
-let read (canvas: Canvas) x y =
+let read x y (canvas: Canvas) =
   match(get2d x y canvas) with
   | Some (row, col) -> Some col
   | None -> None

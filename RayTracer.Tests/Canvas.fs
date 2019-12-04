@@ -21,6 +21,6 @@ let tests =
 
     testCase "Writing pixels to a canvas" <| fun _ ->
       let c1 = canvas 10 20
-      let c2 = write c1 2 3 red
-      Expect.equal (read c2 2 3) (Some red) ""
+      let c2 = write 2 3 red c1
+      Expect.equal (read 2 3 c2) (Some red) ""
   ]
