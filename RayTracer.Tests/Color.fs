@@ -6,7 +6,7 @@ open Color
 [<Tests>]
 
 let tests =
-  testList "Tests for Unit" [
+  testList "Tests for Color" [
     testCase "Colors are (red, green, blue) tuples" <| fun _ ->
       let c = color -0.5 0.4 1.7
       Expect.equal (c) (-0.5, 0.4, 1.7) ""
