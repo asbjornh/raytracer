@@ -26,8 +26,12 @@ let identity =
 
 let filteri fn m =
   Array.indexed m
-  |> Array.filter (fun (i, el) -> fn i)
-  |> Array.map (fun (i, el) -> el)
+  |> Array.filter (fst >> fn)
+  |> Array.map snd
+
+let foldi fn initial m =
+  Array.indexed m
+  |> Array.fold (fun acc (i, el) -> fn acc i el) initial
 
 let getColumn i =
   let folder acc (row: float []) = Array.concat [ acc; [|row.[i]|] ]
@@ -58,17 +62,25 @@ let transpose (a: float [] []) =
   [|0..l|]
   |> Array.map (flip getColumn a)
 
-let determinant (m: float [] []) =
-  match (m.[0], m.[1]) with
-  | ([| a; b; |], [| c; d; |]) -> (a * d) - (b * c)
-  | _ -> failwith "Must be a 2x2 matrix"
 
 let submatrix row col =
   filteri ((<>) row)
   >> Array.map (filteri ((<>) col))
 
-let minor row col = submatrix row col >> determinant
+let rec determinant (m: float [] []) =
+  if (Array.length m <= 2)
+  then
+    match (m.[0], m.[1]) with
+    | ([| a; b; |], [| c; d; |]) -> (a * d) - (b * c)
+    | _ -> failwith "Must be a matrix of at least 2x2"
+  else
+    m.[0]
+    |> foldi (fun acc i _ ->
+      acc + m.[0].[i] * cofactor 0 i m
+    ) 0.
 
-let cofactor row col =
+and cofactor row col =
   let factor = if (isEven (row + col)) then 1.0 else -1.0
-  minor row col >> (*) factor
+  submatrix row col >> determinant >> (*) factor
+
+let minor row col = submatrix row col >> determinant
