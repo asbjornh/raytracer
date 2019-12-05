@@ -2,6 +2,9 @@ module Util
 
 let always a _ = a
 
+let epsilon = 0.00001
+let looseEq a b = abs (a - b) < epsilon
+
 let pow a b = b ** a
 
 let clamp lower upper n = n |> (min upper) |> (max lower)
@@ -28,7 +31,6 @@ let get2d x y (list: 'a list list) =
     | Some (colI, col) -> Some (row, col)
     | None -> None
   | None -> None
-
 
 let writeFile (path: string) content =
   System.IO.File.WriteAllLines (path, List.toArray content)

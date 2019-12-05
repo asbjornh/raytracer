@@ -8,18 +8,16 @@ let matrix (a: float list list) =
 let create w h init =
   Array.create h (Array.create w init)
 
-let epsilon = 0.00001
+let concat a b = Array.concat [a; b]
+
+let appendTo arr el = concat arr [| el |]
+
+let flatten (a: 'a[][]) =
+  Array.reduce concat a
+
 let equals (a: float [] []) (b: float [] []) =
-  if (Array.length a <> Array.length b)
-  then false
-  else
-    Array.indexed a
-    |> Array.forall (fun (rowI, row) ->
-      Array.indexed row
-      |> Array.forall (fun (colI, col) ->
-        abs (col - b.[rowI].[colI]) < epsilon
-      )
-    )
+  Array.indexed (flatten a)
+  |> Array.forall (fun (i, el) -> looseEq el (flatten b).[i])
 
 let map fn =
   Array.map (Array.map fn)
@@ -43,7 +41,7 @@ let foldi fn initial m =
   |> Array.fold (fun acc (i, el) -> fn acc i el) initial
 
 let getColumn i =
-  let folder acc (row: float []) = Array.concat [ acc; [|row.[i]|] ]
+  let folder acc (row: 'a[]) = appendTo acc row.[i]
   Array.fold folder Array.empty
 
 let toTuple a =
