@@ -68,3 +68,7 @@ let submatrix row col =
   >> Array.map (filteri ((<>) col))
 
 let minor row col = submatrix row col >> determinant
+
+let cofactor row col =
+  let factor = if (isEven (row + col)) then 1.0 else -1.0
+  minor row col >> (*) factor

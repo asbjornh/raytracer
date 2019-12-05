@@ -161,4 +161,15 @@ let tests =
       let b = submatrix 1 0 m
       Expect.equal (determinant b) 25. ""
       Expect.equal (minor 1 0 m) 25. ""
+
+    testCase "Calculating a cofactor of a 3x3 matrix" <| fun _ ->
+      let m = matrix [
+        [  3. ;  5. ;  0. ]
+        [  2. ; -1. ; -7. ]
+        [  6. ; -1. ;  5. ]
+      ]
+      Expect.equal (minor 0 0 m) -12. ""
+      Expect.equal (cofactor 0 0 m) -12. ""
+      Expect.equal (minor 1 0 m) 25. ""
+      Expect.equal (cofactor 1 0 m) -25. ""
   ]
