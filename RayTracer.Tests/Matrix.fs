@@ -105,4 +105,7 @@ let tests =
         [ 0. ; 8. ; 3. ; 8. ]
       ]
       Expect.equal (transpose m) expected ""
+
+    testCase "Transposing the identity" <| fun _ ->
+      Expect.equal (transpose identity) identity ""
   ]
