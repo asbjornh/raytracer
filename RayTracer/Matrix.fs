@@ -11,10 +11,10 @@ let equals (a: float [,]) (b: float [,]) = a = b
 let flatten (a: 'a[,]) = a |> Seq.cast<'a>
 
 let getColumn col (a: _[,]) =
-    flatten a.[*,col..col] |> Seq.toArray
+  flatten a.[*,col..col] |> Seq.toArray
 
 let getRow row (a: _[,]) =
-    flatten a.[row..row,*] |> Seq.toArray  
+  flatten a.[row..row,*] |> Seq.toArray  
 
 let toTuple (a: float [,]) =
   match (getColumn 0 a) with
@@ -46,3 +46,11 @@ let determinant (m: float [,]) =
   match (getRow 0 m, getRow 1 m) with
   | ([| a; b; |], [| c; d; |]) -> (a * d) - (b * c)
   | _ -> failwith "Must be a 2x2 matrix"
+
+let submatrix row col (m: float [,]) =
+  Array2D.zeroCreate (Array2D.length1 m - 1) (Array2D.length2 m - 1)
+  |> Array2D.mapi (fun r c _ ->
+    let rowToUse = if (r >= row) then r + 1 else r
+    let colToUse = if (c >= col) then c + 1 else c
+    m.[rowToUse, colToUse]
+  )

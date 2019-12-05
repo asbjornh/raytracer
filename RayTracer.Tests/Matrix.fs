@@ -115,4 +115,30 @@ let tests =
         [ -3. ; 2. ]
       ]
       Expect.equal (determinant m) 17. ""
+
+    testCase "A submatrix of a 3x3 matrix is a 2x2 matrix" <| fun _ ->
+      let m = array2D [
+        [  1. ; 5. ;  0. ]
+        [ -3. ; 2. ;  7. ]
+        [  0. ; 6. ; -3. ]
+      ]
+      let expected = array2D [
+        [ -3. ; 2. ]
+        [  0. ; 6. ]
+      ]
+      Expect.equal (submatrix 0 2 m) expected ""
+
+    testCase "A submatrix of a 4x4 matrix is a 3x3 matrix" <| fun _ ->
+      let m = array2D [
+        [ -6. ;  1. ;  1. ;  6. ]
+        [ -8. ;  5. ;  8. ;  6. ]
+        [ -1. ;  0. ;  8. ;  2. ]
+        [ -7. ;  1. ; -1. ;  1. ]
+      ]
+      let expected = array2D [
+        [ -6. ;  1. ; 6. ]
+        [ -8. ;  8. ; 6. ]
+        [ -7. ; -1. ; 1. ]
+      ]
+      Expect.equal (submatrix 2 1 m) expected ""
   ]
