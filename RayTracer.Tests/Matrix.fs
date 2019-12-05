@@ -151,4 +151,14 @@ let tests =
         [ -7. ; -1. ; 1. ]
       ]
       Expect.equal (submatrix 2 1 m) expected ""
+
+    testCase "Calculating a minor of a 3x3 matrix" <| fun _ ->
+      let m = matrix [
+        [  3. ;  5. ;  0. ]
+        [  2. ; -1. ; -7. ]
+        [  6. ; -1. ;  5. ]
+      ]
+      let b = submatrix 1 0 m
+      Expect.equal (determinant b) 25. ""
+      Expect.equal (minor 1 0 m) 25. ""
   ]

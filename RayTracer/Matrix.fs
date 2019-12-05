@@ -66,3 +66,5 @@ let determinant (m: float [] []) =
 let submatrix row col =
   filteri ((<>) row)
   >> Array.map (filteri ((<>) col))
+
+let minor row col = submatrix row col >> determinant
