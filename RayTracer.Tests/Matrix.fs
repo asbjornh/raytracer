@@ -172,4 +172,28 @@ let tests =
       Expect.equal (cofactor 0 0 m) -12. ""
       Expect.equal (minor 1 0 m) 25. ""
       Expect.equal (cofactor 1 0 m) -25. ""
+
+    testCase "Calculating the determinant of a 3x3 matrix" <| fun _ ->
+      let m = matrix [
+        [  1. ;  2. ;  6. ]
+        [ -5. ;  8. ; -4. ]
+        [  2. ;  6. ;  4. ]
+      ]
+      Expect.equal (cofactor 0 0 m) 56. ""
+      Expect.equal (cofactor 0 1 m) 12. ""
+      Expect.equal (cofactor 0 2 m) -46. ""
+      Expect.equal (determinant m) -196. ""
+
+    testCase "Calculating the determinant of a 4x4 matrix" <| fun _ ->
+      let m = matrix [
+        [ -2. ; -8. ;  3. ;  5. ]
+        [ -3. ;  1. ;  7. ;  3. ]
+        [  1. ;  2. ; -9. ;  6. ]
+        [ -6. ;  7. ;  7. ; -9. ]
+      ]
+      Expect.equal (cofactor 0 0 m) 690. ""
+      Expect.equal (cofactor 0 1 m) 447. ""
+      Expect.equal (cofactor 0 2 m) 210. ""
+      Expect.equal (cofactor 0 3 m) 51. ""
+      Expect.equal (determinant m) -4071. ""
   ]
