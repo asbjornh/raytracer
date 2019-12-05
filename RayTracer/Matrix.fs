@@ -8,21 +8,30 @@ let matrix (a: float list list) =
 let create w h init =
   Array.create h (Array.create w init)
 
-let equals (a: float [] []) (b: float [] []) = a = b
+let epsilon = 0.00001
+let equals (a: float [] []) (b: float [] []) =
+  if (Array.length a <> Array.length b)
+  then false
+  else
+    Array.indexed a
+    |> Array.forall (fun (rowI, row) ->
+      Array.indexed row
+      |> Array.forall (fun (colI, col) ->
+        abs (col - b.[rowI].[colI]) < epsilon
+      )
+    )
 
-let map fn (a: float [] []) =
-  a |> Array.map (fun row ->
-    row |> Array.map (fun col -> fn row col)
-  )
+let map fn =
+  Array.map (Array.map fn)
 
 let mapi fn (a: float [] []) =
   a |> Array.mapi (fun rowI row ->
-    row |> Array.mapi (fun colI col -> fn rowI colI col)
+    row |> Array.mapi (fun colI col -> fn rowI colI)
   )
 
 let identity =
   create 4 4 0.0
-  |> mapi (fun row col _ -> if (row = col) then 1.0 else 0.0)
+  |> mapi (fun row col -> if (row = col) then 1.0 else 0.0)
 
 let filteri fn m =
   Array.indexed m
@@ -46,7 +55,7 @@ let multiply (a: float [] []) (b: float [] []) =
   let widthA = Array.length a.[0]
   let widthB = Array.length b.[0]
 
-  let map row col _ =
+  let map row col =
     let colB = min col (widthB - 1)
     [0..widthA-1]
     |> List.fold (fun acc i -> acc + a.[row].[i] * b.[i].[colB]) 0.0
@@ -86,3 +95,8 @@ and cofactor row col =
 let minor row col = submatrix row col >> determinant
 
 let invertible = determinant >> (<>) 0.
+
+let inverse a =
+  mapi (fun row col -> cofactor row col a) a
+  |> transpose
+  |> map (flip (/) (determinant a))
