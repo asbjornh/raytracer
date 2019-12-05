@@ -52,4 +52,4 @@ let cross a b =
 
 let toMatrix (a: Tuple) =
   let (x, y, z, w) = a
-  array2D [ [x]; [y]; [z]; [w] ]
+  [| [|x|]; [|y|]; [|z|]; [|w|] |]
