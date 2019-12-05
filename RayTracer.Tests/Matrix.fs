@@ -196,4 +196,24 @@ let tests =
       Expect.equal (cofactor 0 2 m) 210. ""
       Expect.equal (cofactor 0 3 m) 51. ""
       Expect.equal (determinant m) -4071. ""
+
+    testCase "Testing an invertible matrix for invertibility" <| fun _ ->
+      let m = matrix [
+        [  6. ;  4. ;  4. ;  4. ]
+        [  5. ;  5. ;  7. ;  6. ]
+        [  4. ; -9. ;  3. ; -7. ]
+        [  9. ;  1. ;  7. ; -6. ]
+      ]
+      Expect.equal (determinant m) -2120. ""
+      Expect.isTrue (invertible m) ""
+
+    testCase "Testing a noninvertible matrix for invertibility" <| fun _ ->
+      let m = matrix [
+        [ -4. ;  2. ; -2. ; -3. ]
+        [  9. ;  6. ;  2. ;  6. ]
+        [  0. ; -5. ;  1. ; -5. ]
+        [  0. ;  0. ;  0. ;  0. ]
+      ]
+      Expect.equal (determinant m) 0. ""
+      Expect.isFalse (invertible m) ""
   ]

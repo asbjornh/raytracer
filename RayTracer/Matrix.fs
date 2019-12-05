@@ -84,3 +84,5 @@ and cofactor row col =
   submatrix row col >> determinant >> (*) factor
 
 let minor row col = submatrix row col >> determinant
+
+let invertible = determinant >> (<>) 0.
