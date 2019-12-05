@@ -7,9 +7,6 @@ let point x y z = Tuple (x, y, z, 1.0)
 
 let vector x y z = Tuple (x, y, z, 0.0)
 
-let epsilon = 0.00001
-let equals a b = abs (a - b) < epsilon
-
 let combine op (a: Tuple) (b: Tuple) =
   let (x1, y1, z1, w1) = a
   let (x2, y2, z2, w2) = b

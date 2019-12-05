@@ -8,10 +8,6 @@ let matrix (a: float list list) =
 let create w h init =
   Array.create h (Array.create w init)
 
-let concat a b = Array.concat [a; b]
-
-let appendTo arr el = concat arr [| el |]
-
 let flatten (a: 'a[][]) =
   Array.reduce concat a
 
@@ -19,8 +15,7 @@ let equals (a: float [] []) (b: float [] []) =
   Array.indexed (flatten a)
   |> Array.forall (fun (i, el) -> looseEq el (flatten b).[i])
 
-let map fn =
-  Array.map (Array.map fn)
+let map fn = Array.map (Array.map fn)
 
 let mapi fn (a: float [] []) =
   a |> Array.mapi (fun rowI row ->
@@ -30,15 +25,6 @@ let mapi fn (a: float [] []) =
 let identity =
   create 4 4 0.0
   |> mapi (fun row col -> if (row = col) then 1.0 else 0.0)
-
-let filteri fn m =
-  Array.indexed m
-  |> Array.filter (fst >> fn)
-  |> Array.map snd
-
-let foldi fn initial m =
-  Array.indexed m
-  |> Array.fold (fun acc (i, el) -> fn acc i el) initial
 
 let getColumn i =
   let folder acc (row: 'a[]) = appendTo acc row.[i]
@@ -53,13 +39,13 @@ let multiply (a: float [] []) (b: float [] []) =
   let widthA = Array.length a.[0]
   let widthB = Array.length b.[0]
 
-  let map row col =
+  let mapper row col =
     let colB = min col (widthB - 1)
     [0..widthA-1]
     |> List.fold (fun acc i -> acc + a.[row].[i] * b.[i].[colB]) 0.0
 
   create widthB widthA 0.0
-  |> mapi map
+  |> mapi mapper
 
 let multiplyTuple a b =
   Tuple.toMatrix b |> multiply a |> toTuple
