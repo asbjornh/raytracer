@@ -4,7 +4,7 @@ open System
 open Expecto
 open Matrix
 
-let diff expected actual = Expect.defaultDiffPrinter expected actual
+let diff actual expected = Expect.defaultDiffPrinter expected actual
 
 [<Tests>]
 
@@ -239,7 +239,7 @@ let tests =
       Expect.equal (b.[3].[2]) (-160. / 532.) ""
       Expect.equal (cofactor 3 2 a) 105. ""
       Expect.equal (b.[2].[3]) (105. / 532.) ""
-      Expect.isTrue (equals b expected) (diff expected b)
+      Expect.isTrue (equals b expected) (diff b expected)
 
     testCase "Calculating the inverse of another matrix" <| fun _ ->
       let a = matrix [
@@ -255,7 +255,7 @@ let tests =
         [  0.35897 ;  0.35897 ;  0.43590 ;  0.92308 ]
         [ -0.69231 ; -0.69231 ; -0.76923 ; -1.92308 ]
       ]
-      Expect.isTrue (equals b expected) (diff expected b)
+      Expect.isTrue (equals b expected) (diff b expected)
 
     testCase "Calculating the inverse of a third matrix" <| fun _ ->
       let a = matrix [
@@ -271,5 +271,22 @@ let tests =
         [ -0.02901 ; -0.14630 ; -0.10926 ;  0.12963 ]
         [  0.17778 ;  0.06667 ; -0.26667 ;  0.33333 ]
       ]
-      Expect.isTrue (equals b expected) (diff expected b)
+      Expect.isTrue (equals b expected) (diff b expected)
+
+    testCase "Multiplying a product by its inverse" <| fun _ ->
+      let a = matrix [
+        [  3. ; -9. ;  7. ;  3. ]
+        [  3. ; -8. ;  2. ; -9. ]
+        [ -4. ;  4. ;  4. ;  1. ]
+        [ -6. ;  5. ; -1. ;  1. ]
+      ]
+      let b = matrix [
+        [  8. ;  2. ;  2. ;  2. ]
+        [  3. ; -1. ;  7. ;  0. ]
+        [  7. ;  0. ;  5. ;  4. ]
+        [  6. ; -2. ;  0. ;  5. ]
+      ]
+      let c = multiply a b
+      let reversed = multiply c (inverse b)
+      Expect.isTrue (equals reversed a) (diff reversed a)
   ]
