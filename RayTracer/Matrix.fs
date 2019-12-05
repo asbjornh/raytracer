@@ -41,3 +41,8 @@ let transpose (a: float [,]) =
   [|0..l|]
   |> Array.map (flip getColumn a)
   |> array2D
+
+let determinant (m: float [,]) =
+  match (getRow 0 m, getRow 1 m) with
+  | ([| a; b; |], [| c; d; |]) -> (a * d) - (b * c)
+  | _ -> failwith "Must be a 2x2 matrix"

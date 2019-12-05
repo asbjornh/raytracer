@@ -108,4 +108,11 @@ let tests =
 
     testCase "Transposing the identity" <| fun _ ->
       Expect.equal (transpose identity) identity ""
+
+    testCase "Calculating the determinant of a 2x2 matrix" <| fun _ ->
+      let m = array2D [
+        [  1. ; 5. ]
+        [ -3. ; 2. ]
+      ]
+      Expect.equal (determinant m) 17. ""
   ]
