@@ -8,6 +8,9 @@ let matrix (a: float list list) =
 let create w h init =
   Array.create h (Array.create w init)
 
+let replace row col v (m: 'a[][]) =
+  m.[row].[col] <- v; m
+
 let flatten (a: 'a[][]) =
   Array.reduce concat a
 
@@ -86,8 +89,4 @@ let inverse a =
   |> map (flip (/) (determinant a))
 
 let translation x y z =
-  let t = identity ()
-  t.[0].[3] <- x
-  t.[1].[3] <- y
-  t.[2].[3] <- z
-  t
+  identity () |> replace 0 3 x |> replace 1 3 y |> replace 2 3 z
