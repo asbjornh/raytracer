@@ -1,5 +1,7 @@
 module Util
 
+open System
+
 // Function helpers
 let always a _ = a
 let flip fn a b = fn b a
@@ -10,6 +12,7 @@ let looseEq a b = abs (a - b) < epsilon
 let pow a b = b ** a
 let clamp lower upper n = n |> (min upper) |> (max lower)
 let isEven a = (a % 2) = 0
+let rad deg = (deg / 180.) * Math.PI
 
 // String
 let toString a = a.ToString ()

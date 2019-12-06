@@ -4,6 +4,8 @@ open Expecto
 open Matrix
 open Transform
 
+let diff actual expected = Expect.defaultDiffPrinter expected actual
+
 [<Tests>]
 let tests =
   testList "Tests for Transform" [
@@ -41,4 +43,27 @@ let tests =
       let transform = scaling -1. 1. 1.
       let p = Tuple.point 2. 3. 4.
       Expect.equal (multiplyTuple transform p) (Tuple.point -2. 3. 4.) ""
+
+    testCase "Rotating a point around the x axis" <| fun _ ->
+      let p = Tuple.point 0. 1. 0.
+      let halfQuarter = rotationX (Util.rad 45.)
+      let fullQuarter = rotationX (Util.rad 90.)
+      let a = (sqrt 2.) / 2.
+
+      let result1 = multiplyTuple halfQuarter p
+      let expected1 = Tuple.point 0. a a
+      Expect.isTrue (Tuple.equals result1 expected1) (diff result1 expected1)
+
+      let result2 = multiplyTuple fullQuarter p
+      let expected2 = Tuple.point 0. 0. 1.
+      Expect.isTrue (Tuple.equals result2 expected2) (diff result2 expected2)
+
+    testCase "The inverse of an x-rotation rotates in the opposite direction" <| fun _ ->
+      let p = Tuple.point 0. 1. 0.
+      let halfQuarter = rotationX (Util.rad 45.)
+      let inv = inverse halfQuarter
+      let a = (sqrt 2.) / 2.
+      let result = multiplyTuple inv p
+      let expected = Tuple.point 0. a -a
+      Expect.isTrue (Tuple.equals result expected) (diff result expected)
   ]
