@@ -31,9 +31,15 @@ let shearing xy xz yx yz zx zy =
   |> replace 2 0 zx |> replace 2 1 zy
 
 let translate x y z = translation x y z |> multiply
+let translateX x = translation x 0. 0. |> multiply
+let translateY y = translation 0. y 0. |> multiply
+let translateZ z = translation 0. 0. z |> multiply
 let scale x y z = scaling x y z |> multiply
+let uniformScale s = scaling s s s |> multiply
 let rotateX rad = rotationX rad |> multiply
 let rotateY rad = rotationY rad |> multiply
 let rotateZ rad = rotationZ rad |> multiply
 let shear xy xz yx yz zx zy =
   shearing xy xz yx yz zx zy |> multiply
+
+let chain fns = List.reduce (>>) fns (identity ())
