@@ -18,3 +18,8 @@ let rotationY rad =
   identity ()
   |> replace 0 0 (cos rad) |> replace 0 2 (sin rad)
   |> replace 2 0 (-sin rad) |> replace 2 2 (cos rad)
+
+let rotationZ rad =
+  identity ()
+  |> replace 0 0 (cos rad) |> replace 0 1 (-sin rad)
+  |> replace 1 0 (sin rad) |> replace 1 1 (cos rad)

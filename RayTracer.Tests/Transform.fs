@@ -81,4 +81,18 @@ let tests =
       let result2 = multiplyTuple fullQuarter p
       let expected2 = Tuple.point 1. 0. 0.
       Expect.isTrue (Tuple.equals result2 expected2) (diff result2 expected2)
+
+    testCase "Rotating a point around the z axis" <| fun _ ->
+      let p = Tuple.point 0. 1. 0.
+      let halfQuarter = rotationZ (Util.rad 45.)
+      let fullQuarter = rotationZ (Util.rad 90.)
+
+      let a = (sqrt 2.) / 2.
+      let result1 = multiplyTuple halfQuarter p
+      let expected1 = Tuple.point -a a 0.
+      Expect.isTrue (Tuple.equals result1 expected1) (diff result1 expected1)
+      
+      let result2 = multiplyTuple fullQuarter p
+      let expected2 = Tuple.point -1. 0. 0.
+      Expect.isTrue (Tuple.equals result2 expected2) (diff result2 expected2)
   ]
