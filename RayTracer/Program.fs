@@ -3,5 +3,5 @@
 
 [<EntryPoint>]
 let main argv =
-  Projectile.run ()
+  Clock.run ()
   0

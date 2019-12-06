@@ -53,3 +53,5 @@ let cross a b =
 
 let toMatrix (x, y, z, w) =
   [| [|x|]; [|y|]; [|z|]; [|w|] |]
+
+let to2d (x, y, _, _) = (x, y)

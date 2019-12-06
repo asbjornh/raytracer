@@ -13,6 +13,7 @@
     <Compile Include="Matrix.fs" />
     <Compile Include="Transform.fs" />
     <Compile Include="Demos/Projectile.fs" />
+    <Compile Include="Demos/Clock.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

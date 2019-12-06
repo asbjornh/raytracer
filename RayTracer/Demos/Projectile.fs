@@ -15,7 +15,6 @@ let tick (e: Environment) (p: Projectile) =
   Projectile (newPos, newVel)
 
 let toInt (a: float) = Math.Round a |> int
-let to2d (x, y, _, _) = (x, y)
 let toCanvasPoint = (Tuple.map toInt) >> to2d
 
 let run () =
