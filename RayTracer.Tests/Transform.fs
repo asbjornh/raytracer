@@ -55,11 +55,11 @@ let tests =
 
       let result1 = multiplyTuple halfQuarter p
       let expected1 = Tuple.point 0. a a
-      Expect.isTrue (Tuple.equals result1 expected1) (diff result1 expected1)
+      expectTupleEquals result1 expected1
 
       let result2 = multiplyTuple fullQuarter p
       let expected2 = Tuple.point 0. 0. 1.
-      Expect.isTrue (Tuple.equals result2 expected2) (diff result2 expected2)
+      expectTupleEquals result2 expected2
 
     testCase "The inverse of an x-rotation rotates in the opposite direction" <| fun _ ->
       let p = Tuple.point 0. 1. 0.
@@ -69,7 +69,7 @@ let tests =
       let a = (sqrt 2.) / 2.
       let result = multiplyTuple inv p
       let expected = Tuple.point 0. a -a
-      Expect.isTrue (Tuple.equals result expected) (diff result expected)
+      expectTupleEquals result expected
 
     testCase "Rotating a point around the y axis" <| fun _ ->
       let p = Tuple.point 0. 0. 1.
@@ -79,11 +79,11 @@ let tests =
       let a = (sqrt 2.) / 2.
       let result1 = multiplyTuple halfQuarter p
       let expected1 = Tuple.point a 0. a
-      Expect.isTrue (Tuple.equals result1 expected1) (diff result1 expected1)
+      expectTupleEquals result1 expected1
 
       let result2 = multiplyTuple fullQuarter p
       let expected2 = Tuple.point 1. 0. 0.
-      Expect.isTrue (Tuple.equals result2 expected2) (diff result2 expected2)
+      expectTupleEquals result2 expected2
 
     testCase "Rotating a point around the z axis" <| fun _ ->
       let p = Tuple.point 0. 1. 0.
@@ -93,53 +93,53 @@ let tests =
       let a = (sqrt 2.) / 2.
       let result1 = multiplyTuple halfQuarter p
       let expected1 = Tuple.point -a a 0.
-      Expect.isTrue (Tuple.equals result1 expected1) (diff result1 expected1)
+      expectTupleEquals result1 expected1
       
       let result2 = multiplyTuple fullQuarter p
       let expected2 = Tuple.point -1. 0. 0.
-      Expect.isTrue (Tuple.equals result2 expected2) (diff result2 expected2)
+      expectTupleEquals result2 expected2
 
     testCase "A shearing transformation moves x in proportion to y" <| fun _ ->
       let transform = shearing 1. 0. 0. 0. 0. 0.
       let p = Tuple.point 2. 3. 4.
       let result = multiplyTuple transform p
       let expected = Tuple.point 5. 3. 4.
-      Expect.isTrue (Tuple.equals result expected) (diff result expected)
+      expectTupleEquals result expected
 
     testCase "A shearing transformation moves x in proportion to z" <| fun _ ->
       let transform = shearing 0. 1. 0. 0. 0. 0.
       let p = Tuple.point 2. 3. 4.
       let result = multiplyTuple transform p
       let expected = Tuple.point 6. 3. 4.
-      Expect.isTrue (Tuple.equals result expected) (diff result expected)
+      expectTupleEquals result expected
 
     testCase "A shearing transformation moves y in proportion to x" <| fun _ ->
       let transform = shearing 0. 0. 1. 0. 0. 0.
       let p = Tuple.point 2. 3. 4.
       let result = multiplyTuple transform p
       let expected = Tuple.point 2. 5. 4.
-      Expect.isTrue (Tuple.equals result expected) (diff result expected)
+      expectTupleEquals result expected
 
     testCase "A shearing transformation moves y in proportion to z" <| fun _ ->
       let transform = shearing 0. 0. 0. 1. 0. 0.
       let p = Tuple.point 2. 3. 4.
       let result = multiplyTuple transform p
       let expected = Tuple.point 2. 7. 4.
-      Expect.isTrue (Tuple.equals result expected) (diff result expected)
+      expectTupleEquals result expected
 
     testCase "A shearing transformation moves z in proportion to x" <| fun _ ->
       let transform = shearing 0. 0. 0. 0. 1. 0.
       let p = Tuple.point 2. 3. 4.
       let result = multiplyTuple transform p
       let expected = Tuple.point 2. 3. 6.
-      Expect.isTrue (Tuple.equals result expected) (diff result expected)
+      expectTupleEquals result expected
 
     testCase "A shearing transformation moves z in proportion to y" <| fun _ ->
       let transform = shearing 0. 0. 0. 0. 0. 1.
       let p = Tuple.point 2. 3. 4.
       let result = multiplyTuple transform p
       let expected = Tuple.point 2. 3. 7.
-      Expect.isTrue (Tuple.equals result expected) (diff result expected)
+      expectTupleEquals result expected
 
     testCase "Individual transformations are applied in sequence" <| fun _ ->
       let p = Tuple.point 1. 0. 1.
