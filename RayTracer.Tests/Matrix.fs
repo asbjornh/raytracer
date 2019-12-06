@@ -79,7 +79,7 @@ let tests =
       ]
       let t = Tuple.point 1. 2. 3.
       let expected = Tuple.point 18. 24. 33.
-      Expect.equal (multiplyTuple m t) expected ""
+      Expect.equal (multiplyT m t) expected ""
 
     testCase "Identity matrix" <| fun _ ->
       let expected = matrix [
@@ -101,7 +101,7 @@ let tests =
 
     testCase "Multiplying the identity matrix by a tuple" <| fun _ ->
       let t = (1., 2., 3., 4.)
-      Expect.equal (multiplyTuple (identity ()) t) t ""
+      Expect.equal (multiplyT (identity ()) t) t ""
 
     testCase "Transposing a matrix" <| fun _ ->
       let m = matrix [

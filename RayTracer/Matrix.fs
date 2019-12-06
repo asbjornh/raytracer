@@ -50,7 +50,7 @@ let multiply (a: float [] []) (b: float [] []) =
   create widthB widthA 0.0
   |> mapi mapper
 
-let multiplyTuple a b =
+let multiplyT a b =
   Tuple.toMatrix b |> multiply a |> toTuple
 
 let transpose (a: float [] []) =

@@ -17,7 +17,7 @@ let run () =
         rotateZ (rad degrees)
         translate 100. 50. 0.
       ]
-      multiplyTuple transform p
+      multiplyT transform p
       |> Tuple.map (Math.Round >> int)
       |> to2d
     )
