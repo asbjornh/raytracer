@@ -10,12 +10,16 @@ let vector x y z = Tuple (x, y, z, 0.0)
 let combine op (a: Tuple) (b: Tuple) =
   let (x1, y1, z1, w1) = a
   let (x2, y2, z2, w2) = b
-  Tuple (op x1 x2, op y1 y2, op z1 z2, op w1 w2)
+  (op x1 x2, op y1 y2, op z1 z2, op w1 w2)
 
-let map fn t =
-  let (x, y, z, w) = t
+let map fn (x, y, z, w) =
   (fn x, fn y, fn z, fn w)
 
+let fold fn init (x, y, z, w) =
+  fn x init |> fn y |> fn z |> fn w
+
+let equals a b =
+  combine looseEq a b |> fold (&&) true
 
 let add = combine (+)
 
@@ -47,6 +51,5 @@ let cross a b =
   let z = x1 * y2 - y1 * x2
   vector x y z
 
-let toMatrix (a: Tuple) =
-  let (x, y, z, w) = a
+let toMatrix (x, y, z, w) =
   [| [|x|]; [|y|]; [|z|]; [|w|] |]
