@@ -89,7 +89,7 @@ let tests =
         [ 0. ; 0. ; 1. ; 0. ]
         [ 0. ; 0. ; 0. ; 1. ]
       ]
-      Expect.equal identity expected ""
+      Expect.equal (identity ()) expected ""
 
     testCase "Multiplying a matrix by the identity matrix" <| fun _ ->
       let m = matrix [
@@ -98,11 +98,11 @@ let tests =
         [ 2. ; 4. ;  8. ; 16. ]
         [ 4. ; 8. ; 16. ; 32. ]
       ]
-      Expect.equal (multiply m identity) m ""
+      Expect.equal (multiply m (identity ())) m ""
 
     testCase "Multiplying the identity matrix by a tuple" <| fun _ ->
       let t = (1., 2., 3., 4.)
-      Expect.equal (multiplyTuple identity t) t ""
+      Expect.equal (multiplyTuple (identity ()) t) t ""
 
     testCase "Transposing a matrix" <| fun _ ->
       let m = matrix [
@@ -120,7 +120,7 @@ let tests =
       Expect.equal (transpose m) expected ""
 
     testCase "Transposing the identity" <| fun _ ->
-      Expect.equal (transpose identity) identity ""
+      Expect.equal (transpose (identity ())) (identity ()) ""
 
     testCase "Calculating the determinant of a 2x2 matrix" <| fun _ ->
       let m = matrix [
@@ -289,4 +289,19 @@ let tests =
       let c = multiply a b
       let reversed = multiply c (inverse b)
       Expect.isTrue (equals reversed a) (diff reversed a)
+
+    testCase "Multiplying by a translation matrix" <| fun _ ->
+      let transform = translation 5. -3. 2.
+      let p = Tuple.point -3. 4. 5.
+      Expect.equal (multiplyTuple transform p) (Tuple.point 2. 1. 7.) ""
+
+    testCase "Multiplying by the inverse of a translation matrix" <| fun _ ->
+      let transform = translation 5. -3. 2.
+      let p = Tuple.point -3. 4. 5.
+      Expect.equal (multiplyTuple (inverse transform) p) (Tuple.point -8. 7. 3.) ""
+
+    testCase "Translation does not affect vectors" <| fun _ ->
+      let transform = translation 5. -3. 2.
+      let v = Tuple.vector -3. 4. 5.
+      Expect.equal (multiplyTuple transform v) v ""
   ]

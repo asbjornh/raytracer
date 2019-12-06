@@ -22,7 +22,7 @@ let mapi fn (a: float [] []) =
     row |> Array.mapi (fun colI col -> fn rowI colI)
   )
 
-let identity =
+let identity () =
   create 4 4 0.0
   |> mapi (fun row col -> if (row = col) then 1.0 else 0.0)
 
@@ -84,3 +84,10 @@ let inverse a =
   mapi (fun row col -> cofactor row col a) a
   |> transpose
   |> map (flip (/) (determinant a))
+
+let translation x y z =
+  let t = identity ()
+  t.[0].[3] <- x
+  t.[1].[3] <- y
+  t.[2].[3] <- z
+  t
