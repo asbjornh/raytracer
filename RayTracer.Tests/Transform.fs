@@ -7,7 +7,6 @@ open Transform
 [<Tests>]
 let tests =
   testList "Tests for Transform" [
-
     testCase "Multiplying by a translation matrix" <| fun _ ->
       let transform = translation 5. -3. 2.
       let p = Tuple.point -3. 4. 5.
