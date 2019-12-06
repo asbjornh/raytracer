@@ -6,6 +6,9 @@ open Transform
 
 let diff actual expected = Expect.defaultDiffPrinter expected actual
 
+let expectTupleEquals expected actual =
+  Expect.isTrue (Tuple.equals actual expected) (diff actual expected)
+
 [<Tests>]
 let tests =
   testList "Tests for Transform" [
@@ -137,4 +140,38 @@ let tests =
       let result = multiplyTuple transform p
       let expected = Tuple.point 2. 3. 7.
       Expect.isTrue (Tuple.equals result expected) (diff result expected)
+
+    testCase "Individual transformations are applied in sequence" <| fun _ ->
+      let p = Tuple.point 1. 0. 1.
+      let a = rotationX (Util.rad 90.)
+      let b = scaling 5. 5. 5.
+      let c = translation 10. 5. 7.
+      // apply rotation first​
+      let p2 = multiplyTuple a p
+      expectTupleEquals p2 (Tuple.point 1. -1. 0.)
+
+      // then apply scaling​
+      let p3 = multiplyTuple b p2
+      expectTupleEquals p3 (Tuple.point 5. -5. 0.)
+
+      // then apply translation​
+      let p4 = multiplyTuple c p3
+      expectTupleEquals p4 (Tuple.point 15. 0. 7.)
+
+    testCase "Chained transformations must be applied in reverse order" <| fun _ ->
+      let p = Tuple.point 1. 0. 1.
+      let a = rotationX (Util.rad 90.)
+      let b = scaling 5. 5. 5.
+      let c = translation 10. 5. 7.
+      let t = multiply c (multiply b a)
+      expectTupleEquals (multiplyTuple t p) (Tuple.point 15. 0. 7.)
+
+    testCase "The chain function applies transforms in sequence" <| fun _ ->
+      let p = Tuple.point 1. 0. 1.
+      let t = chain [
+        rotateX (Util.rad 90.)
+        scale 5. 5. 5.
+        translate 10. 5. 7.
+      ]
+      expectTupleEquals (multiplyTuple t p) (Tuple.point 15. 0. 7.)
   ]
