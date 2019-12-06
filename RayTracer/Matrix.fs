@@ -87,9 +87,3 @@ let inverse a =
   mapi (fun row col -> cofactor row col a) a
   |> transpose
   |> map (flip (/) (determinant a))
-
-let translation x y z =
-  identity () |> replace 0 3 x |> replace 1 3 y |> replace 2 3 z
-
-let scaling x y z =
-  identity () |> replace 0 0 x |> replace 1 1 y |> replace 2 2 z

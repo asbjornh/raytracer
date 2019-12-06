@@ -11,6 +11,7 @@
     <Compile Include="Tuple.fs" />
     <Compile Include="Canvas.fs" />
     <Compile Include="Matrix.fs" />
+    <Compile Include="Transform.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
