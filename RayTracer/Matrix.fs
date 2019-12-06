@@ -2,7 +2,7 @@ module Matrix
 
 open Util
 
-let matrix (a: float list list) =
+let matrix (a: 'a list list) =
   a |>List.toArray |> Array.map List.toArray
 
 let create w h init =
