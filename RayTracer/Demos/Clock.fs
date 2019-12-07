@@ -17,9 +17,7 @@ let run () =
         rotateZ (rad degrees)
         translate 100. 50. 0.
       ]
-      multiplyT transform p
-      |> Tuple.Map (Math.Round >> int)
-      |> to2d
+      multiplyT transform p |> Tuple.toPixel
     )
 
   let white = Color.color 1.0 1.0 1.0

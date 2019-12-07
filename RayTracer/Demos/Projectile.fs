@@ -14,9 +14,6 @@ let tick (e: Environment) (p: Projectile) =
   let newVel = velocity + gravity + wind
   Projectile (newPos, newVel)
 
-let toInt (a: float) = Math.Round a |> int
-let toCanvasPoint = (Tuple.Map toInt) >> to2d
-
 let run () =
   let projectile = (point 0.0 100.0 0.0), (vector 2.0 -1.5 0.0)
   let env = (vector 0.0 0.02 0.0), (vector -0.015 0.0 0.0)
@@ -32,7 +29,7 @@ let run () =
   let canvas = Canvas.canvas 200 100
 
   points
-  |> List.map toCanvasPoint
+  |> List.map Tuple.toPixel
   |> List.fold (fun canv (x, y) -> Canvas.write x y white canv) canvas
   |> Canvas.toPpm
   |> writeFile @"./out.ppm"

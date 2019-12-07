@@ -1,5 +1,7 @@
 module Tuple
 
+open System
+
 open Util
 
 type Tuple(a, b, c, d) =
@@ -72,4 +74,7 @@ let toMatrix (a: Tuple) =
   let (x, y, z, w) = a.Return
   [| [|x|]; [|y|]; [|z|]; [|w|] |]
 
-let to2d (x, y, _, _) = (x, y)
+let toPixel (a: Tuple) =
+  a
+  |> Tuple.Map (Math.Round >> int)
+  |> fun (x, y, _, _) -> (x, y)
