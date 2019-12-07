@@ -7,7 +7,7 @@ open Transform
 let diff actual expected = Expect.defaultDiffPrinter expected actual
 
 let expectTupleEquals expected actual =
-  Expect.isTrue (Tuple.equals actual expected) (diff actual expected)
+  Expect.isTrue (actual = expected) (diff actual expected)
 
 [<Tests>]
 let tests =

@@ -35,7 +35,7 @@ let getColumn i =
 
 let toTuple a =
   match (getColumn 0 a) with
-  | [| x; y; z; w |] -> (x, y, z, w)
+  | [| x; y; z; w |] -> Tuple.Tuple (x, y, z, w)
   | _ -> failwith "Matrix must be 4D"
 
 let multiply (a: float [] []) (b: float [] []) =

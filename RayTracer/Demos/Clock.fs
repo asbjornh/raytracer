@@ -18,7 +18,7 @@ let run () =
         translate 100. 50. 0.
       ]
       multiplyT transform p
-      |> Tuple.map (Math.Round >> int)
+      |> Tuple.Map (Math.Round >> int)
       |> to2d
     )
 

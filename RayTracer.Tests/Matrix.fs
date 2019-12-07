@@ -100,7 +100,7 @@ let tests =
       Expect.equal (multiply m (identity ())) m ""
 
     testCase "Multiplying the identity matrix by a tuple" <| fun _ ->
-      let t = (1., 2., 3., 4.)
+      let t = Tuple.Tuple (1., 2., 3., 4.)
       Expect.equal (multiplyT (identity ()) t) t ""
 
     testCase "Transposing a matrix" <| fun _ ->

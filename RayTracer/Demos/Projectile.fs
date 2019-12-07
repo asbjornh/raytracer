@@ -10,12 +10,12 @@ type Environment = Tuple * Tuple
 let tick (e: Environment) (p: Projectile) =
   let (gravity, wind) = e
   let (position, velocity) = p
-  let newPos = add position velocity
-  let newVel = velocity |> add gravity |> add wind
+  let newPos = position + velocity
+  let newVel = velocity + gravity + wind
   Projectile (newPos, newVel)
 
 let toInt (a: float) = Math.Round a |> int
-let toCanvasPoint = (Tuple.map toInt) >> to2d
+let toCanvasPoint = (Tuple.Map toInt) >> to2d
 
 let run () =
   let projectile = (point 0.0 100.0 0.0), (vector 2.0 -1.5 0.0)
