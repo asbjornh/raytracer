@@ -34,9 +34,6 @@ type Tuple(a, b, c, d) =
   static member (/) (a, b: Tuple) =
     Tuple.MapT (flip (/) a) b
 
-  static member (/.) (a: Tuple, b: Tuple) =
-    Tuple.CombineT (*) a b |> Tuple.Fold (+) 0.
-
   static member (+) (a: Tuple, b: Tuple) =
     Tuple.CombineT (+) a b
 
@@ -54,6 +51,8 @@ type Tuple(a, b, c, d) =
 let point x y z = Tuple(x, y, z, 1.0)
 let vector x y z = Tuple(x, y, z, 0.0)
 
+let dot (a: Tuple) (b: Tuple) =
+  Tuple.CombineT (*) a b |> Tuple.Fold (+) 0.
 let zero = vector 0. 0. 0.
 let negate (a: Tuple) = Tuple.CombineT (-) zero a
 let magnitude (a: Tuple) =

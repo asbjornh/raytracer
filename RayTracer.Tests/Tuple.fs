@@ -93,7 +93,7 @@ let tests =
     testCase "The dot product of two tuples" <| fun _ ->
       let a = vector 1.0 2.0 3.0
       let b = vector 2.0 3.0 4.0
-      Expect.equal (a /. b) 20.0 ""
+      Expect.equal (dot a b) 20.0 ""
 
     testCase "The cross product of two vectors" <| fun _ ->
       let a = vector 1.0 2.0 3.0
