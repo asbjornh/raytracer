@@ -163,7 +163,7 @@ let tests =
       let a = rotationX (Util.rad 90.)
       let b = scaling 5. 5. 5.
       let c = translation 10. 5. 7.
-      let t = multiply c (multiply b a)
+      let t = c * b * a
       expectTupleEquals (multiplyT t p) (Tuple.point 15. 0. 7.)
 
     testCase "The chain function applies transforms in sequence" <| fun _ ->

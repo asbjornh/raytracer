@@ -58,7 +58,7 @@ let tests =
         [ 40. ;  58. ; 110. ; 102. ]
         [ 16. ;  26. ;  46. ;  42. ]
       ]
-      Expect.equal (multiply a b) expected ""
+      Expect.equal (a * b) expected ""
 
     testCase "Get column from matrix" <| fun _ ->
       let m = matrix [
@@ -97,7 +97,7 @@ let tests =
         [ 2. ; 4. ;  8. ; 16. ]
         [ 4. ; 8. ; 16. ; 32. ]
       ]
-      Expect.equal (multiply m (identity ())) m ""
+      Expect.equal (m * (identity ())) m ""
 
     testCase "Multiplying the identity matrix by a tuple" <| fun _ ->
       let t = Tuple.Tuple (1., 2., 3., 4.)
@@ -285,7 +285,7 @@ let tests =
         [  7. ;  0. ;  5. ;  4. ]
         [  6. ; -2. ;  0. ;  5. ]
       ]
-      let c = multiply a b
-      let reversed = multiply c (inverse b)
+      let c = a * b
+      let reversed = c * (inverse b)
       Expect.isTrue (reversed = a) (diff reversed a)
   ]

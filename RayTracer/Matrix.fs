@@ -5,8 +5,30 @@ open Util
 type Matrix (a: _[][]) =
   member x.Return = a
 
-  static member Flatten (a: Matrix) =
-    Array.reduce concat a.Return
+  static member Flatten (m: Matrix) =
+    Array.reduce concat m.Return
+
+  static member Map fn (m: Matrix) = 
+    Array.map (Array.map fn) m.Return |> Matrix
+
+  static member Mapi fn (m: Matrix) =
+    m.Return |> Array.mapi (fun rowI row ->
+      row |> Array.mapi (fun colI col -> fn rowI colI)
+    ) |> Matrix
+
+  static member (*) (mA: Matrix, mB: Matrix) =
+    let a = mA.Return
+    let b = mB.Return
+    let widthA = Array.length a.[0]
+    let widthB = Array.length b.[0]
+
+    let mapper row col =
+      let colB = min col (widthB - 1)
+      [0..widthA-1]
+      |> List.fold (fun acc i -> acc + a.[row].[i] * b.[i].[colB]) 0.0
+
+    Array.create widthA (Array.create widthB 0.0) |> Matrix
+    |> Matrix.Mapi mapper
 
   override x.GetHashCode () = x.GetHashCode ()
   override x.Equals (b: obj) =
@@ -29,45 +51,24 @@ let replace row col v (m: Matrix) =
 let get row col (m: Matrix) =
   m.Return.[row].[col]
 
-let flatten (a: 'a[][]) =
-  Array.reduce concat a
-
-let map fn (m: Matrix) = Array.map (Array.map fn) m.Return |> Matrix
-
-let mapi fn (a: Matrix) =
-  a.Return |> Array.mapi (fun rowI row ->
-    row |> Array.mapi (fun colI col -> fn rowI colI)
-  ) |> Matrix
-
 let identity () =
   create 4 4 0.0
-  |> mapi (fun row col -> if (row = col) then 1.0 else 0.0)
+  |> Matrix.Mapi (fun row col -> if (row = col) then 1.0 else 0.0)
 
 let getColumn i (m: Matrix) =
   let folder acc (row: 'a[]) = appendTo acc row.[i]
-  Array.fold folder Array.empty m.Return
+  let res = Array.fold folder Array.empty m.Return
+  res
 
 let toTuple a =
   match (getColumn 0 a) with
   | [| x; y; z; w |] -> Tuple.Tuple (x, y, z, w)
   | _ -> failwith "Matrix must be 4D"
 
-let multiply (mA: Matrix) (mB: Matrix) =
-  let a = mA.Return
-  let b = mB.Return
-  let widthA = Array.length a.[0]
-  let widthB = Array.length b.[0]
+let multiply (a: Matrix) = (*) a
 
-  let mapper row col =
-    let colB = min col (widthB - 1)
-    [0..widthA-1]
-    |> List.fold (fun acc i -> acc + a.[row].[i] * b.[i].[colB]) 0.0
-
-  create widthB widthA 0.0
-  |> mapi mapper
-
-let multiplyT a =
-  Tuple.toList >> matrix >> multiply a >> toTuple
+let multiplyT a t =
+  Tuple.toArray t |> Matrix |> (*) a |> toTuple
 
 let transpose (a: Matrix) =
   let l = (Array.length a.Return) - 1
@@ -102,6 +103,6 @@ let minor row col = submatrix row col >> determinant
 let invertible (m: Matrix) = (determinant m) <> 0.
 
 let inverse (m: Matrix) =
-  mapi (fun row col -> cofactor row col m) m
+  Matrix.Mapi (fun row col -> cofactor row col m) m
   |> transpose
-  |> map (flip (/) (determinant m))
+  |> Matrix.Map (flip (/) (determinant m))
