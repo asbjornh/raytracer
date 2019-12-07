@@ -9,7 +9,7 @@ let flip fn a b = fn b a
 // Numbers
 let epsilon = 0.00001
 let looseEq a b = abs (a - b) < epsilon
-let pow a b = b ** a
+let pow exponent num = num ** exponent
 let clamp lower upper n = n |> (min upper) |> (max lower)
 let isEven a = (a % 2) = 0
 let rad deg = (deg / 180.) * Math.PI
