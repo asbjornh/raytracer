@@ -4,7 +4,7 @@ open System
 
 open Util
 
-type Tuple(a, b, c, d) =
+type Tuple (a, b, c, d) =
   member x.X = a
   member x.Y = b
   member x.Z = c
@@ -70,9 +70,9 @@ let cross (a: Tuple) (b: Tuple) =
   let z = x1 * y2 - y1 * x2
   vector x y z
 
-let toMatrix (a: Tuple) =
+let toList (a: Tuple) =
   let (x, y, z, w) = a.Return
-  [| [|x|]; [|y|]; [|z|]; [|w|] |]
+  [ [x]; [y]; [z]; [w]; ]
 
 let toPixel (a: Tuple) =
   a
