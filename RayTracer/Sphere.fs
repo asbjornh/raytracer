@@ -24,3 +24,10 @@ let intersect (s: Sphere) (ray: Ray): Intersection<Sphere> list =
     [intersection t1 s; intersection t2 s]
 
 let transform t s = { s with transform = t }
+
+let normal (p: Tuple) s =
+  let objectP = multiplyT (inverse s.transform) p
+  let objectN = objectP - (point 0. 0. 0.)
+  let worldN = multiplyT (transpose (inverse s.transform)) objectN
+  let (x, y, z, _) = worldN.Return
+  normalize (vector x y z)

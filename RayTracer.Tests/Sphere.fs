@@ -1,5 +1,7 @@
 module SphereTest
 
+open System
+
 open Expecto
 open Tuple
 open Sphere
@@ -82,4 +84,46 @@ let tests =
       let s2 = Sphere.transform (translation 5. 0. 0.) s
       let xs = intersect s2 r
       Expect.equal (List.length xs) 0 ""
+
+    testCase "The normal on a sphere at a point on the x axis" <| fun _ ->
+      let s = sphere ()
+      let n = normal (point 1. 0. 0.) s
+      Expect.equal n (vector 1. 0. 0.) ""
+
+    testCase "The normal on a sphere at a point on the y axis" <| fun _ ->
+      let s = sphere ()
+      let n = normal (point 0. 1. 0.) s
+      Expect.equal n (vector 0. 1. 0.) ""
+
+    testCase "The normal on a sphere at a point on the z axis" <| fun _ ->
+      let s = sphere ()
+      let n = normal (point 0. 0. 1.) s
+      Expect.equal n (vector 0. 0. 1.) ""
+
+    testCase "The normal on a sphere at a nonaxial point" <| fun _ ->
+      let s = sphere ()
+      let a = (sqrt 3.) / 3.
+      let n = normal (point a a a) s
+      Expect.equal n (vector a a a) ""
+
+    testCase "The normal is a normalized vector" <| fun _ ->
+      let s = sphere ()
+      let a = (sqrt 3.) / 3.
+      let n = normal (point a a a) s
+      Expect.equal n (normalize n) ""
+
+    testCase "Computing the normal on a translated sphere" <| fun _ ->
+      let s = sphere ()
+      let s2 = Sphere.transform (translation 0. 1. 0.) s
+      let n = normal (point 0. 1.70711 -0.70711) s2
+      Expect.equal n (vector 0. 0.70711 -0.70711) ""
+
+    testCase "Computing the normal on a transformed sphere" <| fun _ ->
+      let diff actual expected = Expect.defaultDiffPrinter expected actual
+      let s = sphere ()
+      let m = (scaling 1. 0.5 1.) * (rotationZ (Math.PI / 5.))
+      let s2 = Sphere.transform m s
+      let a = (sqrt 2.) / 2.
+      let n = normal (point 0. a -a) s2
+      Expect.equal n (vector 0. 0.97014 -0.24254) ""
   ]
