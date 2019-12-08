@@ -25,14 +25,14 @@ let tests =
     testCase "Translating a ray" <| fun _ ->
       let r = ray (point 1. 2. 3.) (vector 0. 1. 0.)
       let m = translation 3. 4. 5.
-      let r2 = transform r m
+      let r2 = transform m r
       Expect.equal r2.origin (point 4. 6. 8.) ""
       Expect.equal r2.direction (vector 0. 1. 0.) ""
 
     testCase "Scaling a ray" <| fun _ ->
       let r = ray (point 1. 2. 3.) (vector 0. 1. 0.)
       let m = scaling 2. 3. 4.
-      let r2 = transform r m
+      let r2 = transform m r
       Expect.equal r2.origin (point 2. 6. 12.) ""
       Expect.equal r2.direction (vector 0. 3. 0.) ""
   ]

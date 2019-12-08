@@ -14,5 +14,5 @@ let ray origin direction =
 let position t ray =
   ray.origin + t * ray.direction
 
-let transform r m =
+let transform m r =
   ray (multiplyT m r.origin) (multiplyT m r.direction)
