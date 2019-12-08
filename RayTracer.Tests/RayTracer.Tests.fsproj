@@ -11,11 +11,12 @@
     <Compile Include="Canvas.fs" />
     <Compile Include="Matrix.fs" />
     <Compile Include="Transform.fs" />
-    <Compile Include="Sphere.fs" />
     <Compile Include="Ray.fs" />
+    <Compile Include="Intersection.fs" />
     <Compile Include="Material.fs" />
     <Compile Include="Light.fs" />
-    <Compile Include="Intersection.fs" />
+    <Compile Include="Sphere.fs" />
+
     <Compile Include="Main.fs" />
   </ItemGroup>
 
