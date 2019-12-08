@@ -4,6 +4,7 @@ open Expecto
 open Tuple
 open Sphere
 open Ray
+open Intersection
 
 [<Tests>]
 let tests =
@@ -13,16 +14,16 @@ let tests =
       let s = sphere ()
       let xs = intersect s r
       Expect.equal (List.length xs) 2 ""
-      Expect.equal xs.[0] 4. ""
-      Expect.equal xs.[1] 6. ""
+      Expect.equal xs.[0].t 4. ""
+      Expect.equal xs.[1].t 6. ""
 
     testCase "A ray intersects a sphere at a tangent" <| fun _ ->
       let r = ray (point 0. 1. -5.) (vector 0. 0. 1.)
       let s = sphere ()
       let xs = intersect s r
       Expect.equal (List.length xs) 2 ""
-      Expect.equal xs.[0] 5. ""
-      Expect.equal xs.[1] 5. ""
+      Expect.equal xs.[0].t 5. ""
+      Expect.equal xs.[1].t 5. ""
 
     testCase "A ray misses a sphere" <| fun _ ->
       let r = ray (point 0. 2. -5.) (vector 0. 0. 1.)
@@ -35,14 +36,14 @@ let tests =
       let s = sphere ()
       let xs = intersect s r
       Expect.equal (List.length xs) 2 ""
-      Expect.equal xs.[0] -1. ""
-      Expect.equal xs.[1] 1. ""
+      Expect.equal xs.[0].t -1. ""
+      Expect.equal xs.[1].t 1. ""
 
     testCase "A sphere is behind a ray" <| fun _ ->
       let r = ray (point 0. 0. 5.) (vector 0. 0. 1.)
       let s = sphere ()
       let xs = intersect s r
       Expect.equal (List.length xs) 2 ""
-      Expect.equal xs.[0] -6. ""
-      Expect.equal xs.[1] -4. ""
+      Expect.equal xs.[0].t -6. ""
+      Expect.equal xs.[1].t -4. ""
   ]

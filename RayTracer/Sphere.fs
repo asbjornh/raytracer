@@ -3,10 +3,12 @@ module Sphere
 open Ray
 open Tuple
 open Util
+open Intersection
 
-let sphere () = ()
+type Sphere = Sphere of unit
+let sphere () = Sphere ()
 
-let intersect s ray =
+let intersect (s: Sphere) (ray: Ray): Intersection<Sphere> list =
   let sphereToRay = ray.origin - (point 0. 0. 0.)
   let a = dot ray.direction ray.direction
   let b = 2. * (dot ray.direction sphereToRay)
@@ -17,4 +19,4 @@ let intersect s ray =
   else
     let t1 = (-b - sqrt discriminant) / (2. * a)
     let t2 = (-b + sqrt discriminant) / (2. * a)
-    [t1; t2]
+    [intersection t1 s; intersection t2 s]
