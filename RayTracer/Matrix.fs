@@ -44,8 +44,7 @@ let matrix (a: float list list) =
 let create w h init =
   Array.create h (Array.create w init) |> Matrix
 
-// TODO: Rename to 'set'?
-let replace row col v (m: Matrix) =
+let set row col v (m: Matrix) =
   m.Return.[row].[col] <- v; m
 
 let get row col (m: Matrix) =
