@@ -100,4 +100,17 @@ let tests =
       let b = vector 2.0 3.0 4.0
       Expect.equal (cross a b) (vector -1.0 2.0 -1.0) ""
       Expect.equal (cross b a) (vector 1.0 -2.0 1.0) ""
+
+    testCase "Reflecting a vector approaching at 45°" <| fun _ ->
+      let v = vector 1. -1. 0.
+      let n = vector 0. 1. 0.
+      let r = reflect n v
+      Expect.equal r (vector 1. 1. 0.) ""
+
+    testCase "Reflecting a vector off a slanted surface" <| fun _ ->
+      let a = (sqrt 2.) / 2.
+      let v = vector 0. -1. 0.
+      let n = vector a a 0.
+      let r = reflect n v
+      Expect.equal r (vector 1. 0. 0.) ""
   ]

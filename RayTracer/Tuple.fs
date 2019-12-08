@@ -73,6 +73,9 @@ let cross (a: Tuple) (b: Tuple) =
   let z = x1 * y2 - y1 * x2
   vector x y z
 
+let reflect (normal: Tuple) (v: Tuple) =
+  v - (dot v normal * 2. * normal)
+
 let toArray (a: Tuple) =
   let (x, y, z, w) = a.Return
   [| [|x|]; [|y|]; [|z|]; [|w|]; |]
