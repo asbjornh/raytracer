@@ -8,6 +8,7 @@ open Sphere
 open Ray
 open Intersection
 open Matrix
+open Material
 open Transform
 
 [<Tests>]
@@ -126,4 +127,16 @@ let tests =
       let a = (sqrt 2.) / 2.
       let n = normal (point 0. a -a) s2
       Expect.equal n (vector 0. 0.97014 -0.24254) ""
+
+    testCase "A sphere has a default material" <| fun _ ->
+      let s = sphere ()
+      let m = s.material
+      Expect.equal m (material ()) ""
+
+    testCase "A sphere may be assigned a material" <| fun _ ->
+      let s = sphere ()
+      let m = material ()
+      m.ambient <- 1.
+      s.material <- m
+      Expect.equal s.material m ""
   ]

@@ -1,13 +1,20 @@
 module Sphere
 
+open Intersection
+open Material
+open Matrix
 open Ray
 open Tuple
 open Util
-open Intersection
-open Matrix
 
-type Sphere = { transform: Matrix }
-let sphere () = { transform = identity () }
+type Sphere = {
+  transform: Matrix;
+  mutable material: Material;
+}
+let sphere () = {
+  transform = identity ()
+  material = material ()
+}
 
 let intersect (s: Sphere) (ray: Ray): Intersection<Sphere> list =
   let r = transform (inverse s.transform) ray

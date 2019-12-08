@@ -3,11 +3,11 @@ module Material
 open Color
 
 type Material = {
-  color: Color;
-  ambient: float;
-  diffuse: float;
-  specular: float;
-  shininess: float;
+  mutable color: Color;
+  mutable ambient: float;
+  mutable diffuse: float;
+  mutable specular: float;
+  mutable shininess: float;
 }
 
 let material () = {
