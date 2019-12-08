@@ -42,6 +42,9 @@ type Tuple (a, b, c, d) =
   static member (-) (a: Tuple, b: Tuple) =
     Tuple.CombineT (-) a b
 
+  override x.ToString () =
+    let (a, b, c, d) = x.Return
+    sprintf "(%f, %f, %f, %f)" a b c d
   override x.GetHashCode () = x.GetHashCode ()
   override x.Equals a =
     match a with
