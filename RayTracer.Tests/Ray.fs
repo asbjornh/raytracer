@@ -3,6 +3,7 @@ module RayTest
 open Expecto
 open Tuple
 open Ray
+open Transform
 
 [<Tests>]
 let tests =
@@ -20,4 +21,18 @@ let tests =
       Expect.equal (position 1. r) (point 3. 3. 4.) ""
       Expect.equal (position -1. r) (point 1. 3. 4.) ""
       Expect.equal (position 2.5 r) (point 4.5 3. 4.) ""
+
+    testCase "Translating a ray" <| fun _ ->
+      let r = ray (point 1. 2. 3.) (vector 0. 1. 0.)
+      let m = translation 3. 4. 5.
+      let r2 = transform r m
+      Expect.equal r2.origin (point 4. 6. 8.) ""
+      Expect.equal r2.direction (vector 0. 1. 0.) ""
+
+    testCase "Scaling a ray" <| fun _ ->
+      let r = ray (point 1. 2. 3.) (vector 0. 1. 0.)
+      let m = scaling 2. 3. 4.
+      let r2 = transform r m
+      Expect.equal r2.origin (point 2. 6. 12.) ""
+      Expect.equal r2.direction (vector 0. 3. 0.) ""
   ]
