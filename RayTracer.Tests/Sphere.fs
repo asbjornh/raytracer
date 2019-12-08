@@ -66,4 +66,20 @@ let tests =
       let t = translation 2. 3. 4.
       let s2 = Sphere.transform t s
       Expect.equal s2.transform t ""
+
+    testCase "Intersecting a scaled sphere with a ray" <| fun _ ->
+      let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
+      let s = sphere ()
+      let s2 = Sphere.transform (scaling 2. 2. 2.) s
+      let xs = intersect s2 r
+      Expect.equal (List.length xs) 2 ""
+      Expect.equal xs.[0].t 3. ""
+      Expect.equal xs.[1].t 7. ""
+
+    testCase "Intersecting a translated sphere with a ray" <| fun _ ->
+      let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
+      let s = sphere ()
+      let s2 = Sphere.transform (translation 5. 0. 0.) s
+      let xs = intersect s2 r
+      Expect.equal (List.length xs) 0 ""
   ]
