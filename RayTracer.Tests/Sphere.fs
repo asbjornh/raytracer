@@ -5,6 +5,8 @@ open Tuple
 open Sphere
 open Ray
 open Intersection
+open Matrix
+open Transform
 
 [<Tests>]
 let tests =
@@ -54,4 +56,14 @@ let tests =
       Expect.equal (List.length xs) 2 ""
       Expect.equal (xs.[0].object) s ""
       Expect.equal (xs.[1].object) s ""
+
+    testCase "A Sphere's default transformation" <| fun _ ->
+      let s = sphere ()
+      Expect.equal s.transform (identity ()) ""
+
+    testCase "Changing a sphere's transformation" <| fun _ ->
+      let s = sphere ()
+      let t = translation 2. 3. 4.
+      let s2 = Sphere.transform t s
+      Expect.equal s2.transform t ""
   ]

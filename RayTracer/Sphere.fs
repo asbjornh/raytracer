@@ -4,9 +4,10 @@ open Ray
 open Tuple
 open Util
 open Intersection
+open Matrix
 
-type Sphere = Sphere of unit
-let sphere () = Sphere ()
+type Sphere = { transform: Matrix }
+let sphere () = { transform = identity () }
 
 let intersect (s: Sphere) (ray: Ray): Intersection<Sphere> list =
   let sphereToRay = ray.origin - (point 0. 0. 0.)
@@ -20,3 +21,5 @@ let intersect (s: Sphere) (ray: Ray): Intersection<Sphere> list =
     let t1 = (-b - sqrt discriminant) / (2. * a)
     let t2 = (-b + sqrt discriminant) / (2. * a)
     [intersection t1 s; intersection t2 s]
+
+let transform t s = { s with transform = t }
