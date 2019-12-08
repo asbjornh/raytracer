@@ -26,8 +26,8 @@ let intersect (s: Sphere) (ray: Ray): Intersection<Sphere> list =
 let transform t s = { s with transform = t }
 
 let normal (p: Tuple) s =
-  let objectP = multiplyT (inverse s.transform) p
-  let objectN = objectP - (point 0. 0. 0.)
-  let worldN = multiplyT (transpose (inverse s.transform)) objectN
+  let invT = inverse s.transform
+  let objectN = (multiplyT invT p) - (point 0. 0. 0.)
+  let worldN = multiplyT (transpose invT) objectN
   let (x, y, z, _) = worldN.Return
   normalize (vector x y z)
