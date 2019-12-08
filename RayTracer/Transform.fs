@@ -42,4 +42,4 @@ let rotateZ rad = rotationZ rad |> multiply
 let shear xy xz yx yz zx zy =
   shearing xy xz yx yz zx zy |> multiply
 
-let chain fns = List.reduce (>>) fns (identity ())
+let chain fns = List.rev fns |> List.reduce (>>) <| identity ()

@@ -167,11 +167,10 @@ let tests =
       expectTupleEquals (multiplyT t p) (Tuple.point 15. 0. 7.)
 
     testCase "The chain function applies transforms in sequence" <| fun _ ->
-      let p = Tuple.point 1. 0. 1.
+      let p = Tuple.point 0. 0. 0.
       let t = chain [
-        rotateX (Util.rad 90.)
         scale 5. 5. 5.
-        translate 10. 5. 7.
+        translate 10. 10. 10.
       ]
-      expectTupleEquals (multiplyT t p) (Tuple.point 15. 0. 7.)
+      expectTupleEquals (multiplyT t p) (Tuple.point 50. 50. 50.)
   ]
