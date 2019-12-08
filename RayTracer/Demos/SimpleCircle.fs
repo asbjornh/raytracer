@@ -5,16 +5,21 @@ open ShellProgressBar
 
 open Canvas
 open Color
+open Intersection
 open Ray
 open Sphere
 open Transform
 open Tuple
 open Util
 
+let colorFromIntersect (i: Intersection<Sphere>) =
+  let c = i.t |> rangeMap (10., 100.) (0., 1.)
+  color c c c
+
 let run () =
-  let t = chain [translate 50. 50. 0.; uniformScale 40.]
+  let t = chain [translate 100. 100. 0.; uniformScale 80.]
   let s = sphere () |> transform t
-  let c = canvas 100 100
+  let c = canvas 200 200
 
   let len = Canvas.length c
   let w = Canvas.width c
@@ -29,11 +34,11 @@ let run () =
     bar.Tick (progressMsg rowI colI)
     let origin = (point (float rowI) (float colI) -5.)
     let r = ray origin (vector 0. 0. 1.)
-    let i = intersect s r
+    let h = intersect s r |> Intersection.hit
 
-    if (List.isEmpty i)
-    then black
-    else white
+    match h with
+    | Some i -> colorFromIntersect i
+    | None -> black
   )
   |> Canvas.toPpm
   |> writeFile @"./out.ppm"

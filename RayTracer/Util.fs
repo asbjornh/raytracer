@@ -11,6 +11,8 @@ let epsilon = 0.00001
 let looseEq a b = abs (a - b) < epsilon
 let pow exponent num = num ** exponent
 let clamp lower upper n = n |> (min upper) |> (max lower)
+let rangeMap (inMin: float, inMax) (outMin, outMax) x
+  = (x - inMin) / (inMax - inMin) * (outMax - outMin) + outMin
 let isEven a = (a % 2) = 0
 let rad deg = (deg / 180.) * Math.PI
 
