@@ -6,7 +6,7 @@ open Tuple
 [<Tests>]
 
 let tests =
-  testList "Tests for Unit" [
+  testList "Tests for Tuple" [
     testCase "point() creates tuples with w=1" <| fun _ ->
       let p = point 4.0 -4.0 3.0 
       Expect.equal p (Tuple (4.0, -4.0, 3.0, 1.0)) ""
