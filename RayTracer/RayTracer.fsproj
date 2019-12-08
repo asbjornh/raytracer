@@ -18,8 +18,13 @@
 
     <Compile Include="Demos/Projectile.fs" />
     <Compile Include="Demos/Clock.fs" />
+    <Compile Include="Demos/SimpleCircle.fs" />
 
     <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ShellProgressBar" Version="4.3.0" />
   </ItemGroup>
 
 </Project>

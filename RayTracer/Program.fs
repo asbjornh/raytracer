@@ -1,7 +1,9 @@
 ﻿module Main
 
+open System
+open ShellProgressBar
 
 [<EntryPoint>]
 let main argv =
-  Clock.run ()
+  SimpleCircle.run ()
   0

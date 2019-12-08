@@ -15,6 +15,8 @@ let width (c: Canvas) =
 
 let height (c: Canvas) = List.length c
 
+let length (c: Canvas) = (height c) * (width c)
+
 let write x y (color: Color) (canvas: Canvas) =
   match (get2d x y canvas) with
   | Some (row, col) -> replace y (replace x color row) canvas
@@ -24,6 +26,11 @@ let read x y (canvas: Canvas) =
   match(get2d x y canvas) with
   | Some (row, col) -> Some col
   | None -> None
+
+let mapi fn (c: Canvas): Canvas =
+  c |> List.mapi (fun rowI row ->
+    List.mapi (fun colI col -> fn rowI colI) row
+  )
 
 let to256 = clamp 0.0 1.0 >> (*) 255.0 >> Math.Round
 

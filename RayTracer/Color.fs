@@ -44,3 +44,9 @@ let (scale: Scale) = fun n -> map ((*) n)
 
 type Divide = float -> Color -> Color
 let (divide: Divide) = fun n -> map (flip (/) n)
+
+let red = color 1. 0. 0.
+let green = color 0. 1. 0.
+let blue = color 0. 0. 1.
+let white = color 1. 1. 1.
+let black = color 0. 0. 0.
