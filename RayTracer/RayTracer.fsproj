@@ -15,6 +15,7 @@
     <Compile Include="Ray.fs" />
     <Compile Include="Intersection.fs" />
     <Compile Include="Sphere.fs" />
+    <Compile Include="Material.fs" />
     <Compile Include="Light.fs" />
 
     <Compile Include="Demos/Projectile.fs" />
