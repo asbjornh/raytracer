@@ -5,5 +5,5 @@ open ShellProgressBar
 
 [<EntryPoint>]
 let main argv =
-  SimpleCircle.run ()
+  IlluminatedSphere.run ()
   0

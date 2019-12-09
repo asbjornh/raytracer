@@ -6,7 +6,7 @@ open Util
 
 type Canvas = (Color list) list
 let canvas w h =
-  List.init h (fun _ -> List.init w (fun _ -> color 0.0 0.0 0.0))
+  List.init h (fun _ -> List.init w (always black))
 
 let width (c: Canvas) =
   match c with
