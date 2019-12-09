@@ -21,22 +21,22 @@ let material () = {
   shininess = 200.
 }
 
-let lighting light point eyeV normalV mat =
+let lighting light pos eyeV normalV mat =
   let effectiveColor = multiply mat.color light.intensity
-  let lightV = normalize (light.position - point)
+  let lightV = normalize (light.position - pos)
   let lightDotNormal = dot lightV normalV
   let ambient = scale mat.ambient effectiveColor
 
   let (diffuse, specular) =
-    if (lightDotNormal < 0.) then
-      (black, black)
+    if (lightDotNormal < 0.)
+    then (black, black)
     else
       let diffuse = effectiveColor |> scale mat.diffuse |> scale lightDotNormal
       let reflectV = reflect normalV (negate lightV)
-      let reflectDotEye = dot reflectV eyeV
+      let reflectDotEye = dot eyeV reflectV
 
-      if (reflectDotEye <= 0.) then
-        (diffuse, black)
+      if (reflectDotEye <= 0.)
+      then (diffuse, black)
       else
         let factor = pow mat.shininess reflectDotEye
         let specular = light.intensity |> scale factor |> scale mat.specular
