@@ -2,38 +2,48 @@ module Color
 
 open Util
 
-type Color = float * float * float
+type Color (r, g, b) =
+  member x.Return = (r, g, b)
 
-let color r g b : Color = (r, g, b)
+  static member Combine fn (a: Color) (b: Color) =
+    let (r1, g1, b1) = a.Return
+    let (r2, g2, b2) = b.Return
+    (fn r1 r2, fn g1 g2, fn b1 b2)
 
-let combine op (a: Color) (b: Color) =
-  let (x1, y1, z1) = a
-  let (x2, y2, z2) = b
-  (op x1 x2, op y1 y2, op z1 z2)
+  static member Map fn (c: Color) =
+    let (r, g, b) = c.Return
+    (fn r, fn g, fn b)
 
-let map fn (c: Color) =
-  let (x, y, z) = c
-  (fn x, fn y, fn z)
+  override x.ToString () = x.Return.ToString ()
+  override x.GetHashCode () = x.Return.GetHashCode ()
+  override x.Equals a =
+    match a with
+    | :? Color as c ->
+      let (r, g, b) = Color.Combine looseEq c x
+      r && g && b
+    | _ -> false
+
+let color r g b = Color (r, g, b)
 
 let toList (r, g, b) = [r; g; b]
 
 let toString transform sep =
-  map (transform >> toString)
+  Color.Map (transform >> toString)
   >> toList
   >> String.concat sep
 
 let epsilon = 0.00001
 let valueEquals a b = abs (a - b) < epsilon
 
-let equals a b = (combine valueEquals a b) |> function
+let equals a b = (Color.Combine valueEquals a b) |> function
   | (true, true, true) -> true
   | _ -> false
 
-let add = combine (+)
-let subtract = combine (-)
-let multiply = combine (*)
-let scale n = map ((*) n)
-let divide n = map (flip (/) n)
+let add (a: Color) = Color.Combine (+) a >> Color
+let subtract (a: Color) = Color.Combine (-) a >> Color
+let multiply (a: Color) = Color.Combine (*) a >> Color
+let scale n = Color.Map ((*) n) >> Color
+let divide n = Color.Map (flip (/) n) >> Color
 
 let red = color 1. 0. 0.
 let green = color 0. 1. 0.

@@ -9,7 +9,7 @@ let tests =
   testList "Tests for Color" [
     testCase "Colors are (red, green, blue) tuples" <| fun _ ->
       let c = color -0.5 0.4 1.7
-      Expect.equal (c) (-0.5, 0.4, 1.7) ""
+      Expect.equal c.Return (-0.5, 0.4, 1.7) ""
 
     testCase "Adding colors" <| fun _ ->
       let c1 = color 0.9 0.6 0.75
