@@ -30,9 +30,9 @@ let run () =
   let bar = new ProgressBar (Canvas.length c, "Rendering", ConsoleColor.Yellow)
 
   c
-  |> Canvas.mapi (fun rowI colI ->
-    bar.Tick (progressMsg rowI colI)
-    let origin = (point (float rowI) (float colI) -5.)
+  |> Canvas.mapi (fun x y ->
+    bar.Tick (progressMsg y x)
+    let origin = (point (float x) (float y) -5.)
     let r = ray origin (vector 0. 0. 1.)
     let h = intersect s r |> Intersection.hit
 

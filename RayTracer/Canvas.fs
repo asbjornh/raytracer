@@ -28,8 +28,8 @@ let read x y (canvas: Canvas) =
   | None -> None
 
 let mapi fn (c: Canvas): Canvas =
-  c |> List.mapi (fun rowI row ->
-    List.mapi (fun colI col -> fn rowI colI) row
+  c |> List.mapi (fun y row ->
+    List.mapi (fun x col -> fn x y) row
   )
 
 let to256 = clamp 0.0 1.0 >> (*) 255.0 >> Math.Round
