@@ -24,6 +24,13 @@ let run () =
   }
   let s = { sphere () with transform = t; material = mat }
 
+  let t2 = chain [translate 140. 140. 40.; uniformScale 40.]
+  let mat2 = {
+    material () with
+      color = (color 0.9 0.6 0.2)
+  }
+  let s2 = { sphere() with transform = t2; material = mat2 }
+
   let l = pointLight (point -100. -100. 250.) (color 1. 1. 1.)
 
   let c = canvas 200 200
@@ -38,17 +45,20 @@ let run () =
   c
   |> Canvas.mapi (fun x y ->
     bar.Tick (progressMsg y x)
-    let origin = (point (float x) (float y) 100.)
+    let origin = (point (float x) (float y) 200.)
     let direction = vector 0. 0. -1.
     let r = ray origin (normalize direction)
-    let h = intersect s r |> Intersection.hit
+
+    let h =
+      List.concat [intersect s r; intersect s2 r]
+      |> Intersection.hit
 
     match h with
     | Some i ->
       let point = position i.t r
       let normalV = normal point i.object
       let eyeV = negate r.direction
-      lighting l point eyeV normalV s.material
+      lighting l point eyeV normalV i.object.material
       |> add bg
     | None -> black |> add bg |> Color.scale 0.8
   )
