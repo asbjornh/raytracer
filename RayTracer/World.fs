@@ -16,4 +16,4 @@ let world light = {
 }
 
 let intersect (ray: Ray) (w: World) =
-  w.objects |> List.collect (Sphere.intersect ray) |> intersections
+  w.objects |> List.collect (intersect ray) |> intersections

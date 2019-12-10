@@ -22,6 +22,24 @@ let hit (l: Intersection list) =
   | [] -> None
   | _ -> Some (List.minBy getT visibleEls)
 
+type Computation = {
+  t: float
+  object: Sphere
+  point: Tuple
+  eyeV: Tuple
+  normalV: Tuple
+}
+
+let prepareComputations (i: Intersection) r =
+  let point = position i.t r
+  {
+    t = i.t
+    object = i.object
+    point = point
+    eyeV = negate r.direction
+    normalV = normal point i.object
+  }
+
 let intersect (ray: Ray) (s: Sphere) =
   let r = Ray.transform (inverse s.transform) ray
   let sphereToRay = r.origin - (point 0. 0. 0.)

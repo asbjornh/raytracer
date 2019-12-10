@@ -1,8 +1,11 @@
 module IntersectionTest
 
 open Expecto
-open Sphere
+
 open Intersection
+open Ray
+open Sphere
+open Tuple
 
 [<Tests>]
 let tests =
@@ -42,4 +45,15 @@ let tests =
       let i4 = intersection 2. s
       let xs = intersections [i1; i2; i3; i4]
       Expect.equal (hit xs) (Some i4) ""
+
+    testCase "Precomputing the state of an intersection" <| fun _ ->
+      let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
+      let shape = sphere ()
+      let i = intersection 4. shape
+      let comps = prepareComputations i r
+      Expect.equal comps.t i.t ""
+      Expect.equal comps.object i.object ""
+      Expect.equal comps.point (point 0. 0. -1.) ""
+      Expect.equal comps.eyeV (vector 0. 0. -1.) ""
+      Expect.equal comps.normalV (vector 0. 0. -1.) ""
   ]
