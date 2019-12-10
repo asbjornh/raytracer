@@ -21,19 +21,10 @@ let toString a = a.ToString ()
 
 // List
 let isIndex a b = a = fst b
-let get list index =
-  List.indexed list |> List.tryFind (isIndex index)
-let replace index (newEl: 'a) (list: 'a list)=
-  list |> List.mapi (fun i el ->
-    if (i = index) then newEl else el
-  )
-let get2d x y (list: 'a list list) =
-  match (get list y) with
-  | Some (rowI, row) ->
-    match (get row x) with
-    | Some (colI, col) -> Some (row, col)
-    | None -> None
-  | None -> None
+let get arr index =
+  Array.indexed arr |> Array.tryFind (isIndex index)
+let replace index (newEl: 'a) (list: 'a [])=
+  list.[index] <- newEl; list
 
 // Array
 let concat a b = Array.concat [a; b]
@@ -43,10 +34,17 @@ let filteri fn m =
   |> Array.filter (fst >> fn)
   |> Array.map snd
 
+let get2d x y (arr: 'a [][]) =
+  try
+    let row = arr.[y]
+    let col = row.[x]
+    Some (row, col)
+  with | _ -> None
+
 let foldi fn initial m =
   Array.indexed m
   |> Array.fold (fun acc (i, el) -> fn acc i el) initial
 
 // IO
 let writeFile (path: string) content =
-  System.IO.File.WriteAllLines (path, List.toArray content)
+  System.IO.File.WriteAllLines (path, content)
