@@ -12,7 +12,7 @@ open Transform
 open Tuple
 open Util
 
-let colorFromIntersect (i: Intersection<Sphere>) =
+let colorFromIntersect (i: Intersection) =
   let c = i.t |> rangeMap (10., 100.) (0., 1.)
   color c c c
 

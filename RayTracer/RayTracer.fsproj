@@ -13,10 +13,10 @@
     <Compile Include="Matrix.fs" />
     <Compile Include="Transform.fs" />
     <Compile Include="Ray.fs" />
-    <Compile Include="Intersection.fs" />
     <Compile Include="Light.fs" />
     <Compile Include="Material.fs" />
     <Compile Include="Sphere.fs" />
+    <Compile Include="Intersection.fs" />
     <Compile Include="World.fs" />
 
     <Compile Include="Demos/Projectile.fs" />
