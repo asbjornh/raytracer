@@ -1,6 +1,6 @@
 .ionide
 
-out.ppm
+*.ppm
 
 # Build results
 [Dd]ebug/
