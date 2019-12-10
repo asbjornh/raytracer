@@ -22,6 +22,7 @@
     <Compile Include="Demos/Clock.fs" />
     <Compile Include="Demos/SimpleCircle.fs" />
     <Compile Include="Demos/IlluminatedSphere.fs" />
+    <Compile Include="Demos/AnimatedSphere.fs" />
 
     <Compile Include="Program.fs" />
   </ItemGroup>

@@ -1,6 +1,7 @@
 .ionide
 
 *.ppm
+*.mov
 
 # Build results
 [Dd]ebug/

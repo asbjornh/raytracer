@@ -82,3 +82,13 @@ let toPixel (a: Tuple) =
   a
   |> Tuple.Map (Math.Round >> int)
   |> fun (x, y, _, _) -> (x, y)
+
+let keyframe (start: Tuple) (finish: Tuple) frames =
+  let diff = finish - start
+  [0..frames-1]
+  |> List.map (fun i ->
+    let progress = float i / float (frames - 1)
+    let (a1, b1, c1, d1) = start.Return
+    let (a2, b2, c2, _) = diff.Return
+    Tuple (a1 + a2 * progress, b1 + b2 * progress, c1 + c2 * progress, d1)
+  )
