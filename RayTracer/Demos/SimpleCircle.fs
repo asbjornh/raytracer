@@ -34,7 +34,7 @@ let run () =
     bar.Tick (progressMsg y x)
     let origin = (point (float x) (float y) -5.)
     let r = ray origin (vector 0. 0. 1.)
-    let h = intersect s r |> Intersection.hit
+    let h = intersect r s |> Intersection.hit
 
     match h with
     | Some i -> colorFromIntersect i

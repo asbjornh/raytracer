@@ -16,7 +16,7 @@ let sphere () = {
   material = material ()
 }
 
-let intersect (s: Sphere) (ray: Ray): Intersection<Sphere> list =
+let intersect (ray: Ray) (s: Sphere): Intersection<Sphere> list =
   let r = transform (inverse s.transform) ray
   let sphereToRay = r.origin - (point 0. 0. 0.)
   let a = dot r.direction r.direction

@@ -50,7 +50,7 @@ let run () =
     let r = ray origin (normalize direction)
 
     let h =
-      List.concat [intersect s r; intersect s2 r]
+      List.concat [intersect r s; intersect r s2]
       |> Intersection.hit
 
     match h with
