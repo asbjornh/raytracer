@@ -18,6 +18,7 @@
     <Compile Include="Shape.fs" />
     <Compile Include="Intersection.fs" />
     <Compile Include="World.fs" />
+    <Compile Include="Camera.fs" />
 
     <Compile Include="Demos/Projectile.fs" />
     <Compile Include="Demos/Clock.fs" />
