@@ -2,6 +2,7 @@ module Transform
 
 open System
 open Matrix
+open Tuple
 
 let translation x y z =
   identity () |> set 0 3 x |> set 1 3 y |> set 2 3 z
@@ -43,3 +44,15 @@ let shear xy xz yx yz zx zy =
   shearing xy xz yx yz zx zy |> multiply
 
 let chain fns = List.rev fns |> List.reduce (>>) <| identity ()
+
+let viewTransform (from: Tuple) To up =
+  let forward = To - from |> normalize
+  let left = cross forward (normalize up)
+  let trueUp = cross left forward
+  let orientation = matrix [
+    [ left.X ; left.Y ; left.Z ; 0. ]
+    [ trueUp.X ; trueUp.Y ; trueUp.Z; 0. ]
+    [ -forward.X ; -forward.Y ; -forward.Z ; 0. ]
+    [ 0. ; 0. ; 0. ; 1. ]
+  ]
+  orientation * (translation -from.X -from.Y -from.Z)

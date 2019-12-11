@@ -2,6 +2,8 @@ module Matrix
 
 open Util
 
+let stringRow = Array.map string >> Array.toList >> join " | "
+
 type Matrix (a: _[][]) =
   member x.Return = a
 
@@ -30,7 +32,13 @@ type Matrix (a: _[][]) =
     Array.create widthA (Array.create widthB 0.0) |> Matrix
     |> Matrix.Mapi mapper
 
-  override x.GetHashCode () = x.GetHashCode ()
+  override x.ToString () =
+    x.Return
+    |> Array.fold (fun acc row ->
+      acc + (stringRow row) + "\n"
+    ) ""
+
+  override x.GetHashCode () = x.Return.GetHashCode ()
   override x.Equals (b: obj) =
     match b with
     | :? Matrix as m ->

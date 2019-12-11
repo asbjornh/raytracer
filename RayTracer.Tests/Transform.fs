@@ -3,6 +3,7 @@ module TransformTest
 open Expecto
 open Matrix
 open Transform
+open Tuple
 
 let diff actual expected = Expect.defaultDiffPrinter expected actual
 
@@ -173,4 +174,38 @@ let tests =
         translate 10. 10. 10.
       ]
       expectTupleEquals (multiplyT t p) (Tuple.point 50. 50. 50.)
+
+    testCase "The transformation matrix for the default orientation" <| fun _ ->
+      let from = point 0. 0. 0.
+      let To = point 0. 0. -1.
+      let up = vector 0. 1. 0.
+      let t = viewTransform from To up
+      Expect.equal t (identity ()) ""
+
+    testCase "A view transformation matrix looking in positive z direction" <| fun _ ->
+      let from = point 0. 0. 0.
+      let To = point 0. 0. 1.
+      let up = vector 0. 1. 0.
+      let t = viewTransform from To up
+      Expect.equal t (scaling -1. 1. -1.) ""
+
+    testCase "The view transformation moves the world" <| fun _ ->
+      let from = point 0. 0. 8.
+      let To = point 0. 0. 0.
+      let up = vector 0. 1. 0.
+      let t = viewTransform from To up
+      Expect.equal t (translation 0. 0. -8.) ""
+
+    testCase "An arbitrary view transformation" <| fun _ ->
+      let from = point 1. 3. 2.
+      let To = point 4. -2. 8.
+      let up = vector 1. 1. 0.
+      let t = viewTransform from To up
+      let expected = matrix [
+        [ -0.50709 ; 0.50709 ;  0.67612 ; -2.36643 ]
+        [  0.76772 ; 0.60609 ;  0.12122 ; -2.82843 ]
+        [ -0.35857 ; 0.59761 ; -0.71714 ;  0.00000 ]
+        [  0.00000 ; 0.00000 ;  0.00000 ;  1.00000 ]
+      ]
+      Expect.equal t expected ""
   ]

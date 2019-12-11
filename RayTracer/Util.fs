@@ -18,6 +18,7 @@ let rad deg = (deg / 180.) * Math.PI
 
 // String
 let toString a = a.ToString ()
+let join sep (strings: string list) = String.Join (sep, strings)
 
 // List
 let isIndex a b = a = fst b
