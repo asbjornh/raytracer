@@ -6,25 +6,25 @@ open Color
 open Light
 open Material
 open Ray
-open Sphere
+open Shape
 open Tuple
 open Transform
 open World
 
-let defaultWorld () = {
-  light = pointLight (point -10. 10. -10.) (color 1. 1. 1.);
-  objects = [
-    { sphere () with
-        material = {
-          material () with
-            color = color 0.8 1. 0.6;
-            diffuse = 0.7
-            specular = 0.2
-        }
-    }
-    { sphere() with transform = scaling 0.5 0.5 0.5 }
-  ]
-}
+let defaultWorld () =
+  let mat = {
+    material () with
+      color = color 0.8 1. 0.6;
+      diffuse = 0.7
+      specular = 0.2
+  }
+  {
+    light = pointLight (point -10. 10. -10.) (color 1. 1. 1.);
+    objects = [
+      sphereM mat
+      sphereT (scaling 0.5 0.5 0.5)
+    ]
+  }
 
 [<Tests>]
 
@@ -39,14 +39,12 @@ let tests =
           specular = 0.2
       }
 
-      let s1 = { sphere () with material = m1 }
-      let s2 = {
-        sphere() with transform = scaling 0.5 0.5 0.5
-      }
+      let s1 = sphereM m1
+      let s2 = sphereT (scaling 0.5 0.5 0.5)
       let w = defaultWorld ()
       Expect.equal w.light light ""
-      Expect.contains w.objects s1 ""
-      Expect.contains w.objects s2 ""
+      Expect.contains w.objects (s1 :> IShape) ""
+      Expect.contains w.objects (s2 :> IShape) ""
 
     testCase "Intersect a world with a ray" <| fun _ ->
       let w = defaultWorld ()

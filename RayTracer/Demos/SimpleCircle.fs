@@ -6,8 +6,9 @@ open ShellProgressBar
 open Canvas
 open Color
 open Intersection
+open Material
 open Ray
-open Sphere
+open Shape
 open Transform
 open Tuple
 open Util
@@ -18,7 +19,7 @@ let colorFromIntersect (i: Intersection) =
 
 let run () =
   let t = chain [translate 100. 100. 0.; uniformScale 80.]
-  let s = sphere () |> transform t
+  let s = sphereT t
   let c = canvas 200 200
 
   let len = Canvas.length c

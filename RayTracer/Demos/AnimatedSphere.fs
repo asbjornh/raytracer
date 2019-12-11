@@ -9,7 +9,7 @@ open Intersection
 open Light
 open Material
 open Ray
-open Sphere
+open Shape
 open Transform
 open Tuple
 open Util
@@ -23,14 +23,14 @@ let frame (bar: ProgressBar) l fileName =
       color = (color 1. 0.4 1.)
       ambient = 0.
   }
-  let s = { sphere () with transform = t; material = mat }
+  let s = sphere t mat
 
   let t2 = chain [translate (1.4 * size) (1.4 * size) (0.4 * size); uniformScale (0.4 * size)]
   let mat2 = {
     material () with
       color = (color 0.9 0.6 0.2)
   }
-  let s2 = { sphere() with transform = t2; material = mat2 }
+  let s2 = sphere t2 mat2
 
   let cSize = (int size) * 2
   let c = canvas cSize cSize
@@ -58,7 +58,7 @@ let frame (bar: ProgressBar) l fileName =
       let point = position i.t r
       let normalV = normal point i.object
       let eyeV = negate r.direction
-      lighting l point eyeV normalV i.object.material
+      lighting l point eyeV normalV i.object.Material
       |> add bg
     | None -> black |> add bg |> Color.scale 0.8
   )

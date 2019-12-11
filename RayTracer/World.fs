@@ -3,10 +3,10 @@ module World
 open Intersection
 open Light
 open Ray
-open Sphere
+open Shape
 
 type World = {
-  objects: Sphere list
+  objects: IShape list
   mutable light: Light
 }
 

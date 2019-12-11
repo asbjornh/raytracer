@@ -2,11 +2,11 @@ module Intersection
 
 open Matrix
 open Ray
-open Sphere
+open Shape
 open Tuple
 open Util
 
-type Intersection = { t: float; object: Sphere }
+type Intersection = { t: float; object: IShape }
 
 let getT i = i.t
 
@@ -22,9 +22,9 @@ let hit (l: Intersection list) =
   | [] -> None
   | _ -> Some (List.minBy getT visibleEls)
 
-type Computation = {
+type Computation<'a> = {
   t: float
-  object: Sphere
+  object: IShape
   point: Tuple
   eyeV: Tuple
   normalV: Tuple
@@ -40,16 +40,5 @@ let prepareComputations (i: Intersection) r =
     normalV = normal point i.object
   }
 
-let intersect (ray: Ray) (s: Sphere) =
-  let r = Ray.transform (inverse s.transform) ray
-  let sphereToRay = r.origin - (point 0. 0. 0.)
-  let a = dot r.direction r.direction
-  let b = 2. * (dot r.direction sphereToRay)
-  let c = (dot sphereToRay sphereToRay) - 1.
-  let discriminant = pow 2. b - 4. * a * c
-  if (discriminant < 0.)
-  then []
-  else
-    let t1 = (-b - sqrt discriminant) / (2. * a)
-    let t2 = (-b + sqrt discriminant) / (2. * a)
-    [intersection t1 s; intersection t2 s]
+let intersect (ray: Ray) (s: IShape) =
+  ray |> s.Intersect |> List.map (fun (t, o) -> intersection t o)
