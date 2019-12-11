@@ -5,6 +5,7 @@ open Expecto
 open Intersection
 open Ray
 open Shape
+open World
 open Tuple
 
 [<Tests>]
@@ -55,5 +56,23 @@ let tests =
       Expect.equal comps.object i.object ""
       Expect.equal comps.point (point 0. 0. -1.) ""
       Expect.equal comps.eyeV (vector 0. 0. -1.) ""
+      Expect.equal comps.normalV (vector 0. 0. -1.) ""
+
+    testCase "The hit, when an intersection occurs on the outside" <| fun _ ->
+      let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
+      let shape = unitSphere ()
+      let i = intersection 4. shape
+      let comps = prepareComputations i r
+      Expect.equal comps.inside false ""
+
+    testCase "The hit, when an intersection occurs on the inside" <| fun _ ->
+      let r = ray (point 0. 0. 0.) (vector 0. 0. 1.)
+      let shape = unitSphere ()
+      let i = intersection 1. shape
+      let comps = prepareComputations i r
+      Expect.equal comps.point (point 0. 0. 1.) ""
+      Expect.equal comps.eyeV (vector 0. 0. -1.) ""
+      Expect.equal comps.inside true ""
+      // normal would have been (0, 0, 1), but is inverted!​
       Expect.equal comps.normalV (vector 0. 0. -1.) ""
   ]

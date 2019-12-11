@@ -28,16 +28,21 @@ type Computation<'a> = {
   point: Tuple
   eyeV: Tuple
   normalV: Tuple
+  inside: bool
 }
 
 let prepareComputations (i: Intersection) r =
   let point = position i.t r
+  let normalV = normal point i.object
+  let eyeV = negate r.direction
+  let inside = (dot normalV eyeV) < 0.
   {
     t = i.t
     object = i.object
     point = point
-    eyeV = negate r.direction
-    normalV = normal point i.object
+    eyeV = eyeV
+    normalV = (if inside then negate else id) normalV
+    inside = inside
   }
 
 let intersect (ray: Ray) (s: IShape) =
