@@ -12,21 +12,6 @@ open Tuple
 open Transform
 open World
 
-let defaultWorld () =
-  let mat = {
-    material () with
-      color = color 0.8 1. 0.6;
-      diffuse = 0.7
-      specular = 0.2
-  }
-  {
-    light = pointLight (point -10. 10. -10.) (color 1. 1. 1.);
-    objects = [
-      sphereM mat
-      sphereT (scaling 0.5 0.5 0.5)
-    ]
-  }
-
 [<Tests>]
 
 let tests =

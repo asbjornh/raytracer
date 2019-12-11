@@ -2,9 +2,11 @@ module Camera
 
 open System
 
+open Canvas
 open Matrix
 open Ray
 open Tuple
+open World
 
 type Camera = {
   hSize: int
@@ -42,3 +44,8 @@ let rayForPixel x y c =
   let origin = multiplyT (inverse c.transform) (point 0. 0. 0.)
   let direction = pixel - origin |> normalize
   ray origin direction
+
+let render c w =
+  (canvas c.hSize c.vSize) |> Canvas.render (fun x y ->
+    rayForPixel x y c |> colorAt w
+  )

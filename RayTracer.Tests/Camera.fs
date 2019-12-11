@@ -4,10 +4,12 @@ open System
 open Expecto
 
 open Camera
+open Color
 open Matrix
 open Transform
 open Tuple
 open Util
+open World
 
 let ExpectEqual actual expected =
   Expect.isTrue
@@ -55,4 +57,14 @@ let tests =
       let a = (sqrt 2.) / 2.
       Expect.equal r.origin (point 0. 2. -5.) ""
       Expect.equal r.direction (vector a 0. -a) ""
+
+    testCase "Rendering a world with a camera" <| fun _ ->
+      let w = defaultWorld ()
+      let c = camera 11 11 (Math.PI / 2.)
+      let from = point 0. 0. -5.
+      let To = point 0. 0. 0.
+      let up = vector 0. 1. 0.
+      let c = { c with transform = (viewTransform from To up)}
+      let image = render c w
+      Expect.equal (image.[5].[5]) (color 0.38066 0.47583 0.2855) ""
   ]

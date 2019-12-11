@@ -1,10 +1,13 @@
 module World
 
+open Color
 open Intersection
 open Light
 open Material
 open Ray
 open Shape
+open Transform
+open Tuple
 
 type World = {
   objects: IShape list
@@ -15,6 +18,21 @@ let world light = {
   objects = [];
   light = light
 }
+
+let defaultWorld () =
+  let mat = {
+    material () with
+      color = color 0.8 1. 0.6;
+      diffuse = 0.7
+      specular = 0.2
+  }
+  {
+    light = pointLight (point -10. 10. -10.) (color 1. 1. 1.);
+    objects = [
+      sphereM mat
+      sphereT (scaling 0.5 0.5 0.5)
+    ]
+  }
 
 let intersect (ray: Ray) (w: World) =
   w.objects |> List.collect (intersect ray) |> intersections
