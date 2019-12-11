@@ -75,4 +75,26 @@ let tests =
       let comps = prepareComputations i r
       let c = shadeHit w comps
       Expect.equal c (color 0.90498 0.90498 0.90498) ""
+
+    testCase "The color when a ray misses" <| fun _ ->
+      let w = defaultWorld ()
+      let r = ray (point 0. 0. -5.) (vector 0. 1. 0.)
+      let c = colorAt w r
+      Expect.equal c (color 0. 0. 0.) ""
+
+    testCase "The color when a ray hits" <| fun _ ->
+      let w = defaultWorld ()
+      let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
+      let c = colorAt w r
+      Expect.equal c (color 0.38066 0.47583 0.2855) ""
+
+    testCase "The color with an intersection behind the ray" <| fun _ ->
+      let w = defaultWorld ()
+      let outer = w.objects.[0]
+      outer.Material.ambient <- 1.
+      let inner = w.objects.[1]
+      inner.Material.ambient <- 1.
+      let r = ray (point 0. 0. 0.75) (vector 0. 0. -1.)
+      let c = colorAt w r
+      Expect.equal c inner.Material.color ""
   ]
