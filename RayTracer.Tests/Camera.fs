@@ -5,6 +5,8 @@ open Expecto
 
 open Camera
 open Matrix
+open Transform
+open Tuple
 open Util
 
 let ExpectEqual actual expected =
@@ -32,4 +34,25 @@ let tests =
     testCase "The pixel size for a vertical canvas" <| fun _ ->
       let c = camera 125 200 (Math.PI / 2.)
       ExpectEqual c.pixelSize 0.01
+
+    testCase "Constructing a ray through the center of the canvas" <| fun _ ->
+      let c = camera 201 101 (Math.PI / 2.)
+      let r = rayForPixel 100 50 c
+      Expect.equal r.origin (point 0. 0. 0.) ""
+      Expect.equal r.direction (vector 0. 0. -1.) ""
+      
+    testCase "Constructing a ray through a corner of the canvas" <| fun _ ->
+      let c = camera 201 101 (Math.PI / 2.)
+      let r = rayForPixel 0 0 c
+      Expect.equal r.origin (point 0. 0. 0.) ""
+      Expect.equal r.direction (vector 0.66519 0.33259 -0.66851) ""
+
+    testCase "Constructing a ray when the camera is transformed" <| fun _ ->
+      let c = camera 201 101 (Math.PI / 2.)
+      let t = (rotationY (Math.PI / 4.)) * (translation 0. -2. 5.)
+      let c = { c with transform = t }
+      let r = rayForPixel 100 50 c
+      let a = (sqrt 2.) / 2.
+      Expect.equal r.origin (point 0. 2. -5.) ""
+      Expect.equal r.direction (vector a 0. -a) ""
   ]
