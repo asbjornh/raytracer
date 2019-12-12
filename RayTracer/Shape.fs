@@ -6,11 +6,18 @@ open Ray
 open Tuple
 open Util
 
-
 type IShape =
   abstract Transform: Matrix
   abstract Material: Material
   abstract Intersect: Ray -> (float * IShape) list
+
+let normal (p: Tuple) (s: IShape) =
+  let invT = inverse s.Transform
+  let objectN = (multiplyT invT p) - (point 0. 0. 0.)
+  let worldN = multiplyT (transpose invT) objectN
+  let (x, y, z, _) = worldN.Return
+  normalize (vector x y z)
+
 
 type Sphere =
   {
@@ -26,18 +33,9 @@ let sphere t m: Sphere = {
   Transform = t
   Material = m
 }
-
 let unitSphere () = sphere (identity ()) (defaultMaterial ())
 let sphereT t = sphere t (defaultMaterial ())
 let sphereM m = sphere (identity ()) m
-
-let normal (p: Tuple) (s: IShape) =
-  let invT = inverse s.Transform
-  let objectN = (multiplyT invT p) - (point 0. 0. 0.)
-  let worldN = multiplyT (transpose invT) objectN
-  let (x, y, z, _) = worldN.Return
-  normalize (vector x y z)
-
 
 let intersectSphere (ray: Ray) (s: IShape) =
   let r = Ray.transform (inverse s.Transform) ray
