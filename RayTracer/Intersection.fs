@@ -29,6 +29,7 @@ type Computation<'a> = {
   eyeV: Tuple
   normalV: Tuple
   inside: bool
+  overPoint: Tuple
 }
 
 let prepareComputations (i: Intersection) r =
@@ -36,13 +37,16 @@ let prepareComputations (i: Intersection) r =
   let normalV = normal point i.object
   let eyeV = negate r.direction
   let inside = (dot normalV eyeV) < 0.
+  let normalV =
+    (if inside then negate else id) normalV
   {
     t = i.t
     object = i.object
     point = point
     eyeV = eyeV
-    normalV = (if inside then negate else id) normalV
+    normalV = normalV
     inside = inside
+    overPoint = point + (epsilon * normalV)
   }
 
 let intersect (ray: Ray) (s: IShape) =

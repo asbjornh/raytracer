@@ -5,8 +5,9 @@ open Expecto
 open Intersection
 open Ray
 open Shape
-open World
 open Tuple
+open Transform
+open Util
 
 [<Tests>]
 let tests =
@@ -75,4 +76,12 @@ let tests =
       Expect.equal comps.inside true ""
       // normal would have been (0, 0, 1), but is inverted!​
       Expect.equal comps.normalV (vector 0. 0. -1.) ""
+
+    testCase "The hit should offset the point" <| fun _ ->
+      let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
+      let shape = sphereT (translation 0. 0. 1.)
+      let i = intersection 5. shape
+      let comps = prepareComputations i r
+      Expect.isLessThan comps.overPoint.Z (-epsilon / 2.) ""
+      Expect.isGreaterThan comps.point.Z comps.overPoint.Z ""
   ]
