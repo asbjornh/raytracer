@@ -18,12 +18,7 @@ let tests =
   testList "Tests for World" [
     testCase "The default world" <| fun _ ->
       let light = pointLight (point -10. 10. -10.) (color 1. 1. 1.)
-      let m1 = {
-        defaultMaterial () with
-          color = color 0.8 1. 0.6;
-          diffuse = 0.7
-          specular = 0.2
-      }
+      let m1 = material (color 0.8 1. 0.6) 0.1 0.7 0.2
 
       let s1 = sphereM m1
       let s2 = sphereT (scaling 0.5 0.5 0.5)

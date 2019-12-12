@@ -12,8 +12,7 @@ open Tuple
 open World
 
 
-let wallMaterial = defaultMaterial ()
-wallMaterial.color <- color 1. 0.9 0.9
+let wallMaterial = materialC (color 1. 0.9 0.9)
 
 let floor = sphere (scaling 10. 0.01 10.) wallMaterial
 
@@ -37,25 +36,20 @@ let rightWall =
   ]
   <| wallMaterial
 
-let middle = sphereT (translation -0.5 1. 0.5)
-
-middle.Material.color <- color 0.1 1. 0.5
-middle.Material.diffuse <- 0.7
-middle.Material.specular <- 0.3
+let middle =
+  sphere
+  <| (translation -0.5 1. 0.5)
+  <| material (color 0.1 1. 0.5) 0.1 0.7 0.3
 
 let right =
-  sphereT (chain [ translate 1.5 0.5 -0.5; uniformScale 0.5 ])
-
-right.Material.color <- color 0.5 1. 0.1
-right.Material.diffuse <- 0.7
-right.Material.specular <- 0.3
+  sphere
+  <| (chain [ translate 1.5 0.5 -0.5; uniformScale 0.5 ])
+  <| material (color 0.5 1. 0.1) 0.1 0.7 0.3
 
 let left =
-  sphereT (chain [ translate -1.5 0.33 -0.75; uniformScale 0.33 ])
-
-left.Material.color <- color 1. 0.8 0.1
-left.Material.diffuse <- 0.7
-left.Material.specular <- 0.3
+  sphere
+  <| (chain [ translate -1.5 0.33 -0.75; uniformScale 0.33 ])
+  <| material (color 1. 0.8 0.1) 0.1 0.7 0.3
 
 let pLight = pointLight (point -10. 10. -10.) (color 1.1 1.1 1.)
 let cLight = constantLight (color 0. 0.03 0.05)

@@ -21,6 +21,18 @@ let defaultMaterial () = {
   shininess = 200.
 }
 
+let material color ambient diffuse specular =
+  {
+    defaultMaterial () with
+      color = color
+      ambient = ambient
+      diffuse = diffuse
+      specular = specular
+  }
+
+let materialC color =
+  { defaultMaterial () with color = color }
+
 let phongLighting (light: PointLight) pos eyeV normalV mat =
   let effectiveColor = multiply mat.color light.intensity
   let lightV = normalize (light.position - pos)

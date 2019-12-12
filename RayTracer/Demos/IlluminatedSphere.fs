@@ -25,10 +25,7 @@ let run () =
   let s = sphere t mat
 
   let t2 = chain [translate 140. 140. 40.; uniformScale 40.]
-  let mat2 = {
-    defaultMaterial () with
-      color = (color 0.9 0.6 0.2)
-  }
+  let mat2 = materialC (color 0.9 0.6 0.2)
   let s2 = sphere t2 mat2
 
   let l = pointLight (point -100. -100. 250.) (color 1. 1. 1.)
