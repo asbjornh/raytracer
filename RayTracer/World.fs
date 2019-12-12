@@ -10,17 +10,20 @@ open Transform
 open Tuple
 
 type World = {
+  background: Color
   objects: IShape list
   lights: Light list
 }
 
 let world lights objects = {
+  background = black
   objects = List.map (fun o -> (o :> IShape)) objects
   lights = lights
 }
 
 let defaultWorld () =
   {
+    background = black
     lights = [pointLight (point -10. 10. -10.) (color 1. 1. 1.)]
     objects = [
       sphereM (material (color 0.8 1. 0.6) 0.1 0.7 0.2)
@@ -65,4 +68,4 @@ let shadeHit world comps =
 let colorAt world ray =
   match (intersect ray world |> hit) with
   | Some i -> prepareComputations i ray |> shadeHit world
-  | None -> Color.black
+  | None -> world.background
