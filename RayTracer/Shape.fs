@@ -27,8 +27,8 @@ let sphere t m: Sphere = {
   Material = m
 }
 
-let unitSphere () = sphere (identity ()) (material ())
-let sphereT t = sphere t (material ())
+let unitSphere () = sphere (identity ()) (defaultMaterial ())
+let sphereT t = sphere t (defaultMaterial ())
 let sphereM m = sphere (identity ()) m
 
 let normal (p: Tuple) (s: IShape) =

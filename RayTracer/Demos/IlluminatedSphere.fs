@@ -18,7 +18,7 @@ let run () =
   let bg = color 0.2 0.2 0.4
   let t = chain [translate 100. 100. 0.; uniformScale 80.]
   let mat = {
-    material () with
+    defaultMaterial () with
       color = (color 1. 0.4 1.)
       ambient = 0.
   }
@@ -26,7 +26,7 @@ let run () =
 
   let t2 = chain [translate 140. 140. 40.; uniformScale 40.]
   let mat2 = {
-    material () with
+    defaultMaterial () with
       color = (color 0.9 0.6 0.2)
   }
   let s2 = sphere t2 mat2

@@ -19,7 +19,7 @@ let tests =
     testCase "The default world" <| fun _ ->
       let light = pointLight (point -10. 10. -10.) (color 1. 1. 1.)
       let m1 = {
-        material () with
+        defaultMaterial () with
           color = color 0.8 1. 0.6;
           diffuse = 0.7
           specular = 0.2

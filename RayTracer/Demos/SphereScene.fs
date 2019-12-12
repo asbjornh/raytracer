@@ -12,7 +12,7 @@ open Tuple
 open World
 
 
-let wallMaterial = material ()
+let wallMaterial = defaultMaterial ()
 wallMaterial.color <- color 1. 0.9 0.9
 
 let floor = sphere (scaling 10. 0.01 10.) wallMaterial

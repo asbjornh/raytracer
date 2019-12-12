@@ -19,7 +19,7 @@ let frame (bar: ProgressBar) l fileName =
   let bg = color 0.2 0.2 0.4
   let t = chain [translate size size 0.; uniformScale (0.8 * size)]
   let mat = {
-    material () with
+    defaultMaterial () with
       color = (color 1. 0.4 1.)
       ambient = 0.
   }
@@ -27,7 +27,7 @@ let frame (bar: ProgressBar) l fileName =
 
   let t2 = chain [translate (1.4 * size) (1.4 * size) (0.4 * size); uniformScale (0.4 * size)]
   let mat2 = {
-    material () with
+    defaultMaterial () with
       color = (color 0.9 0.6 0.2)
   }
   let s2 = sphere t2 mat2

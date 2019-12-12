@@ -21,7 +21,7 @@ let world lights objects = {
 
 let defaultWorld () =
   let mat = {
-    material () with
+    defaultMaterial () with
       color = color 0.8 1. 0.6;
       diffuse = 0.7
       specular = 0.2

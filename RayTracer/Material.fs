@@ -13,7 +13,7 @@ type Material = {
   mutable shininess: float;
 }
 
-let material () = {
+let defaultMaterial () = {
   color = color 1. 1. 1.
   ambient = 0.1
   diffuse = 0.9
