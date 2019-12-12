@@ -162,4 +162,13 @@ let tests =
       let a = (sqrt 2.) / 2.
       let n = normalAt (point 0. a -a) (s :> IShape)
       Expect.equal n (vector 0. 0.97014 -0.24254) ""
+
+    testCase "The normal of a plane is constant everywhere" <| fun _ ->
+      let p = defaultPlane ()
+      let n1 = (p :> IShape).LocalNormal (point 0. 0. 0.)
+      let n2 = (p :> IShape).LocalNormal (point 10. 0. -10.)
+      let n3 = (p :> IShape).LocalNormal (point -5. 0. 150.)
+      Expect.equal n1 (vector 0. 1. 0.) ""
+      Expect.equal n2 (vector 0. 1. 0.) ""
+      Expect.equal n3 (vector 0. 1. 0.) ""
   ]

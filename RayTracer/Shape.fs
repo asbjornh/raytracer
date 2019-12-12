@@ -56,3 +56,19 @@ let sphereIntersect (ray: Ray) (s: IShape) =
     let t1 = (-b - sqrt discriminant) / (2. * a)
     let t2 = (-b + sqrt discriminant) / (2. * a)
     [(t1, s); (t2, s)]
+
+
+type Plane =
+  {
+    Transform: Matrix
+    Material: Material
+  }
+  interface IShape with
+    member this.Transform = this.Transform
+    member this.Material = this.Material
+    member this.LocalIntersect r = [(0., (this :> IShape))]
+    member this.LocalNormal _ = (vector 0. 1. 0.)
+
+let plane t m : Plane = { Transform = t; Material = m }
+
+let defaultPlane () = plane (identity ()) (defaultMaterial ())
