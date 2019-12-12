@@ -28,8 +28,11 @@ let defaultWorld () =
     ]
   }
 
+let intersectObjects ray (objects: IShape list) =
+  objects |> List.collect (Intersection.intersect ray) |> intersections
+
 let intersect (ray: Ray) (w: World) =
-  w.objects |> List.collect (intersect ray) |> intersections
+  w.objects |> intersectObjects ray
 
 let shadeHit world comps =
   world.lights
@@ -40,6 +43,7 @@ let shadeHit world comps =
       comps.eyeV
       comps.normalV
       comps.object.Material
+      false // TODO
   )
   |> List.reduce add
 
@@ -47,3 +51,18 @@ let colorAt world ray =
   match (intersect ray world |> hit) with
   | Some i -> prepareComputations i ray |> shadeHit world
   | None -> Color.black
+
+let isInShadow point light objects =
+  match light with
+  | ConstantLight _ -> false
+  | PointLight l ->
+    let v = l.position - point
+    let distance = magnitude v
+    let direction = normalize v
+    let r = ray point direction
+    let intersections = intersectObjects r objects
+    let h = hit intersections
+
+    match h with
+    | Some hit -> hit.t < distance
+    | None -> false

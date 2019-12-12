@@ -79,4 +79,24 @@ let tests =
       let r = ray (point 0. 0. 0.75) (vector 0. 0. -1.)
       let c = colorAt w r
       Expect.equal c inner.Material.color ""
+
+    testCase "There is no shadow when nothing is collinear with point and light" <| fun _ ->
+      let w = defaultWorld ()
+      let p = point 0. 10. 0.
+      Expect.equal (isInShadow p w.lights.[0] w.objects) false ""
+
+    testCase "The shadow when an object is between the point and the light" <| fun _ ->
+      let w = defaultWorld ()
+      let p = point 10. -10. 10.
+      Expect.equal (isInShadow p w.lights.[0] w.objects) true ""
+
+    testCase "There is no shadow when an object is behind the light" <| fun _ ->
+      let w = defaultWorld ()
+      let p = point -20. 20. -20.
+      Expect.equal (isInShadow p w.lights.[0] w.objects) false ""
+
+    testCase "There is no shadow when an object is behind the point" <| fun _ ->
+      let w = defaultWorld ()
+      let p = point -2. 2. -2.
+      Expect.equal (isInShadow p w.lights.[0] w.objects) false ""
   ]
