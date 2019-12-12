@@ -9,12 +9,18 @@ open Util
 type IShape =
   abstract Transform: Matrix
   abstract Material: Material
-  abstract Intersect: Ray -> (float * IShape) list
+  abstract LocalIntersect: Ray -> (float * IShape) list
+  abstract LocalNormal: Tuple -> Tuple
 
-let normal (p: Tuple) (s: IShape) =
-  let invT = inverse s.Transform
-  let objectN = (multiplyT invT p) - (point 0. 0. 0.)
-  let worldN = multiplyT (transpose invT) objectN
+let shapeIntersect ray (shape: IShape) =
+  shape.LocalIntersect
+  <| Ray.transform (inverse shape.Transform) ray
+
+let normalAt point (shape: IShape) =
+  let invT = inverse shape.Transform
+  let localP = multiplyT invT point
+  let localN = shape.LocalNormal localP
+  let worldN = multiplyT (transpose invT) localN
   let (x, y, z, _) = worldN.Return
   normalize (vector x y z)
 
@@ -27,7 +33,8 @@ type Sphere =
   interface IShape with
     member this.Transform = this.Transform
     member this.Material = this.Material
-    member this.Intersect r = intersectSphere r this
+    member this.LocalIntersect r = sphereIntersect r this
+    member this.LocalNormal t = t - (point 0. 0. 0.)
 
 let sphere t m: Sphere = {
   Transform = t
@@ -37,11 +44,10 @@ let unitSphere () = sphere (identity ()) (defaultMaterial ())
 let sphereT t = sphere t (defaultMaterial ())
 let sphereM m = sphere (identity ()) m
 
-let intersectSphere (ray: Ray) (s: IShape) =
-  let r = Ray.transform (inverse s.Transform) ray
-  let sphereToRay = r.origin - (point 0. 0. 0.)
-  let a = dot r.direction r.direction
-  let b = 2. * (dot r.direction sphereToRay)
+let sphereIntersect (ray: Ray) (s: IShape) =
+  let sphereToRay = ray.origin - (point 0. 0. 0.)
+  let a = dot ray.direction ray.direction
+  let b = 2. * (dot ray.direction sphereToRay)
   let c = (dot sphereToRay sphereToRay) - 1.
   let discriminant = pow 2. b - 4. * a * c
   if (discriminant < 0.)

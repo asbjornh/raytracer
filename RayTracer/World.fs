@@ -29,7 +29,7 @@ let defaultWorld () =
   }
 
 let intersectObjects ray (objects: IShape list) =
-  objects |> List.collect (Intersection.intersect ray) |> intersections
+  objects |> List.collect (intersect ray) |> intersections
 
 let intersect (ray: Ray) (w: World) =
   w.objects |> intersectObjects ray

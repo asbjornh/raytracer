@@ -34,7 +34,7 @@ type Computation<'a> = {
 
 let prepareComputations (i: Intersection) r =
   let point = position i.t r
-  let normalV = normal point i.object
+  let normalV = normalAt point i.object
   let eyeV = negate r.direction
   let inside = (dot normalV eyeV) < 0.
   let normalV =
@@ -50,4 +50,4 @@ let prepareComputations (i: Intersection) r =
   }
 
 let intersect (ray: Ray) (s: IShape) =
-  ray |> s.Intersect |> List.map (fun (t, o) -> intersection t o)
+  s |> shapeIntersect ray |> List.map (fun (t, o) -> intersection t o)

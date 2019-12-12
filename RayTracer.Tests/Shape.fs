@@ -19,13 +19,13 @@ type TestShape =
   interface IShape with
     member this.Transform = this.Transform
     member this.Material = this.Material
-    member this.Intersect ray =
-      let r = Ray.transform (inverse this.Transform) ray
+    member this.LocalIntersect ray =
       [(0., this :> IShape)]
+    member this.LocalNormal t = t
 
-let testShape t m : TestShape = {
+let testShape t : TestShape = {
   Transform = t
-  Material = m
+  Material = Material.defaultMaterial ()
 }
 
 [<Tests>]
@@ -102,41 +102,41 @@ let tests =
 
     testCase "The normal on a sphere at a point on the x axis" <| fun _ ->
       let s = unitSphere ()
-      let n = normal (point 1. 0. 0.) s
+      let n = normalAt (point 1. 0. 0.) (s :> IShape)
       Expect.equal n (vector 1. 0. 0.) ""
 
     testCase "The normal on a sphere at a point on the y axis" <| fun _ ->
       let s = unitSphere ()
-      let n = normal (point 0. 1. 0.) s
+      let n = normalAt (point 0. 1. 0.) (s :> IShape)
       Expect.equal n (vector 0. 1. 0.) ""
 
     testCase "The normal on a sphere at a point on the z axis" <| fun _ ->
       let s = unitSphere ()
-      let n = normal (point 0. 0. 1.) s
+      let n = normalAt (point 0. 0. 1.) (s :> IShape)
       Expect.equal n (vector 0. 0. 1.) ""
 
     testCase "The normal on a sphere at a nonaxial point" <| fun _ ->
       let s = unitSphere ()
       let a = (sqrt 3.) / 3.
-      let n = normal (point a a a) s
+      let n = normalAt (point a a a) (s :> IShape)
       Expect.equal n (vector a a a) ""
 
     testCase "The normal is a normalized vector" <| fun _ ->
       let s = unitSphere ()
       let a = (sqrt 3.) / 3.
-      let n = normal (point a a a) s
+      let n = normalAt (point a a a) (s :> IShape)
       Expect.equal n (normalize n) ""
 
     testCase "Computing the normal on a translated sphere" <| fun _ ->
       let s = sphere (translation 0. 1. 0.) (defaultMaterial ())
-      let n = normal (point 0. 1.70711 -0.70711) s
+      let n = normalAt (point 0. 1.70711 -0.70711) (s :> IShape)
       Expect.equal n (vector 0. 0.70711 -0.70711) ""
 
     testCase "Computing the normal on a transformed sphere" <| fun _ ->
       let m = (scaling 1. 0.5 1.) * (rotationZ (Math.PI / 5.))
       let s = sphere m (defaultMaterial ())
       let a = (sqrt 2.) / 2.
-      let n = normal (point 0. a -a) s
+      let n = normalAt (point 0. a -a) (s :> IShape)
       Expect.equal n (vector 0. 0.97014 -0.24254) ""
 
     testCase "A sphere has a default material" <| fun _ ->
@@ -149,4 +149,17 @@ let tests =
       let m = defaultMaterial ()
       let s2 = { s with Material = m}
       Expect.equal s2.Material m ""
+
+    testCase "Computing the normal on a translated shape" <| fun _ ->
+      let s = testShape (translation 0. 1. 0.)
+      let n = normalAt (point 0. 1.70711 -0.70711) (s :> IShape)
+      Expect.equal n (vector 0. 0.70711 -0.70711) ""
+
+    testCase "Computing the normal on a transformed shape" <| fun _ ->
+      let s =
+        testShape
+        <| chain [scale 1. 0.5 1.; rotateZ (Math.PI / 5.)]
+      let a = (sqrt 2.) / 2.
+      let n = normalAt (point 0. a -a) (s :> IShape)
+      Expect.equal n (vector 0. 0.97014 -0.24254) ""
   ]
