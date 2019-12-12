@@ -55,7 +55,7 @@ let frame (bar: ProgressBar) l fileName =
       let point = position i.t r
       let normalV = normal point i.object
       let eyeV = negate r.direction
-      lighting l point eyeV normalV i.object.Material
+      lighting l point eyeV normalV i.object.Material false
       |> add bg
     | None -> black |> add bg |> Color.scale 0.8
   )

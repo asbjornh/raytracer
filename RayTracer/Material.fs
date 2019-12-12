@@ -33,30 +33,34 @@ let material color ambient diffuse specular =
 let materialC color =
   { defaultMaterial () with color = color }
 
-let phongLighting (light: PointLight) pos eyeV normalV mat =
+let phongLighting (light: PointLight) pos eyeV normalV mat inShadow =
   let effectiveColor = multiply mat.color light.intensity
-  let lightV = normalize (light.position - pos)
-  let lightDotNormal = dot lightV normalV
   let ambient = scale mat.ambient effectiveColor
 
-  let (diffuse, specular) =
-    if (lightDotNormal < 0.)
-    then (black, black)
-    else
-      let diffuse = effectiveColor |> scale mat.diffuse |> scale lightDotNormal
-      let reflectV = reflect normalV (negate lightV)
-      let reflectDotEye = dot eyeV reflectV
+  if inShadow
+  then ambient
+  else
+    let lightV = normalize (light.position - pos)
+    let lightDotNormal = dot lightV normalV
 
-      if (reflectDotEye <= 0.)
-      then (diffuse, black)
+    let (diffuse, specular) =
+      if (lightDotNormal < 0.)
+      then (black, black)
       else
-        let factor = pow mat.shininess reflectDotEye
-        let specular = light.intensity |> scale factor |> scale mat.specular
-        (diffuse, specular)
+        let diffuse = effectiveColor |> scale mat.diffuse |> scale lightDotNormal
+        let reflectV = reflect normalV (negate lightV)
+        let reflectDotEye = dot eyeV reflectV
 
-  ambient |> add diffuse |> add specular
+        if (reflectDotEye <= 0.)
+        then (diffuse, black)
+        else
+          let factor = pow mat.shininess reflectDotEye
+          let specular = light.intensity |> scale factor |> scale mat.specular
+          (diffuse, specular)
 
-let lighting light pos eyeV normalV mat =
+    ambient |> add diffuse |> add specular
+
+let lighting light pos eyeV normalV mat inShadow =
   match light with
   | ConstantLight l -> l.intensity
-  | PointLight l -> phongLighting l pos eyeV normalV mat
+  | PointLight l -> phongLighting l pos eyeV normalV mat inShadow
