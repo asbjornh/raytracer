@@ -5,5 +5,5 @@ open ShellProgressBar
 
 [<EntryPoint>]
 let main argv =
-  SphereScene.run ()
+  PlaneScene.run ()
   0
