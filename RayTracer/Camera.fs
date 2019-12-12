@@ -1,6 +1,7 @@
 module Camera
 
 open System
+open ShellProgressBar
 
 open Canvas
 open Matrix
@@ -14,7 +15,7 @@ type Camera = {
   fov: float
   halfWidth: float
   halfHeight: float
-  transform: Matrix
+  mutable transform: Matrix
   pixelSize: float
 }
 let camera hSize vSize fov =
@@ -49,3 +50,20 @@ let render c w =
   (canvas c.hSize c.vSize) |> Canvas.render (fun x y ->
     rayForPixel x y c |> colorAt w
   )
+
+let renderProgress (c: Camera) w =
+  let canv = canvas c.hSize c.vSize
+  let len = Canvas.length canv
+  let width = Canvas.width canv
+
+  let progressMsg row col =
+    sprintf "Rendering %i of %i pixels" (width * row + col + 1) len
+  let bar = new ProgressBar (len, "Rendering", ConsoleColor.Yellow)
+
+  let result = canv |> Canvas.render (fun x y ->
+    bar.Tick (progressMsg y x)
+    rayForPixel x y c |> colorAt w
+  )
+
+  printfn "\n" // To avoid CLI glitch after rendering
+  result

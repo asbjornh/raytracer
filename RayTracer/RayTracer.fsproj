@@ -25,6 +25,7 @@
     <Compile Include="Demos/SimpleCircle.fs" />
     <Compile Include="Demos/IlluminatedSphere.fs" />
     <Compile Include="Demos/AnimatedSphere.fs" />
+    <Compile Include="Demos/SphereScene.fs" />
 
     <Compile Include="Program.fs" />
   </ItemGroup>

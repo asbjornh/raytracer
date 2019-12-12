@@ -5,5 +5,5 @@ open ShellProgressBar
 
 [<EntryPoint>]
 let main argv =
-  AnimatedSphere.run ()
+  SphereScene.run ()
   0

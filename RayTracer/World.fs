@@ -14,8 +14,8 @@ type World = {
   mutable light: Light
 }
 
-let world light = {
-  objects = [];
+let world light objects = {
+  objects = objects
   light = light
 }
 
