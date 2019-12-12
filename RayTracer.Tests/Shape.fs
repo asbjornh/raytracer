@@ -1,8 +1,8 @@
-module SphereTest
+module ShapeTest
 
 open System
-
 open Expecto
+
 open Tuple
 open Shape
 open Ray
@@ -11,9 +11,26 @@ open Matrix
 open Material
 open Transform
 
+type TestShape =
+  {
+    Material: Material
+    Transform: Matrix
+  }
+  interface IShape with
+    member this.Transform = this.Transform
+    member this.Material = this.Material
+    member this.Intersect ray =
+      let r = Ray.transform (inverse this.Transform) ray
+      [(0., this :> IShape)]
+
+let testShape t m : TestShape = {
+  Transform = t
+  Material = m
+}
+
 [<Tests>]
 let tests =
-  testList "Tests for Sphere" [
+  testList "Tests for Shape" [
     testCase "A ray intersects a sphere at two points" <| fun _ ->
       let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
       let s = unitSphere ()
