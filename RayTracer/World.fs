@@ -15,7 +15,7 @@ type World = {
 }
 
 let world light objects = {
-  objects = objects
+  objects = List.map (fun o -> (o :> IShape)) objects
   light = light
 }
 

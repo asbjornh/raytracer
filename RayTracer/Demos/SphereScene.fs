@@ -63,8 +63,7 @@ let cTransform = viewTransform (point 0. 1.5 -5.) (point 0. 1. 0.) (vector 0. 1.
 cam.transform <- cTransform
 
 let objects =
-  [middle; right; left; floor; leftWall; rightWall]
-  |> List.map (fun o -> (o :> IShape))
+  [middle; right; left; floor; leftWall; rightWall;]
 
 let w = world light objects
 
