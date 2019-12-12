@@ -99,4 +99,17 @@ let tests =
       let w = defaultWorld ()
       let p = point -2. 2. -2.
       Expect.equal (isInShadow p w.lights.[0] w.objects) false ""
+
+    testCase "shade_hit() is given an intersection in shadow" <| fun _ ->
+      let s = sphereT (translation 0. 0. 10.)
+      let w =
+        world
+        <| [pointLight (point 0. 0. -10.) (color 1. 1. 1.)]
+        <| [unitSphere (); s]
+
+      let r = ray (point 0. 0. 5.) (vector 0. 0. 1.)
+      let i = intersection 4. s
+      let comps = prepareComputations i r
+      let c = shadeHit w comps
+      Expect.equal c (color 0.1 0.1 0.1) ""
   ]

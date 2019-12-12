@@ -34,24 +34,6 @@ let intersectObjects ray (objects: IShape list) =
 let intersect (ray: Ray) (w: World) =
   w.objects |> intersectObjects ray
 
-let shadeHit world comps =
-  world.lights
-  |> List.map (fun light ->
-    lighting
-      light
-      comps.point
-      comps.eyeV
-      comps.normalV
-      comps.object.Material
-      false // TODO
-  )
-  |> List.reduce add
-
-let colorAt world ray =
-  match (intersect ray world |> hit) with
-  | Some i -> prepareComputations i ray |> shadeHit world
-  | None -> Color.black
-
 let isInShadow point light objects =
   match light with
   | ConstantLight _ -> false
@@ -66,3 +48,21 @@ let isInShadow point light objects =
     match h with
     | Some hit -> hit.t < distance
     | None -> false
+
+let shadeHit world comps =
+  world.lights
+  |> List.map (fun light ->
+    lighting
+      light
+      comps.point
+      comps.eyeV
+      comps.normalV
+      comps.object.Material
+      (isInShadow comps.overPoint light world.objects)
+  )
+  |> List.reduce add
+
+let colorAt world ray =
+  match (intersect ray world |> hit) with
+  | Some i -> prepareComputations i ray |> shadeHit world
+  | None -> Color.black
