@@ -57,15 +57,16 @@ left.Material.color <- color 1. 0.8 0.1
 left.Material.diffuse <- 0.7
 left.Material.specular <- 0.3
 
-let light = pointLight (point -10. 10. -10.) (color 1. 1. 1.)
-let cam = camera 100 50 (Math.PI / 3.)
+let pLight = pointLight (point -10. 10. -10.) (color 1.1 1.1 1.)
+let cLight = constantLight (color 0. 0.03 0.05)
+let cam = camera 200 100 (Math.PI / 3.)
 let cTransform = viewTransform (point 0. 1.5 -5.) (point 0. 1. 0.) (vector 0. 1. 0.)
 cam.transform <- cTransform
 
 let objects =
   [middle; right; left; floor; leftWall; rightWall;]
 
-let w = world light objects
+let w = world [pLight; cLight] objects
 
 let run () =
   renderProgress cam w

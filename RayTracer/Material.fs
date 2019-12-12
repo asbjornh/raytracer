@@ -21,7 +21,7 @@ let material () = {
   shininess = 200.
 }
 
-let lighting light pos eyeV normalV mat =
+let phongLighting (light: PointLight) pos eyeV normalV mat =
   let effectiveColor = multiply mat.color light.intensity
   let lightV = normalize (light.position - pos)
   let lightDotNormal = dot lightV normalV
@@ -43,3 +43,8 @@ let lighting light pos eyeV normalV mat =
         (diffuse, specular)
 
   ambient |> add diffuse |> add specular
+
+let lighting light pos eyeV normalV mat =
+  match light with
+  | ConstantLight l -> l.intensity
+  | PointLight l -> phongLighting l pos eyeV normalV mat

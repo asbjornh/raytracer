@@ -11,12 +11,12 @@ open Tuple
 
 type World = {
   objects: IShape list
-  mutable light: Light
+  lights: Light list
 }
 
-let world light objects = {
+let world lights objects = {
   objects = List.map (fun o -> (o :> IShape)) objects
-  light = light
+  lights = lights
 }
 
 let defaultWorld () =
@@ -27,7 +27,7 @@ let defaultWorld () =
       specular = 0.2
   }
   {
-    light = pointLight (point -10. 10. -10.) (color 1. 1. 1.);
+    lights = [pointLight (point -10. 10. -10.) (color 1. 1. 1.)]
     objects = [
       sphereM mat
       sphereT (scaling 0.5 0.5 0.5)
@@ -38,12 +38,16 @@ let intersect (ray: Ray) (w: World) =
   w.objects |> List.collect (intersect ray) |> intersections
 
 let shadeHit world comps =
-  lighting
-    world.light
-    comps.point
-    comps.eyeV
-    comps.normalV
-    comps.object.Material
+  world.lights
+  |> List.map (fun light ->
+    lighting
+      light
+      comps.point
+      comps.eyeV
+      comps.normalV
+      comps.object.Material
+  )
+  |> List.reduce add
 
 let colorAt world ray =
   match (intersect ray world |> hit) with

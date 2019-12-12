@@ -3,7 +3,18 @@ module Light
 open Color
 open Tuple
 
-type Light = { intensity: Color; position: Tuple }
+type PointLight = { intensity: Color; position: Tuple }
+type ConstantLight = { intensity: Color; }
 
-let pointLight position intensity =
+type Light =
+  | PointLight of PointLight
+  | ConstantLight of ConstantLight
+
+let pointLightFactory position intensity =
   { intensity = intensity; position = position }
+
+let pointLight p i =
+  pointLightFactory p i |> PointLight
+
+let constantLight intensity =
+  ConstantLight { intensity = intensity; }

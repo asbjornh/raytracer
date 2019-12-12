@@ -28,7 +28,7 @@ let tests =
       let s1 = sphereM m1
       let s2 = sphereT (scaling 0.5 0.5 0.5)
       let w = defaultWorld ()
-      Expect.equal w.light light ""
+      Expect.equal w.lights.[0] light ""
       Expect.contains w.objects (s1 :> IShape) ""
       Expect.contains w.objects (s2 :> IShape) ""
 
@@ -52,8 +52,10 @@ let tests =
       Expect.equal c (color 0.38066 0.47583 0.2855) ""
 
     testCase "Shading an intersection from the inside" <| fun _ ->
-      let w = defaultWorld ()
-      w.light <- (pointLight (point 0. 0.25 0.) (color 1. 1. 1.))
+      let w = {
+         defaultWorld () with 
+           lights = [pointLight (point 0. 0.25 0.) (color 1. 1. 1.)]
+      }
       let r = ray (point 0. 0. 0.) (vector 0. 0. 1.)
       let shape = w.objects.[1]
       let i = intersection 0.5 shape
