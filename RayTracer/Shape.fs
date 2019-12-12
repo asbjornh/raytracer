@@ -66,7 +66,12 @@ type Plane =
   interface IShape with
     member this.Transform = this.Transform
     member this.Material = this.Material
-    member this.LocalIntersect r = [(0., (this :> IShape))]
+    member this.LocalIntersect r =
+      if (looseEq r.direction.Y 0.)
+      then []
+      else
+        let t = -r.origin.Y / r.direction.Y
+        [(t, (this :> IShape))]
     member this.LocalNormal _ = (vector 0. 1. 0.)
 
 let plane t m : Plane = { Transform = t; Material = m }
