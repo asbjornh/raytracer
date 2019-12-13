@@ -16,22 +16,22 @@ let tests =
 
     testCase "A stripe pattern is constant in y" <| fun _ ->
       let pattern = stripePattern white black
-      Expect.equal (stripeAt (point 0. 0. 0.) pattern) white ""
-      Expect.equal (stripeAt (point 0. 1. 0.) pattern) white ""
-      Expect.equal (stripeAt (point 0. 2. 0.) pattern) white ""
+      Expect.equal (colorAt (point 0. 0. 0.) pattern) white ""
+      Expect.equal (colorAt (point 0. 1. 0.) pattern) white ""
+      Expect.equal (colorAt (point 0. 2. 0.) pattern) white ""
 
     testCase "A stripe pattern is constant in z" <| fun _ ->
       let pattern = stripePattern white black
-      Expect.equal (stripeAt (point 0. 0. 0.) pattern) white ""
-      Expect.equal (stripeAt (point 0. 0. 1.) pattern) white ""
-      Expect.equal (stripeAt (point 0. 0. 2.) pattern) white ""
+      Expect.equal (colorAt (point 0. 0. 0.) pattern) white ""
+      Expect.equal (colorAt (point 0. 0. 1.) pattern) white ""
+      Expect.equal (colorAt (point 0. 0. 2.) pattern) white ""
 
     testCase "A stripe pattern alternates in x" <| fun _ ->
       let pattern = stripePattern white black
-      Expect.equal (stripeAt (point 0. 0. 0.) pattern) white "One"
-      Expect.equal (stripeAt (point 0.9 0. 0.) pattern) white "Two"
-      Expect.equal (stripeAt (point 1. 0. 0.) pattern) black "Three"
-      Expect.equal (stripeAt (point -0.1 0. 0.) pattern) black "Four"
-      Expect.equal (stripeAt (point -1. 0. 0.) pattern) black "Five"
-      Expect.equal (stripeAt (point -1.1 0. 0.) pattern) white "Six"
+      Expect.equal (colorAt (point 0. 0. 0.) pattern) white "One"
+      Expect.equal (colorAt (point 0.9 0. 0.) pattern) white "Two"
+      Expect.equal (colorAt (point 1. 0. 0.) pattern) black "Three"
+      Expect.equal (colorAt (point -0.1 0. 0.) pattern) black "Four"
+      Expect.equal (colorAt (point -1. 0. 0.) pattern) black "Five"
+      Expect.equal (colorAt (point -1.1 0. 0.) pattern) white "Six"
   ]

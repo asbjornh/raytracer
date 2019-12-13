@@ -2,6 +2,7 @@ module Material
 
 open Color
 open Light
+open Pattern
 open Tuple
 open Util
 
@@ -11,6 +12,7 @@ type Material = {
   mutable diffuse: float;
   mutable specular: float;
   mutable shininess: float;
+  mutable pattern: IPattern option
 }
 
 let defaultMaterial () = {
@@ -19,6 +21,7 @@ let defaultMaterial () = {
   diffuse = 0.9
   specular = 0.9
   shininess = 200.
+  pattern = None
 }
 
 let material color ambient diffuse specular =
@@ -30,11 +33,24 @@ let material color ambient diffuse specular =
       specular = specular
   }
 
+let patternMaterial pattern ambient diffuse specular =
+  {
+    defaultMaterial () with
+      ambient = ambient
+      diffuse = diffuse
+      specular = specular
+      pattern = Some pattern
+  }
+
 let materialC color =
   { defaultMaterial () with color = color }
 
 let phongLighting (light: PointLight) pos eyeV normalV mat inShadow =
-  let effectiveColor = multiply mat.color light.intensity
+  let baseColor =
+    match mat.pattern with
+    | Some p -> p.GetColor pos
+    | None -> mat.color
+  let effectiveColor = multiply baseColor light.intensity
   let ambient = scale mat.ambient effectiveColor
 
   if inShadow
