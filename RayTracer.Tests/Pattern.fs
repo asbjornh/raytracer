@@ -66,4 +66,12 @@ let tests =
       Expect.equal (colorAt (point 0.25 0. 0.) i pattern) (color 0.75 0.75 0.75) ""
       Expect.equal (colorAt (point 0.5 0. 0.) i pattern) (color 0.5 0.5 0.5) ""
       Expect.equal (colorAt (point 0.75 0. 0.) i pattern) (color 0.25 0.25 0.25) ""
+
+    testCase "A ring should extend in both x and z" <| fun _ ->
+      let pattern = ringPattern  white black
+      Expect.equal (colorAt (point 0. 0. 0.) i pattern) white ""
+      Expect.equal (colorAt (point 1. 0. 0.) i pattern) black ""
+      Expect.equal (colorAt (point 0. 0. 1.) i pattern) black ""
+      // 0.708 = just slightly more than √2/2​
+      Expect.equal (colorAt (point 0.708 0. 0.708) i pattern) black ""
   ]

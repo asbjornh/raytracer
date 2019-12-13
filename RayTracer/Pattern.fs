@@ -48,3 +48,23 @@ type GradientPattern =
 let gradientPatternT a b t : GradientPattern =
   { A = a; B = b; Transform = t }
 let gradientPattern a b = gradientPatternT a b (identity ())
+
+
+type RingPattern =
+  {
+    A: Color
+    B: Color
+    Transform: Matrix
+  }
+  interface IPattern with
+    member this.Transform = this.Transform
+    member this.GetColor point =
+      let pointsSquared = sqrt (point.X ** 2. + point.Z ** 2.)
+      if ((Math.Floor pointsSquared) % 2. = 0.)
+      then this.A
+      else this.B
+
+let ringPatternT a b t : RingPattern =
+  { A = a; B = b; Transform = t }
+
+let ringPattern a b = ringPatternT a b (identity ())
