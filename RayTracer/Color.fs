@@ -44,6 +44,8 @@ let subtract (a: Color) = Color.Combine (-) a >> Color
 let multiply (a: Color) = Color.Combine (*) a >> Color
 let scale n = Color.Map ((*) n) >> Color
 let divide n = Color.Map (flip (/) n) >> Color
+let blend a b amount =
+  subtract b a |> scale amount |> add a
 
 let red = color 1. 0. 0.
 let green = color 0. 1. 0.

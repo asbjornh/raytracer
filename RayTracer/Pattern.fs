@@ -32,3 +32,19 @@ let stripePatternT a b t : StripePattern =
   { A = a; B = b; Transform = t }
 
 let stripePattern a b = stripePatternT a b (identity ())
+
+
+type GradientPattern =
+  {
+    A: Color
+    B: Color
+    Transform: Matrix
+  }
+  interface IPattern with
+    member this.Transform = this.Transform
+    member this.GetColor point =
+      Color.blend this.A this.B (point.X - (Math.Floor point.X))
+
+let gradientPatternT a b t : GradientPattern =
+  { A = a; B = b; Transform = t }
+let gradientPattern a b = gradientPatternT a b (identity ())

@@ -59,4 +59,11 @@ let tests =
       let pattern = stripePatternT white black (translation 0.5 0. 0.)
       let c = colorAt (point 2.5 0. 0.) object.Transform pattern
       Expect.equal c white ""
+
+    testCase "A gradient linearly interpolates between colors" <| fun _ ->
+      let pattern = gradientPattern white black
+      Expect.equal (colorAt (point 0. 0. 0.) i pattern) white ""
+      Expect.equal (colorAt (point 0.25 0. 0.) i pattern) (color 0.75 0.75 0.75) ""
+      Expect.equal (colorAt (point 0.5 0. 0.) i pattern) (color 0.5 0.5 0.5) ""
+      Expect.equal (colorAt (point 0.75 0. 0.) i pattern) (color 0.25 0.25 0.25) ""
   ]
