@@ -5,5 +5,5 @@ open ShellProgressBar
 
 [<EntryPoint>]
 let main argv =
-  PlaneScene.run ()
+  Stripes.run ()
   0

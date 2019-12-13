@@ -47,6 +47,8 @@ let divide n = Color.Map (flip (/) n) >> Color
 
 let red = color 1. 0. 0.
 let green = color 0. 1. 0.
-let blue = color 0. 0. 1.
+let blue = color 0.2 0.4 1.
 let white = color 1. 1. 1.
 let black = color 0. 0. 0.
+let yellow = color 1. 0.9 0.
+let darkGray = color 0.1 0.1 0.1
