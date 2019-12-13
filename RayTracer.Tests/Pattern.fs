@@ -74,4 +74,22 @@ let tests =
       Expect.equal (colorAt (point 0. 0. 1.) i pattern) black ""
       // 0.708 = just slightly more than √2/2​
       Expect.equal (colorAt (point 0.708 0. 0.708) i pattern) black ""
+
+    testCase "Checkers should repeat in x" <| fun _ ->
+      let pattern = checkersPattern white black
+      Expect.equal (colorAt (point 0. 0. 0.) i pattern) white ""
+      Expect.equal (colorAt (point 0.99 0. 0.) i pattern) white ""
+      Expect.equal (colorAt (point 1.01 0. 0.) i pattern) black ""
+
+    testCase "Checkers should repeat in y" <| fun _ ->
+      let pattern = checkersPattern white black
+      Expect.equal (colorAt (point 0. 0. 0.) i pattern) white ""
+      Expect.equal (colorAt (point 0. 0.99 0.) i pattern) white ""
+      Expect.equal (colorAt (point 0. 1.01 0.) i pattern) black ""
+
+    testCase "Checkers should repeat in z" <| fun _ ->
+      let pattern = checkersPattern white black
+      Expect.equal (colorAt (point 0. 0. 0.) i pattern) white ""
+      Expect.equal (colorAt (point 0. 0. 0.99) i pattern) white ""
+      Expect.equal (colorAt (point 0. 0. 1.01) i pattern) black ""
   ]
