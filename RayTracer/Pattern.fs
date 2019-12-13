@@ -16,11 +16,7 @@ let colorAt (point: Tuple) (objectT: Matrix) (pattern: IPattern) =
   pattern.GetColor patternPoint
 
 type StripePattern =
-  {
-    A: Color
-    B: Color
-    Transform: Matrix
-  }
+  { A: Color; B: Color; Transform: Matrix }
   interface IPattern with
     member this.Transform = this.Transform
     member this.GetColor point =
@@ -35,11 +31,7 @@ let stripePattern a b = stripePatternT a b (identity ())
 
 
 type GradientPattern =
-  {
-    A: Color
-    B: Color
-    Transform: Matrix
-  }
+  { A: Color; B: Color; Transform: Matrix }
   interface IPattern with
     member this.Transform = this.Transform
     member this.GetColor point =
@@ -51,11 +43,7 @@ let gradientPattern a b = gradientPatternT a b (identity ())
 
 
 type RingPattern =
-  {
-    A: Color
-    B: Color
-    Transform: Matrix
-  }
+  { A: Color; B: Color; Transform: Matrix }
   interface IPattern with
     member this.Transform = this.Transform
     member this.GetColor point =
