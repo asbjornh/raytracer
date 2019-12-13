@@ -61,6 +61,7 @@ let shadeHit world comps =
       comps.eyeV
       comps.normalV
       comps.object.Material
+      comps.object.Transform
       (isInShadow comps.overPoint light world.objects)
   )
   |> List.reduce add
