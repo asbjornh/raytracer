@@ -5,5 +5,5 @@ open ShellProgressBar
 
 [<EntryPoint>]
 let main argv =
-  Stripes.run ()
+  Gradients.run ()
   0

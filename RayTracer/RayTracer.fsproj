@@ -29,6 +29,7 @@
     <Compile Include="Demos/SphereScene.fs" />
     <Compile Include="Demos/PlaneScene.fs" />
     <Compile Include="Demos/Stripes.fs" />
+    <Compile Include="Demos/Gradients.fs" />
 
     <Compile Include="Program.fs" />
   </ItemGroup>
