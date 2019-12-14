@@ -45,10 +45,11 @@ let patternMaterial pattern ambient diffuse specular =
 let materialC color =
   { defaultMaterial () with color = color }
 
-let phongLighting (light: PointLight) pos eyeV normalV mat objectT inShadow =
+let phongLighting (light: PointLight) (pos: Tuple) eyeV (normalV: Tuple) mat objectT inShadow =
+  let overPoint = pos + (epsilon * normalV)
   let baseColor =
     match mat.pattern with
-    | Some p -> colorAt pos objectT p
+    | Some p -> colorAt overPoint objectT p
     | None -> mat.color
   let effectiveColor = multiply baseColor light.intensity
   let ambient = scale mat.ambient effectiveColor
