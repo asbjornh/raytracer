@@ -112,4 +112,26 @@ let tests =
       let comps = prepareComputations i r
       let c = shadeHit w comps
       Expect.equal c (color 0.1 0.1 0.1) ""
+
+    testCase "The reflected color for a nonreflective material" <| fun _ ->
+      let w = defaultWorld ()
+      let r = ray (point 0. 0. 0.) (vector 0. 0. 1.)
+      let shape = w.objects.[1]
+      shape.Material.ambient <- 1.
+      let i = intersection 1. shape
+      let comps = prepareComputations i r
+      let color = reflectedColor comps w
+      Expect.equal color black ""
+
+    testCase "The reflected color for a reflective material" <| fun _ ->
+      let w = defaultWorld ()
+      let mat = { defaultMaterial() with reflective = 0.5 }
+      let shape = plane (translation 0. -1. 0.) mat
+      let w = { w with objects = List.concat [w.objects; [shape]] }
+      let a = (sqrt 2.) / 2.
+      let r = ray (point 0. 0. -3.) (vector 0. -a a)
+      let i = intersection (sqrt 2.) shape
+      let comps = prepareComputations i r
+      let c = reflectedColor comps w
+      Expect.equal c (color 0.19033 0.23791 0.14275) ""
   ]

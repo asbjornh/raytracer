@@ -70,3 +70,12 @@ let colorAt world ray =
   match (intersect ray world |> hit) with
   | Some i -> prepareComputations i ray |> shadeHit world
   | None -> world.background
+
+let reflectedColor comps world =
+  let reflective = comps.object.Material.reflective
+  if (reflective = 0.)
+  then black
+  else
+    let r = ray comps.overPoint comps.reflectV
+    let c = colorAt world r
+    Color.scale reflective c
