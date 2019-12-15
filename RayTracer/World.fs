@@ -52,7 +52,7 @@ let isInShadow point light objects =
     | Some hit -> hit.t < distance
     | None -> false
 
-let shadeHit world comps =
+let shadeHit world comps remaining =
   world.lights
   |> List.map (fun light ->
     let surface =
@@ -64,21 +64,21 @@ let shadeHit world comps =
         comps.object.Material
         comps.object.Transform
         (isInShadow comps.overPoint light world.objects)
-    let reflected = reflectedColor world comps
+    let reflected = reflectedColor world comps remaining
     add surface reflected
   )
   |> List.reduce add
 
-let colorAt world ray =
+let colorAt world ray remaining =
   match (intersect ray world |> hit) with
-  | Some i -> prepareComputations i ray |> shadeHit world
+  | Some i -> prepareComputations i ray |> shadeHit world <| remaining
   | None -> world.background
 
-let reflectedColor world comps =
+let reflectedColor world comps remaining =
   let reflective = comps.object.Material.reflective
-  if (reflective = 0.)
+  if (remaining < 1 || reflective = 0.)
   then black
   else
     let r = ray comps.overPoint comps.reflectV
-    let c = colorAt world r
+    let c = colorAt world r (remaining - 1)
     Color.scale reflective c

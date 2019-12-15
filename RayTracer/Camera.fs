@@ -48,7 +48,7 @@ let rayForPixel x y c =
 
 let render c w =
   (canvas c.hSize c.vSize) |> Canvas.render (fun x y ->
-    rayForPixel x y c |> colorAt w
+    rayForPixel x y c |> colorAt w <| 4
   )
 
 let renderProgress (c: Camera) w =
@@ -59,7 +59,7 @@ let renderProgress (c: Camera) w =
 
   let result = canv |> Canvas.render (fun x y ->
     bar.Tick (sprintf "Rendering %i pixels" len)
-    rayForPixel x y c |> colorAt w
+    rayForPixel x y c |> colorAt w <| 4
   )
 
   printfn "\n" // To avoid CLI glitch after rendering
