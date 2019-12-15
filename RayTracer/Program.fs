@@ -5,5 +5,5 @@ open ShellProgressBar
 
 [<EntryPoint>]
 let main argv =
-  Gradients.run ()
+  Reflection.run ()
   0

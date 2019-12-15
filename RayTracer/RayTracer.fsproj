@@ -30,6 +30,7 @@
     <Compile Include="Demos/PlaneScene.fs" />
     <Compile Include="Demos/Stripes.fs" />
     <Compile Include="Demos/Gradients.fs" />
+    <Compile Include="Demos/Reflection.fs" />
 
     <Compile Include="Program.fs" />
   </ItemGroup>
