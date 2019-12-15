@@ -1,4 +1,4 @@
-module World
+module rec World
 
 open Color
 open Intersection
@@ -32,7 +32,7 @@ let defaultWorld () =
   }
 
 let intersectObjects ray (objects: IShape list) =
-  objects |> List.collect (intersect ray) |> intersections
+  objects |> List.collect (Intersection.intersect ray) |> intersections
 
 let intersect (ray: Ray) (w: World) =
   w.objects |> intersectObjects ray
@@ -55,14 +55,17 @@ let isInShadow point light objects =
 let shadeHit world comps =
   world.lights
   |> List.map (fun light ->
-    lighting
-      light
-      comps.point
-      comps.eyeV
-      comps.normalV
-      comps.object.Material
-      comps.object.Transform
-      (isInShadow comps.overPoint light world.objects)
+    let surface =
+      lighting
+        light
+        comps.point
+        comps.eyeV
+        comps.normalV
+        comps.object.Material
+        comps.object.Transform
+        (isInShadow comps.overPoint light world.objects)
+    let reflected = reflectedColor comps world
+    add surface reflected
   )
   |> List.reduce add
 
@@ -71,6 +74,7 @@ let colorAt world ray =
   | Some i -> prepareComputations i ray |> shadeHit world
   | None -> world.background
 
+// TODO flip arguments
 let reflectedColor comps world =
   let reflective = comps.object.Material.reflective
   if (reflective = 0.)

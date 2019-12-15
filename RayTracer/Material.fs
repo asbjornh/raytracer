@@ -86,8 +86,9 @@ let phongLighting
 
       ambient |> add diffuse |> add specular
 
-let lighting light pos eyeV normalV mat objectT inShadow =
+let constantLighting l _ _ _ _ _ _ = l.intensity
+
+let lighting light =
   match light with
-  | ConstantLight l -> l.intensity
-  | PointLight l ->
-    phongLighting l pos eyeV normalV mat objectT inShadow
+  | ConstantLight l -> constantLighting l
+  | PointLight l -> phongLighting l

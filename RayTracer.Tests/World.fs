@@ -134,4 +134,16 @@ let tests =
       let comps = prepareComputations i r
       let c = reflectedColor comps w
       Expect.equal c (color 0.19033 0.23791 0.14275) ""
+
+    testCase "shade_hit() with a reflective material" <| fun _ ->
+      let w = defaultWorld ()
+      let mat = { defaultMaterial() with reflective = 0.5 }
+      let shape = plane (translation 0. -1. 0.) mat
+      let w = { w with objects = List.concat [w.objects; [shape]] }
+      let a = (sqrt 2.) / 2.
+      let r = ray (point 0. 0. -3.) (vector 0. -a a)
+      let i = intersection (sqrt 2.) shape
+      let comps = prepareComputations i r
+      let c = shadeHit w comps
+      Expect.equal c (color 0.87676 0.92434 0.82917) ""
   ]
