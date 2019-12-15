@@ -84,4 +84,12 @@ let tests =
       let comps = prepareComputations i r
       Expect.isLessThan comps.overPoint.Z (-epsilon / 2.) ""
       Expect.isGreaterThan comps.point.Z comps.overPoint.Z ""
+
+    testCase "Precomputing the reflection vector" <| fun _ ->
+      let shape = defaultPlane ()
+      let a = (sqrt 2.) / 2.
+      let r = ray (point 0. 1. -1.) (vector 0. -a a) 
+      let i = intersection (sqrt 2.) shape
+      let comps = prepareComputations i r
+      Expect.equal comps.reflectV (vector 0. a a) ""
   ]

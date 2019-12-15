@@ -1,6 +1,5 @@
 module Intersection
 
-open Matrix
 open Ray
 open Shape
 open Tuple
@@ -28,6 +27,7 @@ type Computation<'a> = {
   point: Tuple
   eyeV: Tuple
   normalV: Tuple
+  reflectV: Tuple
   inside: bool
   overPoint: Tuple
 }
@@ -39,12 +39,14 @@ let prepareComputations (i: Intersection) r =
   let inside = (dot normalV eyeV) < 0.
   let normalV =
     (if inside then negate else id) normalV
+  let reflectV = reflect normalV r.direction
   {
     t = i.t
     object = i.object
     point = point
     eyeV = eyeV
     normalV = normalV
+    reflectV = reflectV
     inside = inside
     overPoint = point + (epsilon * normalV)
   }
