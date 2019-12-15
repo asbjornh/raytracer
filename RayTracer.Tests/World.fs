@@ -133,7 +133,7 @@ let tests =
       let i = intersection (sqrt 2.) shape
       let comps = prepareComputations i r
       let c = reflectedColor w comps 1
-      Expect.equal c (color 0.19033 0.23791 0.14275) ""
+      Expect.equal c (color 0.38066 0.47583 0.28549) ""
 
     testCase "shade_hit() with a reflective material" <| fun _ ->
       let w = defaultWorld ()
@@ -145,7 +145,7 @@ let tests =
       let i = intersection (sqrt 2.) shape
       let comps = prepareComputations i r
       let c = shadeHit w comps 1
-      Expect.equal c (color 0.87676 0.92434 0.82917) ""
+      Expect.equal c (color 0.53354 0.58112 0.48596) ""
 
     testCase "color_at() with mutually reflective surfaces" <| fun _ ->
       let light = pointLight (point 0. 0. 0.) (color 1. 1. 1.)
@@ -154,7 +154,7 @@ let tests =
       let upper = plane (translation 0. 1. 0.) mat
       let w = world [light] [lower; upper]
       let r = ray (point 0. 0. 0.) (vector 0. 1. 0.)
-      Expect.equal (colorAt w r 1) (color 3.8 3.8 3.8) ""
+      Expect.equal (colorAt w r 1) black ""
 
     testCase "The reflected color at the maximum recursive depth" <| fun _ ->
       let w = defaultWorld ()

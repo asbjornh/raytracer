@@ -64,8 +64,12 @@ let shadeHit world comps remaining =
         comps.object.Material
         comps.object.Transform
         (isInShadow comps.overPoint light world.objects)
-    let reflected = reflectedColor world comps remaining
-    add surface reflected
+    let reflected =
+      match light with
+      | PointLight _ -> reflectedColor world comps remaining
+      | ConstantLight _ -> black
+    // NOTE: Diverting from book in order to fix reflections for ConstantLight
+    blend surface reflected comps.object.Material.reflective
   )
   |> List.reduce add
 
@@ -80,5 +84,4 @@ let reflectedColor world comps remaining =
   then black
   else
     let r = ray comps.overPoint comps.reflectV
-    let c = colorAt world r (remaining - 1)
-    Color.scale reflective c
+    colorAt world r (remaining - 1)
