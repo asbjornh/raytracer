@@ -8,6 +8,7 @@ open Ray
 open Shape
 open Transform
 open Tuple
+open Util
 
 type World = {
   background: Color
@@ -52,6 +53,12 @@ let isInShadow point light objects =
     | Some hit -> hit.t < distance
     | None -> false
 
+let fresnel surface reflect normalV eyeV mat =
+  let ang = angle (normalize normalV) (normalize eyeV)
+  let amount = ang |> pow 3. |> clamp 0. 1.
+  let fColor = blend surface reflect amount
+  blend reflect fColor mat.fresnel
+
 let shadeHit world comps remaining =
   world.lights
   |> List.map (fun light ->
@@ -69,7 +76,11 @@ let shadeHit world comps remaining =
       | PointLight _ -> reflectedColor world comps remaining
       | ConstantLight _ -> black
     // NOTE: Diverting from book in order to fix reflections for ConstantLight
-    blend surface reflected comps.object.Material.reflective
+    let mat = comps.object.Material
+    let col = blend surface reflected mat.reflective
+    if (mat.fresnel = 0.)
+    then col
+    else fresnel surface col comps.normalV comps.eyeV mat
   )
   |> List.reduce add
 

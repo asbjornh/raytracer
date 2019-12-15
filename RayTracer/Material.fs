@@ -14,6 +14,7 @@ type Material = {
   mutable shininess: float
   mutable pattern: IPattern option
   mutable reflective: float
+  mutable fresnel: float
 }
 
 let defaultMaterial () = {
@@ -24,6 +25,7 @@ let defaultMaterial () = {
   shininess = 200.
   pattern = None
   reflective = 0.
+  fresnel = 0.
 }
 
 let material color ambient diffuse specular =

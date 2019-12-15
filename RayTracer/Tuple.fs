@@ -73,6 +73,8 @@ let cross (a: Tuple) (b: Tuple) =
 
 let reflect (normal: Tuple) (v: Tuple) =
   v - (dot v normal * 2. * normal)
+let angle a b =
+  (dot a b) / (magnitude a * magnitude b) |> Math.Acos
 
 let toArray (a: Tuple) =
   let (x, y, z, w) = a.Return
