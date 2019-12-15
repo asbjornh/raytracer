@@ -120,7 +120,7 @@ let tests =
       shape.Material.ambient <- 1.
       let i = intersection 1. shape
       let comps = prepareComputations i r
-      let color = reflectedColor comps w
+      let color = reflectedColor w comps
       Expect.equal color black ""
 
     testCase "The reflected color for a reflective material" <| fun _ ->
@@ -132,7 +132,7 @@ let tests =
       let r = ray (point 0. 0. -3.) (vector 0. -a a)
       let i = intersection (sqrt 2.) shape
       let comps = prepareComputations i r
-      let c = reflectedColor comps w
+      let c = reflectedColor w comps
       Expect.equal c (color 0.19033 0.23791 0.14275) ""
 
     testCase "shade_hit() with a reflective material" <| fun _ ->

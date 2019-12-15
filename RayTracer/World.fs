@@ -64,7 +64,7 @@ let shadeHit world comps =
         comps.object.Material
         comps.object.Transform
         (isInShadow comps.overPoint light world.objects)
-    let reflected = reflectedColor comps world
+    let reflected = reflectedColor world comps
     add surface reflected
   )
   |> List.reduce add
@@ -74,8 +74,7 @@ let colorAt world ray =
   | Some i -> prepareComputations i ray |> shadeHit world
   | None -> world.background
 
-// TODO flip arguments
-let reflectedColor comps world =
+let reflectedColor world comps =
   let reflective = comps.object.Material.reflective
   if (reflective = 0.)
   then black
