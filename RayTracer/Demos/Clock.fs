@@ -13,9 +13,9 @@ let run () =
       let degrees = 360. / 12. * (float i)
       let p = point 0. 0. 0.
       let transform = chain [
-        translateY 30.
-        rotateZ (rad degrees)
         translate 100. 50. 0.
+        rotateZ (rad degrees)
+        translateY 30.
       ]
       multiplyT transform p |> Tuple.toPixel
     )
