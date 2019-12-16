@@ -1,4 +1,4 @@
-module SphereRing
+module SoftShadows
 
 open System
 
@@ -9,24 +9,9 @@ open Material
 open Shape
 open Transform
 open Tuple
-open Util
 open World
 
-
-let sphereRing direction t count spread =
-  let up = vector 0. 0. 1.
-  List.init count (fun i ->
-    let degrees = 360. / (float count) * (float i)
-    let transform = chain [
-      rotateAlign up direction
-      rotateZ (rad degrees)
-      translateY spread
-    ]
-    sphereT (Matrix.multiply t transform)
-  )
-
-
-let wallMaterial = materialC (color 0.5 0.1 0.6)
+let wallMaterial = material yellow 0.3 0.8 0.8
 
 let floor = sphere (scaling 10. 0.01 10.) wallMaterial
 
@@ -50,19 +35,35 @@ let rightWall =
   ]
   <| wallMaterial
 
-let pLight = pointLight (point -10. 10. -10.) (color 1. 0.9 0.7)
-let cLight = constantLight (color 0. 0.1 0.2)
+let middle =
+  sphere
+  <| (translation -0.5 1. 0.5)
+  <| defaultMaterial ()
+
+let right =
+  sphere
+  <| (chain [ translate 1.5 0.5 -0.5; uniformScale 0.5 ])
+  <| defaultMaterial ()
+
+let left =
+  sphere
+  <| (chain [ translate -1.5 0.33 -0.75; uniformScale 0.33 ])
+  <| defaultMaterial ()
+
+let lightPos = point -10. 10. -10.
+let origin = point 0. 0. 0.
+let rLights = ringLight lightPos (origin - lightPos) (color 1. 0.9 0.7) 20 2.
+let darkBrown = Color.scale 0.15 (color 1. 0.3 0.6)
+let cLight = constantLight darkBrown
+let lights = List.concat [rLights; [cLight]]
 let cam = camera 400 200 (Math.PI / 3.)
 let cTransform = viewTransform (point 0. 1.5 -5.) (point 0. 1. 0.) (vector 0. 1. 0.)
 cam.transform <- cTransform
 
-let spheresT = chain [translateY 1.; uniformScale 0.2]
-let spheres =
-  sphereRing (vector 0. 0. 1.) spheresT 8 3.
 let objects =
-  List.concat [spheres; [floor; leftWall; rightWall;]]
+  [middle; right; left; floor; leftWall; rightWall;]
 
-let w = world [pLight; cLight] objects
+let w = world lights objects
 
 let run () =
   renderProgress cam w

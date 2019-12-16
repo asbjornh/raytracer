@@ -5,5 +5,5 @@ open ShellProgressBar
 
 [<EntryPoint>]
 let main argv =
-  SphereRing.run ()
+  SoftShadows.run ()
   0

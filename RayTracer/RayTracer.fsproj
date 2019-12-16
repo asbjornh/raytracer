@@ -32,6 +32,7 @@
     <Compile Include="Demos/Gradients.fs" />
     <Compile Include="Demos/Reflection.fs" />
     <Compile Include="Demos/SphereRing.fs" />
+    <Compile Include="Demos/SoftShadows.fs" />
 
     <Compile Include="Program.fs" />
   </ItemGroup>
