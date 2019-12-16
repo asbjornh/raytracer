@@ -31,6 +31,35 @@ let shearing xy xz yx yz zx zy =
   |> set 1 0 yx |> set 1 2 yz
   |> set 2 0 zx |> set 2 1 zy
 
+
+let rotateAlignment (from: Tuple) (To: Tuple) =
+  // NOTE: https://gist.github.com/kevinmoran/b45980723e53edeb8a5a43c49f134724
+  let f = normalize from
+  let t = normalize To
+  let cosA = dot f t
+  if (f = t)
+    then identity ()
+  else if (cosA = -1.)
+    then failwith "'from' and 'To' can't point in opposite directions"
+  else
+    let a = cross f t
+    let k = 1. / (1. + cosA)
+    matrix [
+      [ (a.X * a.X * k) + cosA;
+        (a.Y * a.X * k) - a.Z;
+        (a.Z * a.X * k) + a.Y;
+        0.0 ]
+      [ (a.X * a.Y * k) + a.Z;
+        (a.Y * a.Y * k) + cosA;
+        (a.Z * a.Y * k) - a.X;
+        0.0 ]
+      [ (a.X * a.Z * k) - a.Y;
+        (a.Y * a.Z * k) + a.X;
+        (a.Z * a.Z * k) + cosA 
+        0.0 ]
+      [ 0.0 ; 0.0 ; 0.0 ; 1.0 ]
+    ];
+
 let translate x y z = translation x y z |> multiply
 let translateX x = translation x 0. 0. |> multiply
 let translateY y = translation 0. y 0. |> multiply
@@ -40,12 +69,13 @@ let uniformScale s = scaling s s s |> multiply
 let rotateX rad = rotationX rad |> multiply
 let rotateY rad = rotationY rad |> multiply
 let rotateZ rad = rotationZ rad |> multiply
+let rotateAlign f t = rotateAlignment f t |> multiply
 let shear xy xz yx yz zx zy =
   shearing xy xz yx yz zx zy |> multiply
 
 let chain fns = List.rev fns |> List.reduce (>>) <| identity ()
 
-let viewTransform (from: Tuple) To up =
+let viewTransform (from: Tuple) (To: Tuple) up =
   let forward = To - from |> normalize
   let left = cross forward (normalize up)
   let trueUp = cross left forward
