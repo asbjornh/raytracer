@@ -5,5 +5,5 @@ open ShellProgressBar
 
 [<EntryPoint>]
 let main argv =
-  Reflection.run ()
+  SphereRing.run ()
   0
