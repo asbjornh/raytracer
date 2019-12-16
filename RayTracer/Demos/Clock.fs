@@ -27,4 +27,4 @@ let run () =
   points
   |> List.fold (fun canv (x, y) -> Canvas.write x y white canv) canvas
   |> Canvas.toPpm
-  |> writeFile @"./out.ppm"
+  |> Util.writeFile ("../render/" + (Util.nowStr ()) + ".ppm")

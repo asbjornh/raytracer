@@ -49,3 +49,6 @@ let foldi fn initial m =
 // IO
 let writeFile (path: string) content =
   System.IO.File.WriteAllLines (path, content)
+
+let nowStr () =
+  DateTimeOffset.Now.ToString "d.MMMM_yyyy_H.m"

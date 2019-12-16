@@ -42,6 +42,6 @@ let run () =
     | None -> black
   )
   |> Canvas.toPpm
-  |> writeFile @"./out.ppm"
+  |> Util.writeFile ("../render/" + (Util.nowStr ()) + ".ppm")
 
   printfn "\n"
