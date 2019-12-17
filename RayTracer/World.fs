@@ -71,10 +71,12 @@ let shadeHit world comps remaining =
         comps.object.Material
         comps.object.Transform
         (isInShadow comps.overPoint light world.objects)
+    // NOTE: If all lights are passed to 'reflectedColor' the reflection will be way too bright
+    let reflectW = { world with lights = [light] }
     let reflected =
       match light with
-      | PointLight _ -> reflectedColor world comps remaining
-      | ConstantLight _ -> black
+      | PointLight _ -> reflectedColor reflectW comps remaining
+      | ConstantLight l -> l.intensity
     // NOTE: Diverting from book in order to fix reflections for ConstantLight
     let mat = comps.object.Material
     let col = blend surface reflected mat.reflective
