@@ -37,14 +37,16 @@ let ringLight (position: Tuple) direction intensity count spread =
     pointLight p i
   )
 
-let squareLight (position: Tuple) direction intensity resolution spread =
+let squareLight (position: Tuple) direction intensity resolution size =
   let up = vector 0. 0. 1.
   let count = resolution * resolution
   List.init resolution (fun y ->
     List.init resolution (fun x ->
+      let delta = size / (float resolution)
+      let offset = size / 4.
       let transform = chain [
         translate position.X position.Y position.Z
-        translate (float x * spread) (float y * spread) 0.
+        translate (float x * delta - offset) (float y * delta - offset) 0.
         rotateAlign up direction
       ]
       let p = multiplyT transform (point 0. 0. 0.)
