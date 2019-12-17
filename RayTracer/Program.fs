@@ -5,5 +5,5 @@ open ShellProgressBar
 
 [<EntryPoint>]
 let main argv =
-  SoftShadows.run ()
+  Reflection.run ()
   0
