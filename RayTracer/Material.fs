@@ -85,7 +85,7 @@ let phongLighting
     let overPoint = pos + (epsilon * normalV)
     let baseColor =
       match mat.pattern with
-      | Some p -> colorAt overPoint objectT p
+      | Some p -> patternAt overPoint objectT p
       | None -> mat.color
     let effectiveColor = multiply baseColor light.intensity
     let ambient = scale mat.ambient effectiveColor

@@ -10,7 +10,7 @@ type IPattern =
   abstract member GetColor: Tuple -> Color
   abstract member Transform: Matrix
 
-let colorAt (point: Tuple) (objectT: Matrix) (pattern: IPattern) =
+let patternAt (point: Tuple) (objectT: Matrix) (pattern: IPattern) =
   let localPoint = multiplyT (inverse objectT) point
   let patternPoint = multiplyT (inverse pattern.Transform) localPoint
   pattern.GetColor patternPoint
