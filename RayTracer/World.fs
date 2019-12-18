@@ -57,37 +57,41 @@ let isInShadow point light objects =
 
 let shadeHit world comps remaining =
   world.lights
-  |> List.map (fun light ->
+  |> List.fold (fun acc light ->
     let singleLightW = { world with lights = [light] }
-    match comps.object.Material with
-    | Phong mat ->
-      lighting
-        light
-        comps.point
-        comps.eyeV
-        comps.normalV
-        mat
-        comps.object.Transform
-        (isInShadow comps.overPoint light world.objects)
-    | Reflective _ ->
-      match light with
-      | PointLight _ -> reflectedColor singleLightW comps remaining
-      | ConstantLight l -> l.intensity
-    | Fresnel mat ->
-      let compsA = { comps with object = assignMaterial comps.object mat.a }
-      let compsB = { comps with object = assignMaterial comps.object mat.b }
-      let a = shadeHit singleLightW compsA remaining
-      let b = shadeHit singleLightW compsB remaining
+    let colr =
+      match comps.object.Material with
+      | Phong mat ->
+        lighting
+          light
+          comps.point
+          comps.eyeV
+          comps.normalV
+          mat
+          comps.object.Transform
+          (isInShadow comps.overPoint light world.objects)
+      | Reflective _ ->
+        match light with
+        | PointLight _ -> reflectedColor singleLightW comps remaining
+        | ConstantLight l -> black
+      | Fresnel mat ->
+        let compsA = { comps with object = assignMaterial comps.object mat.a }
+        let compsB = { comps with object = assignMaterial comps.object mat.b }
+        let a = shadeHit singleLightW compsA remaining
+        let b = shadeHit singleLightW compsB remaining
         let f = fresnelShade a b comps.normalV comps.eyeV mat.a mat.b
-      blend a f mat.mix
-    | Blend mat ->
-      let compsA = { comps with object = assignMaterial comps.object mat.a }
-      let compsB = { comps with object = assignMaterial comps.object mat.b }
-      let a = shadeHit singleLightW compsA remaining
-      let b = shadeHit singleLightW compsB remaining
-      blend a b mat.mix
-  )
-  |> List.reduce add
+        blend a f mat.mix
+      | Blend mat ->
+        let compsA = { comps with object = assignMaterial comps.object mat.a }
+        let compsB = { comps with object = assignMaterial comps.object mat.b }
+        let a = shadeHit singleLightW compsA remaining
+        let b = shadeHit singleLightW compsB remaining
+        blend a b mat.mix
+
+    match light with
+    | PointLight _ -> add acc colr
+    | ConstantLight _ -> lighten acc colr
+  ) (color 0. 0. 0.)
 
 let colorAt world ray remaining =
   match (intersect ray world |> hit) with

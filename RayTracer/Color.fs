@@ -48,6 +48,7 @@ let subtract c = Color.CombineC (-) c
 let multiply c = Color.CombineC (*) c
 let scale n = Color.MapC ((*) n)
 let divide n = Color.MapC (flip (/) n)
+let lighten c = Color.CombineC max c
 let blend a b amount =
   subtract b a |> scale amount |> add a
 
