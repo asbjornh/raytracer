@@ -36,7 +36,12 @@ let rightWall =
   ]
   <| wallMaterial
 
-let sphereMat = { materialC red with reflective = 0.8; fresnel = 0.4 }
+let sphereMat = Fresnel {
+  a = materialC white
+  b = Reflective { additive = true }
+  mix = 1.
+}
+
 let middle =
   sphere
   <| (translation -0.5 1. 0.5)
@@ -54,7 +59,7 @@ let left =
 
 let lightPos = (point -10. 10. -10.)
 let origin = (point 0. 0. 0.)
-let sLights = squareLight lightPos (origin - lightPos) (color 1. 0.9 0.7) 5 8.
+let sLights = squareLight lightPos (origin - lightPos) (color 1. 1. 0.9) 5 8.
 let cLight = constantLight (color 0. 0.15 0.3)
 let lights = List.concat [sLights; [cLight]]
 
