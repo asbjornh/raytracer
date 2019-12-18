@@ -10,9 +10,13 @@ type Color (r, g, b) =
     let (r2, g2, b2) = b.Return
     (fn r1 r2, fn g1 g2, fn b1 b2)
 
+  static member CombineC fn a b = Color.Combine fn a b |> Color
+
   static member Map fn (c: Color) =
     let (r, g, b) = c.Return
     (fn r, fn g, fn b)
+
+  static member MapC fn c = Color.Map fn c |> Color
 
   override x.ToString () = x.Return.ToString ()
   override x.GetHashCode () = x.Return.GetHashCode ()
@@ -39,11 +43,11 @@ let equals a b = (Color.Combine valueEquals a b) |> function
   | (true, true, true) -> true
   | _ -> false
 
-let add (a: Color) = Color.Combine (+) a >> Color
-let subtract (a: Color) = Color.Combine (-) a >> Color
-let multiply (a: Color) = Color.Combine (*) a >> Color
-let scale n = Color.Map ((*) n) >> Color
-let divide n = Color.Map (flip (/) n) >> Color
+let add c = Color.CombineC (+) c
+let subtract c = Color.CombineC (-) c
+let multiply c = Color.CombineC (*) c
+let scale n = Color.MapC ((*) n)
+let divide n = Color.MapC (flip (/) n)
 let blend a b amount =
   subtract b a |> scale amount |> add a
 
