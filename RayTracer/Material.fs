@@ -1,4 +1,6 @@
-module Material
+module rec Material
+
+open System
 
 open Color
 open Light
@@ -6,55 +8,78 @@ open Pattern
 open Tuple
 open Util
 
-type Material = {
+type Material =
+  | Phong of Phong
+  | Reflective of Reflective
+  | Fresnel of Fresnel
+  | Blend of Blend
+
+type Fresnel = {
+  a: Material
+  b: Material
+  mix: float
+}
+
+type Blend = {
+  a: Material
+  b: Material
+  mix: float
+}
+
+type Reflective = {
+  additive: bool
+}
+
+type Phong = {
   mutable color: Color
   mutable ambient: float
   mutable diffuse: float
   mutable specular: float
   mutable shininess: float
   mutable pattern: IPattern option
-  mutable reflective: float
-  mutable fresnel: float
 }
 
-let defaultMaterial () = {
+let defaultMaterial () = Phong (defaultMaterialP ())
+
+let defaultMaterialP () = {
   color = color 1. 1. 1.
   ambient = 0.1
   diffuse = 0.9
   specular = 0.9
   shininess = 200.
   pattern = None
-  reflective = 0.
-  fresnel = 0.
 }
 
 let material color ambient diffuse specular =
-  {
-    defaultMaterial () with
+  Phong {
+    defaultMaterialP () with
       color = color
       ambient = ambient
       diffuse = diffuse
       specular = specular
   }
 
-let patternMaterial pattern ambient diffuse specular =
+let patternMaterialP pattern ambient diffuse specular =
   {
-    defaultMaterial () with
+    defaultMaterialP () with
       ambient = ambient
       diffuse = diffuse
       specular = specular
       pattern = Some pattern
   }
 
+let patternMaterial pattern ambient diffuse specular =
+  Phong <| patternMaterialP pattern ambient diffuse specular
+
 let materialC color =
-  { defaultMaterial () with color = color }
+  Phong { defaultMaterialP () with color = color }
 
 let phongLighting
   (light: PointLight)
   (pos: Tuple)
   (eyeV: Tuple)
   (normalV: Tuple)
-  (mat: Material)
+  (mat: Phong)
   (objectT: Matrix.Matrix)
   (inShadow: bool) =
     let overPoint = pos + (epsilon * normalV)
@@ -94,3 +119,10 @@ let lighting light =
   match light with
   | ConstantLight l -> constantLighting l
   | PointLight l -> phongLighting l
+
+let fresnelShade a b normalV eyeV =
+  let ang = angle (normalize normalV) (normalize eyeV)
+  let mapping = pow 3.
+  let max = mapping (Math.PI / 2.)
+  let amount = ang |> mapping |> rangeMap (0., max) (0., 1.)
+  blend a b amount

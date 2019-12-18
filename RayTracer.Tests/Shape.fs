@@ -13,12 +13,13 @@ open Transform
 
 type TestShape =
   {
-    Material: Material
+    mutable Material: Material
     Transform: Matrix
   }
   interface IShape with
     member this.Transform = this.Transform
     member this.Material = this.Material
+    member this.SetMaterial mat = this.Material <- mat
     member this.LocalIntersect ray =
       [(0., this :> IShape)]
     member this.LocalNormal t = t

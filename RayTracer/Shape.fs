@@ -9,6 +9,7 @@ open Util
 type IShape =
   abstract Transform: Matrix
   abstract Material: Material
+  abstract SetMaterial: Material -> unit
   abstract LocalIntersect: Ray -> (float * IShape) list
   abstract LocalNormal: Tuple -> Tuple
 
@@ -28,11 +29,12 @@ let normalAt point (shape: IShape) =
 type Sphere =
   {
     Transform: Matrix;
-    Material: Material
+    mutable Material: Material
   }
   interface IShape with
     member this.Transform = this.Transform
     member this.Material = this.Material
+    member this.SetMaterial mat = this.Material <- mat
     member this.LocalIntersect r = sphereIntersect r this
     member this.LocalNormal t = t - (point 0. 0. 0.)
 
@@ -61,10 +63,11 @@ let sphereIntersect (ray: Ray) (s: IShape) =
 type Plane =
   {
     Transform: Matrix
-    Material: Material
+    mutable Material: Material
   }
   interface IShape with
     member this.Transform = this.Transform
+    member this.SetMaterial mat = this.Material <- mat
     member this.Material = this.Material
     member this.LocalIntersect r =
       if (looseEq r.direction.Y 0.)
@@ -77,3 +80,10 @@ type Plane =
 let plane t m : Plane = { Transform = t; Material = m }
 
 let defaultPlane () = plane (identity ()) (defaultMaterial ())
+
+let assignMaterial (s: IShape) (m: Material) =
+  match s with
+  | :? Sphere as s -> sphere s.Transform m :> IShape
+  | :? Plane as p -> plane p.Transform m :> IShape
+  | _ -> s
+

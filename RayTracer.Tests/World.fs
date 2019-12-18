@@ -73,12 +73,16 @@ let tests =
     testCase "The color with an intersection behind the ray" <| fun _ ->
       let w = defaultWorld ()
       let outer = w.objects.[0]
-      outer.Material.ambient <- 1.
+      outer.SetMaterial <| Phong { defaultMaterialP () with ambient = 1. }
       let inner = w.objects.[1]
-      inner.Material.ambient <- 1.
+      inner.SetMaterial <| Phong { defaultMaterialP () with ambient = 1. }
       let r = ray (point 0. 0. 0.75) (vector 0. 0. -1.)
       let c = colorAt w r 1
-      Expect.equal c inner.Material.color ""
+      let actual =
+        match inner.Material with
+        | Phong m -> m.color
+        | _ -> red
+      Expect.equal c actual ""
 
     testCase "There is no shadow when nothing is collinear with point and light" <| fun _ ->
       let w = defaultWorld ()
@@ -113,19 +117,13 @@ let tests =
       let c = shadeHit w comps 1
       Expect.equal c (color 0.1 0.1 0.1) ""
 
-    testCase "The reflected color for a nonreflective material" <| fun _ ->
-      let w = defaultWorld ()
-      let r = ray (point 0. 0. 0.) (vector 0. 0. 1.)
-      let shape = w.objects.[1]
-      shape.Material.ambient <- 1.
-      let i = intersection 1. shape
-      let comps = prepareComputations i r
-      let color = reflectedColor w comps 1
-      Expect.equal color black ""
-
     testCase "The reflected color for a reflective material" <| fun _ ->
       let w = defaultWorld ()
-      let mat = { defaultMaterial() with reflective = 0.5 }
+      let mat = Blend {
+        a = defaultMaterial ()
+        b = Reflective { additive = false }
+        mix = 0.5
+      }
       let shape = plane (translation 0. -1. 0.) mat
       let w = { w with objects = List.concat [w.objects; [shape]] }
       let a = (sqrt 2.) / 2.
@@ -137,7 +135,11 @@ let tests =
 
     testCase "shade_hit() with a reflective material" <| fun _ ->
       let w = defaultWorld ()
-      let mat = { defaultMaterial() with reflective = 0.5 }
+      let mat = Blend {
+        a = defaultMaterial ()
+        b = Reflective { additive = false }
+        mix = 0.5
+      }
       let shape = plane (translation 0. -1. 0.) mat
       let w = { w with objects = List.concat [w.objects; [shape]] }
       let a = (sqrt 2.) / 2.
@@ -149,7 +151,7 @@ let tests =
 
     testCase "color_at() with mutually reflective surfaces" <| fun _ ->
       let light = pointLight (point 0. 0. 0.) (color 1. 1. 1.)
-      let mat = { defaultMaterial () with reflective = 1. }
+      let mat = Reflective { additive = false }
       let lower = plane (translation 0. -1. 0.) mat
       let upper = plane (translation 0. 1. 0.) mat
       let w = world [light] [lower; upper]
@@ -158,7 +160,11 @@ let tests =
 
     testCase "The reflected color at the maximum recursive depth" <| fun _ ->
       let w = defaultWorld ()
-      let mat = { defaultMaterial() with reflective = 0.5 }
+      let mat = Blend {
+        a = defaultMaterial ()
+        b = Reflective { additive = false }
+        mix = 0.5
+      }
       let shape = plane (translation 0. -1. 0.) mat
       let w = { w with objects = List.concat [w.objects; [shape]] }
       let a = (sqrt 2.) / 2.

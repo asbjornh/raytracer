@@ -1,5 +1,7 @@
 module rec World
 
+open System
+
 open Color
 open Intersection
 open Light
@@ -53,36 +55,43 @@ let isInShadow point light objects =
     | Some hit -> hit.t < distance
     | None -> false
 
-let fresnel surface reflect normalV eyeV mat =
-  let ang = angle (normalize normalV) (normalize eyeV)
-  let amount = ang |> pow 3. |> clamp 0. 1.
-  let fColor = blend surface reflect amount
-  blend reflect fColor mat.fresnel
-
 let shadeHit world comps remaining =
   world.lights
   |> List.map (fun light ->
-    let surface =
+    let singleLightW = { world with lights = [light] }
+    match comps.object.Material with
+    | Phong mat ->
       lighting
         light
         comps.point
         comps.eyeV
         comps.normalV
-        comps.object.Material
+        mat
         comps.object.Transform
         (isInShadow comps.overPoint light world.objects)
-    // NOTE: If all lights are passed to 'reflectedColor' the reflection will be way too bright
-    let reflectW = { world with lights = [light] }
-    let reflected =
+    | Reflective _ ->
       match light with
-      | PointLight _ -> reflectedColor reflectW comps remaining
+      | PointLight _ -> reflectedColor singleLightW comps remaining
       | ConstantLight l -> l.intensity
-    // NOTE: Diverting from book in order to fix reflections for ConstantLight
-    let mat = comps.object.Material
-    let col = blend surface reflected mat.reflective
-    if (mat.fresnel = 0.)
-    then col
-    else fresnel surface col comps.normalV comps.eyeV mat
+    | Fresnel mat ->
+      let compsA = { comps with object = assignMaterial comps.object mat.a }
+      let compsB = { comps with object = assignMaterial comps.object mat.b }
+      let a = shadeHit singleLightW compsA remaining
+      let b = shadeHit singleLightW compsB remaining
+      let f =
+        match (mat.a, mat.b) with
+        | (Reflective r, _) when r.additive ->
+          fresnelShade a black comps.normalV comps.eyeV |> add b
+        | (_, Reflective r) when r.additive ->
+          fresnelShade black b comps.normalV comps.eyeV |> add a
+        | _ -> fresnelShade a b comps.normalV comps.eyeV
+      blend a f mat.mix
+    | Blend mat ->
+      let compsA = { comps with object = assignMaterial comps.object mat.a }
+      let compsB = { comps with object = assignMaterial comps.object mat.b }
+      let a = shadeHit singleLightW compsA remaining
+      let b = shadeHit singleLightW compsB remaining
+      blend a b mat.mix
   )
   |> List.reduce add
 
@@ -116,9 +125,7 @@ let occlusionAt pos normalV (samples: (Tuple * Tuple)[]) =
   )
 
 let reflectedColor world comps remaining =
-  let reflective = comps.object.Material.reflective
-  if (remaining < 1 || reflective = 0.)
-  then black
+  if (remaining < 1) then black
   else
     let r = ray comps.overPoint comps.reflectV
     colorAt world r (remaining - 1)

@@ -17,11 +17,7 @@ open Util
 let run () =
   let bg = color 0.2 0.2 0.4
   let t = chain [translate 100. 100. 0.; uniformScale 80.]
-  let mat = {
-    defaultMaterial () with
-      color = (color 1. 0.4 1.)
-      ambient = 0.
-  }
+  let mat = material (color 1. 0.4 1.) 0. 0.9 0.9
   let s = sphere t mat
 
   let t2 = chain [translate 140. 140. 40.; uniformScale 40.]
@@ -55,7 +51,10 @@ let run () =
       let point = position i.t r
       let normalV = normalAt point i.object
       let eyeV = negate r.direction
-      lighting l point eyeV normalV i.object.Material i.object.Transform false
+      match i.object.Material with
+      | Phong mat ->
+        lighting l point eyeV normalV mat i.object.Transform false
+      | _ -> black
       |> add bg
     | None -> black |> add bg |> Color.scale 0.8
   )
