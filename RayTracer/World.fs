@@ -91,6 +91,30 @@ let colorAt world ray remaining =
   | Some i -> prepareComputations i ray |> shadeHit world <| remaining
   | None -> world.background
 
+let colorAndDepthAt world ray remaining =
+  match (intersect ray world |> hit) with
+  | Some i ->
+    let comps = prepareComputations i ray
+    let c = comps |> shadeHit world <| remaining
+    (comps.point, comps.normalV, c)
+  | None ->
+    let p = point infinity infinity infinity
+    let n = vector 0. 0. 0.
+    (p, n, world.background)
+
+let occlusionAt pos normalV (samples: (Tuple * Tuple)[]) =
+  let pointInf = point infinity infinity infinity
+
+  samples
+  |> Array.sumBy (fun (pointB, normalB) ->
+    if (pointB = pos) then 0.
+    else if (pointB = pointInf || pos = pointInf) then 0.
+    else
+      let d = magnitude (pointB - pos) * 800. * ((abs pos.Z) + 1.)
+      let v = pointB - pos |> normalize
+      (max 0. (dot normalV v)) * (1. / (1. + d))
+  )
+
 let reflectedColor world comps remaining =
   let reflective = comps.object.Material.reflective
   if (remaining < 1 || reflective = 0.)

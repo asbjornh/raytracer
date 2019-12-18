@@ -24,7 +24,6 @@ let read x y (canvas: Canvas) =
   | Some (row, col) -> Some col
   | None -> None
 
-
 let flatten a =
   Array.indexed a
   |> Array.fold (fun acc (y, row) ->
@@ -33,6 +32,12 @@ let flatten a =
       |> Array.map (fun (x, col) -> (x, y))
     Array.concat [acc; r]
   ) Array.empty
+
+let map fn (a: Canvas) =
+  a
+  |> flatten
+  |> Array.Parallel.map (fun (x, y) -> fn x y)
+  |> Array.chunkBySize (width a)
 
 let render (fn: int -> int -> Color) (a: Canvas) =
   let pixels =

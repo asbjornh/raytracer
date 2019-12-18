@@ -4,9 +4,11 @@ open System
 open ShellProgressBar
 
 open Canvas
+open Color
 open Matrix
 open Ray
 open Tuple
+open Util
 open World
 
 type Camera = {
@@ -50,6 +52,36 @@ let render c w =
   (canvas c.hSize c.vSize) |> Canvas.render (fun x y ->
     rayForPixel x y c |> colorAt w <| 4
   )
+
+let renderOcclusion c w =
+  let canv = canvas c.hSize c.vSize
+  let len = Canvas.length canv
+  let bar = new ProgressBar (2, "Rendering", ConsoleColor.Yellow)
+
+  bar.Tick ()
+  let renderBar = bar.Spawn (len, "Raytracing")
+
+  let result = canv |> Canvas.map (fun x y ->
+    renderBar.Tick (sprintf "Raytracing %i pixels" len)
+    rayForPixel x y c |> colorAndDepthAt w <| 4
+  )
+
+  bar.Tick ()
+  let occlusionBar = bar.Spawn(len, "Processing")
+  let pixels = map2d (fun (_, _, c) -> c) result
+  let depths =
+    result |> map2d (fun (p, n, _) -> (p, n))
+  let occlusion =
+    depths
+    |> mapi2d (fun x y (point, normalV) ->
+      occlusionBar.Tick (sprintf "Processing %i pixels" len)
+      let samples = depths |> subGrid x y 5 |> Array.concat
+      let o = occlusionAt point normalV samples |> (*) 0.5
+      add black (scale o white)
+    )
+
+  printfn "\n" // To avoid CLI glitch after rendering
+  map22d subtract pixels occlusion
 
 let renderProgress (c: Camera) w =
   let canv = canvas c.hSize c.vSize

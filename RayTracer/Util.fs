@@ -35,6 +35,17 @@ let filteri fn m =
   |> Array.filter (fst >> fn)
   |> Array.map snd
 
+let map2d fn arr =
+  arr |> Array.map (Array.map fn)
+
+let mapi2d fn =
+  Array.mapi (fun y row ->
+    row |> Array.mapi (fun x col -> fn x y col)
+  )
+
+let map22d fn arr1 arr2 =
+  Array.map2 (Array.map2 fn) arr1 arr2
+
 let get2d x y (arr: 'a [][]) =
   try
     let row = arr.[y]
@@ -45,6 +56,17 @@ let get2d x y (arr: 'a [][]) =
 let foldi fn initial m =
   Array.indexed m
   |> Array.fold (fun acc (i, el) -> fn acc i el) initial
+
+let rec sub from To arr =
+  let f = max 0 from
+  if (f = 0 && To = 0) then [||]
+  else
+    try (Array.sub arr f (To + 1 - f)) with
+    | _ -> sub f (To - 1) arr
+
+let subGrid x y size arr =
+  sub (y - size) (y + size) arr
+  |> Array.map (sub (x - size) (x + size))
 
 // IO
 let writeFile (path: string) content =
