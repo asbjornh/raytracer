@@ -78,13 +78,7 @@ let shadeHit world comps remaining =
       let compsB = { comps with object = assignMaterial comps.object mat.b }
       let a = shadeHit singleLightW compsA remaining
       let b = shadeHit singleLightW compsB remaining
-      let f =
-        match (mat.a, mat.b) with
-        | (Reflective r, _) when r.additive ->
-          fresnelShade a black comps.normalV comps.eyeV |> add b
-        | (_, Reflective r) when r.additive ->
-          fresnelShade black b comps.normalV comps.eyeV |> add a
-        | _ -> fresnelShade a b comps.normalV comps.eyeV
+        let f = fresnelShade a b comps.normalV comps.eyeV mat.a mat.b
       blend a f mat.mix
     | Blend mat ->
       let compsA = { comps with object = assignMaterial comps.object mat.a }
