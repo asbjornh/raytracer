@@ -120,9 +120,17 @@ let lighting light =
   | ConstantLight l -> constantLighting l
   | PointLight l -> phongLighting l
 
-let fresnelShade a b normalV eyeV =
+let fresnelColor a b normalV eyeV =
   let ang = angle (normalize normalV) (normalize eyeV)
   let mapping = pow 3.
   let max = mapping (Math.PI / 2.)
   let amount = ang |> mapping |> rangeMap (0., max) (0., 1.)
   blend a b amount
+
+let fresnelShade a b normalV eyeV matA matB =
+  match (matA, matB) with
+  | (Reflective r, _) when r.additive ->
+    fresnelColor a black normalV eyeV |> add b
+  | (_, Reflective r) when r.additive ->
+    fresnelColor black b normalV eyeV |> add a
+  | _ -> fresnelColor a b normalV eyeV
