@@ -16,6 +16,17 @@ let rangeMap (inMin: float, inMax) (outMin, outMax) x
 let isEven a = (a % 2) = 0
 let rad deg = (deg / 180.) * Math.PI
 
+let cubicBezier p1 p2 (t: float) =
+  let p0 = 0.
+  let p3 = 1.
+  let tDiff = 1. - t
+  let result =
+    (tDiff ** 3. * p0) +
+    (tDiff ** 2. * 3. * t * p1) +
+    (tDiff * 3. * t ** 2. * p2) +
+    (t ** 3. * p3)
+  result
+
 // String
 let toString a = a.ToString ()
 let join sep (strings: string list) = String.Join (sep, strings)

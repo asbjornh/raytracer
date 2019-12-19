@@ -35,6 +35,7 @@ type Reflective = {
 type Gradient = {
   a: Material
   b: Material
+  sharpness: float
   transform: Matrix.Matrix
 }
 
@@ -130,3 +131,6 @@ let material color ambient diffuse specular =
 
 let materialC color =
   Phong { defaultMaterialP () with color = color }
+
+let gradient a b t =
+  Gradient { a = a; b = b; sharpness = 0.; transform = t }

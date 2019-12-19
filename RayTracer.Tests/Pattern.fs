@@ -60,7 +60,7 @@ let tests =
       Expect.equal c white ""
 
     testCase "A gradient linearly interpolates between colors" <| fun _ ->
-      let pattern = gradientAt white black
+      let pattern = gradientAt white black 0.
       Expect.equal (pattern (point 0. 0. 0.)) white ""
       Expect.equal (pattern (point 0.25 0. 0.)) (color 0.75 0.75 0.75) ""
       Expect.equal (pattern (point 0.5 0. 0.)) (color 0.5 0.5 0.5) ""

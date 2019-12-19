@@ -75,10 +75,10 @@ let shadeHitSingleLight light world comps remaining =
     lighting
       light comps.point comps.eyeV comps.normalV mat isShadow
 
-  | Reflective _ ->
+  | Reflective mat ->
     match light with
     | PointLight _ -> reflectedColor world comps remaining
-    | ConstantLight _ -> black
+    | ConstantLight l -> if mat.additive then black else l.intensity
 
   | Fresnel mat ->
     let (a, b) = shadeTwo world comps remaining mat.a mat.b
@@ -97,8 +97,13 @@ let shadeHitSingleLight light world comps remaining =
 
   | Gradient mat ->
     let (a, b) = shadeTwo world comps remaining mat.a mat.b
+    let (newA, newB) =
+      match (mat.a, mat.b) with
+      | (Reflective r, _) when r.additive -> (add a b, b)
+      | (_, Reflective r) when r.additive -> (a, add a b)
+      | _ -> (a, b)
     let p = patternPoint objectT mat.transform comps.overPoint
-    gradientAt a b p
+    gradientAt newA newB mat.sharpness p
 
 let shadeHit world comps remaining =
   world.lights

@@ -4,6 +4,7 @@ open System
 
 open Matrix
 open Tuple
+open Util
 
 type PatternType =
   | Stripes
@@ -27,5 +28,13 @@ let patternAt a b (pattern: PatternType) (point: Tuple) =
     if ((Math.Floor pointsSquared) % 2. = 0.)
     then a else b
 
-let gradientAt a b (point: Tuple) =
-  Color.blend a b (point.X - (Math.Floor point.X))
+
+let gradientAt a b sharpness (point: Tuple) =
+  let amount = point.X - Math.Floor point.X
+  if (sharpness = 0.) then
+    Color.blend a b amount
+  else
+    let p1 = 0. - sharpness
+    let p2 = 1. + sharpness
+    let mapped = cubicBezier p1 p2 amount |> clamp 0. 1.
+    Color.blend a b mapped
