@@ -114,7 +114,7 @@ let fresnelShade a b normalV eyeV =
 let getBlendComponents matA matB a b =
   match (matA, matB) with
   | (Reflective mat, _) -> (blend mat.blend a b, b)
-  | (_, Reflective mat) -> (a, blend mat.blend a b)
+  | (_, Reflective mat) -> (a, blend mat.blend b a)
   | _ -> (a, b)
 
 let defaultMaterial () = Phong (defaultMaterialP ())
