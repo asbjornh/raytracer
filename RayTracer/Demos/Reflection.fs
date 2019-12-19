@@ -60,7 +60,7 @@ let left =
 let lightPos = (point -10. 10. -10.)
 let origin = (point 0. 0. 0.)
 let sLights = squareLight lightPos (origin - lightPos) (color 1. 1. 0.9) 5 8.
-let cLight = constantLight (color 0. 0.15 0.3)
+let cLight = constantLight (color 0. 0.15 0.3) false
 let lights = List.concat [sLights; [cLight]]
 
 let cam = camera 400 200 (Math.PI / 3.)

@@ -66,8 +66,8 @@ let left =
 
 let darkBrown = Color.scale 0.15 (color 1. 0.3 0.6)
 let pLight = pointLight (point -10. 10. -10.) (color 1. 0.9 0.7)
-let cLight = constantLight darkBrown
-let cam = camera 400 200 (Math.PI / 3.)
+let cLight = constantLight darkBrown true
+let cam = camera 200 100 (Math.PI / 3.)
 let cTransform = viewTransform (point 0. 1.5 -5.) (point 0. 1. 0.) (vector 0. 1. 0.)
 cam.transform <- cTransform
 

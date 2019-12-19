@@ -108,7 +108,8 @@ let shadeHit world comps remaining =
 
     match light with
     | PointLight _ -> add acc colr
-    | ConstantLight _ -> lighten acc colr
+    | ConstantLight l ->
+      if l.additive then add acc colr else lighten acc colr
   ) (color 0. 0. 0.)
 
 let colorAt world ray remaining =

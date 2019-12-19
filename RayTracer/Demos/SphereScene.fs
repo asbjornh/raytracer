@@ -52,7 +52,7 @@ let left =
   <| defaultMaterial ()
 
 let pLight = pointLight (point -10. 10. -10.) (color 1. 0.9 0.7)
-let cLight = constantLight (color 0. 0.1 0.2)
+let cLight = constantLight (color 0. 0.1 0.2) true
 let cam = camera 400 200 (Math.PI / 3.)
 let cTransform = viewTransform (point 0. 1.5 -5.) (point 0. 1. 0.) (vector 0. 1. 0.)
 cam.transform <- cTransform

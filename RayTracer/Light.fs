@@ -7,7 +7,7 @@ open Transform
 open Util
 
 type PointLight = { intensity: Color; position: Tuple }
-type ConstantLight = { intensity: Color; }
+type ConstantLight = { intensity: Color; additive: bool }
 
 type Light =
   | PointLight of PointLight
@@ -19,8 +19,8 @@ let pointLightFactory position intensity =
 let pointLight p i =
   pointLightFactory p i |> PointLight
 
-let constantLight intensity =
-  ConstantLight { intensity = intensity; }
+let constantLight intensity additive =
+  ConstantLight { intensity = intensity; additive = additive }
 
 let ringLight (position: Tuple) direction intensity count spread =
   let up = vector 0. 0. 1.
