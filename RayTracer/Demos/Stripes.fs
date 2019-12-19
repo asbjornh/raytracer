@@ -23,29 +23,30 @@ let wall = plane (chain [translateZ 10.; rotateX (rad 80.)]) mat
 
 
 
-let purple = color 0. 0. 0.2
 let midMat = Pattern {
-  a = materialC purple
+  a = Reflective { blend = Normal }
   b = materialC white
   pattern = Stripes
   transform = chain [
     translateX -0.06
     rotateY (Math.PI / 1.5)
-    uniformScale 0.05
+    uniformScale 0.1
   ]
 }
+
 let middle =
   sphere
   <| (translation -0.5 1. 0.5)
   <| midMat
 
 let rightMat = Pattern {
-  a = materialC purple
-  b = materialC white
+  a = materialC white
+  b = Reflective { blend = Normal }
   pattern = Stripes
   transform = chain [
-    rotateZ (Math.PI / 2.)
-    uniformScale 0.3
+    rotateZ (rad -15.)
+    rotateY (Math.PI / -0.5)
+    uniformScale 0.2
   ]
 }
 let right =
@@ -54,20 +55,22 @@ let right =
   <| rightMat
 
 let leftMat = Pattern {
-  a = materialC purple
+  a = Reflective { blend = Normal }
   b = materialC white
   pattern = Stripes
-  transform = identity ()
+  transform = chain [rotateZ (rad 15.); uniformScale 0.25]
 }
 let left =
   sphere
   <| (chain [ translate -1.5 0.33 -0.75; uniformScale 0.33 ])
   <| leftMat
 
-let darkBrown = Color.scale 0.15 (color 1. 0.3 0.6)
-let pLight = pointLight (point -10. 10. -10.) (color 1. 0.9 0.7)
+let darkBrown = Color.scale 0.25 (color 1. 0.3 0.4)
+let lightPos = point -10. 10. -10.
+let origin = point 0. 0. 0.
+let sLight = softLight lightPos (origin - lightPos) white 5 8.
 let cLight = constantLight darkBrown true
-let cam = camera 200 100 (Math.PI / 3.)
+let cam = camera 400 200 (Math.PI / 3.)
 let cTransform = viewTransform (point 0. 1.5 -5.) (point 0. 1. 0.) (vector 0. 1. 0.)
 cam.transform <- cTransform
 
@@ -75,7 +78,7 @@ let objects: IShape list =
   [middle; right; left; floor; wall]
 
 let w = {
-  world [pLight; cLight] objects with
+  world [sLight; cLight] objects with
     background = darkBrown
 }
 
