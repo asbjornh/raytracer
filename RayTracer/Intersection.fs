@@ -40,33 +40,27 @@ let indexFromIntersection (s: IShape) =
   | Transparent m -> m.index
   | _ -> 1.
 let refractiveIndexes (is: Intersection list) (hit: Intersection) =
-  let mutable containers: IShape list = []
-  let mutable n1 = 1.
-  let mutable n2 = 1.
+  is |> List.fold (fun (containers, n1, n2) i ->
+    let newN1 =
+      if refEq i hit then
+        if List.isEmpty containers then 1.
+        else indexFromIntersection (List.last containers)
+      else n1
 
-  is |> List.iter (fun i ->
-    if refEq i hit then
-      if List.isEmpty containers then
-        n1 <- 1.
-      else
-        n1 <- indexFromIntersection (List.last containers)
-    else ignore ()
-
-    if (containsRef i.object containers) then
-      containers <-
+    let newC =
+      if (containsRef i.object containers) then
         List.filter (fun el -> not (refEq el i.object)) containers
-    else
-      containers <-
-        List.append containers [i.object]
-    
-    if refEq i hit then
-      if List.isEmpty containers then
-        n2 <- 1.
-      else
-        n2 <- indexFromIntersection (List.last containers)
-    else ignore ()
-  )
-  (n1, n2)
+      else List.append containers [i.object]
+
+    let newN2 =
+      if refEq i hit then
+        if List.isEmpty newC then 1.
+        else indexFromIntersection (List.last newC)
+      else n2
+    (newC, newN1, newN2)
+  ) ([], 1., 1.)
+  |> (fun (_, n1, n2) -> (n1, n2))
+
 
 let prepareComputations (is: Intersection list) (hit: Intersection) r =
   let point = position hit.t r
