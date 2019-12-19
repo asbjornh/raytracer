@@ -49,8 +49,27 @@ let multiply c = Color.CombineC (*) c
 let scale n = Color.MapC ((*) n)
 let divide n = Color.MapC (flip (/) n)
 let lighten c = Color.CombineC max c
-let blend a b amount =
+let invert c = subtract (color 1. 1. 1.) c
+let screen a b =
+  invert (multiply (invert a) (invert b))
+let mix a b amount =
   subtract b a |> scale amount |> add a
+
+type BlendingMode =
+  | Add
+  | Subtract
+  | Multiply
+  | Lighten
+  | Screen
+  | Normal
+
+let blend = function
+  | Add -> add
+  | Subtract -> subtract
+  | Multiply -> multiply
+  | Lighten -> lighten
+  | Screen -> screen
+  | Normal -> always
 
 let red = color 1. 0.1 0.2
 let green = color 0. 1. 0.
