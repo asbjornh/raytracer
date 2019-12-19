@@ -123,14 +123,16 @@ let shadeHit world comps remaining =
   ) (color 0. 0. 0.)
 
 let colorAt world ray remaining =
-  match (intersect ray world |> hit) with
-  | Some i -> prepareComputations i ray |> shadeHit world <| remaining
+  let is = intersect ray world
+  match (is |> hit) with
+  | Some i -> prepareComputations is i ray |> shadeHit world <| remaining
   | None -> world.background
 
 let colorAndDepthAt world ray remaining =
-  match (intersect ray world |> hit) with
+  let is = intersect ray world
+  match (is |> hit) with
   | Some i ->
-    let comps = prepareComputations i ray
+    let comps = prepareComputations is i ray
     let c = comps |> shadeHit world <| remaining
     (comps.point, comps.normalV, c)
   | None ->

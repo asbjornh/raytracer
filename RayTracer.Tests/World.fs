@@ -31,7 +31,7 @@ let tests =
       let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
       let shape = w.objects.[0]
       let i = intersection 4. shape
-      let comps = prepareComputations i r
+      let comps = prepareComputations [i] i r
       let c = shadeHit w comps 1
       Expect.equal c (color 0.38066 0.47583 0.2855) ""
 
@@ -43,7 +43,7 @@ let tests =
       let r = ray (point 0. 0. 0.) (vector 0. 0. 1.)
       let shape = w.objects.[1]
       let i = intersection 0.5 shape
-      let comps = prepareComputations i r
+      let comps = prepareComputations [i] i r
       let c = shadeHit w comps 1
       Expect.equal c (color 0.90498 0.90498 0.90498) ""
 
@@ -102,7 +102,7 @@ let tests =
 
       let r = ray (point 0. 0. 5.) (vector 0. 0. 1.)
       let i = intersection 4. s
-      let comps = prepareComputations i r
+      let comps = prepareComputations [i] i r
       let c = shadeHit w comps 1
       Expect.equal c (color 0.1 0.1 0.1) ""
 
@@ -118,7 +118,7 @@ let tests =
       let a = (sqrt 2.) / 2.
       let r = ray (point 0. 0. -3.) (vector 0. -a a)
       let i = intersection (sqrt 2.) shape
-      let comps = prepareComputations i r
+      let comps = prepareComputations [i] i r
       let c = reflectedColor w comps 1
       Expect.equal c (color 0.38066 0.47583 0.28549) ""
 
@@ -134,7 +134,7 @@ let tests =
       let a = (sqrt 2.) / 2.
       let r = ray (point 0. 0. -3.) (vector 0. -a a)
       let i = intersection (sqrt 2.) shape
-      let comps = prepareComputations i r
+      let comps = prepareComputations [i] i r
       let c = shadeHit w comps 1
       Expect.equal c (color 0.53354 0.58112 0.48596) ""
 
@@ -159,7 +159,7 @@ let tests =
       let a = (sqrt 2.) / 2.
       let r = ray (point 0. 0. -3.) (vector 0. -a a)
       let i = intersection (sqrt 2.) shape
-      let comps = prepareComputations i r
+      let comps = prepareComputations [i] i r
       let c = reflectedColor w comps 0
       Expect.equal c black ""
   ]

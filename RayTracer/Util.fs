@@ -2,6 +2,8 @@ module Util
 
 open System
 
+let refEq = LanguagePrimitives.PhysicalEquality
+
 // Function helpers
 let always a _ = a
 let flip fn a b = fn b a
@@ -37,6 +39,10 @@ let get arr index =
   Array.indexed arr |> Array.tryFind (isIndex index)
 let replace index (newEl: 'a) (list: 'a [])=
   list.[index] <- newEl; list
+
+let containsRef v l =
+  l |> List.tryFind (fun el -> refEq el v)
+  |> function | Some _ -> true | None -> false
 
 // Array
 let concat a b = Array.concat [a; b]
