@@ -108,7 +108,7 @@ let fresnelShade a b normalV eyeV =
   let mapping = pow 3.
   let max = mapping (Math.PI / 2.)
   let amount = ang |> mapping |> rangeMap (0., max) (0., 1.)
-  blend a b amount
+  mix a b amount
 
 // If either matA or matB is a Reflective with additive enabled, adds the non-reflective color to the reflected color
 let getBlendComponents matA matB a b =
