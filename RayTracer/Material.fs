@@ -13,6 +13,8 @@ type Material =
   | Reflective of Reflective
   | Fresnel of Fresnel
   | Blend of Blend
+  | Pattern of Pattern
+  | Gradient of Gradient
 
 type Fresnel = {
   a: Material
@@ -30,49 +32,26 @@ type Reflective = {
   additive: bool
 }
 
+type Gradient = {
+  a: Material
+  b: Material
+  transform: Matrix.Matrix
+}
+
+type Pattern = {
+  a: Material
+  b: Material
+  transform: Matrix.Matrix
+  pattern: PatternType
+}
+
 type Phong = {
   mutable color: Color
   mutable ambient: float
   mutable diffuse: float
   mutable specular: float
   mutable shininess: float
-  mutable pattern: IPattern option
 }
-
-let defaultMaterial () = Phong (defaultMaterialP ())
-
-let defaultMaterialP () = {
-  color = color 1. 1. 1.
-  ambient = 0.1
-  diffuse = 0.9
-  specular = 0.9
-  shininess = 200.
-  pattern = None
-}
-
-let material color ambient diffuse specular =
-  Phong {
-    defaultMaterialP () with
-      color = color
-      ambient = ambient
-      diffuse = diffuse
-      specular = specular
-  }
-
-let patternMaterialP pattern ambient diffuse specular =
-  {
-    defaultMaterialP () with
-      ambient = ambient
-      diffuse = diffuse
-      specular = specular
-      pattern = Some pattern
-  }
-
-let patternMaterial pattern ambient diffuse specular =
-  Phong <| patternMaterialP pattern ambient diffuse specular
-
-let materialC color =
-  Phong { defaultMaterialP () with color = color }
 
 let phongLighting
   (light: PointLight)
@@ -80,14 +59,8 @@ let phongLighting
   (eyeV: Tuple)
   (normalV: Tuple)
   (mat: Phong)
-  (objectT: Matrix.Matrix)
   (inShadow: bool) =
-    let overPoint = pos + (epsilon * normalV)
-    let baseColor =
-      match mat.pattern with
-      | Some p -> patternAt overPoint objectT p
-      | None -> mat.color
-    let effectiveColor = multiply baseColor light.intensity
+    let effectiveColor = multiply mat.color light.intensity
     let ambient = scale mat.ambient effectiveColor
 
     if inShadow
@@ -113,7 +86,7 @@ let phongLighting
 
       ambient |> add diffuse |> add specular
 
-let constantLighting l _ _ _ _ _ _ = l.intensity
+let constantLighting l _ _ _ _ _ = l.intensity
 
 let lighting light =
   match light with
@@ -134,3 +107,26 @@ let fresnelShade a b normalV eyeV matA matB =
   | (_, Reflective r) when r.additive ->
     fresnelColor black b normalV eyeV |> add a
   | _ -> fresnelColor a b normalV eyeV
+
+
+let defaultMaterial () = Phong (defaultMaterialP ())
+
+let defaultMaterialP () = {
+  color = color 1. 1. 1.
+  ambient = 0.1
+  diffuse = 0.9
+  specular = 0.9
+  shininess = 200.
+}
+
+let material color ambient diffuse specular =
+  Phong {
+    defaultMaterialP () with
+      color = color
+      ambient = ambient
+      diffuse = diffuse
+      specular = specular
+  }
+
+let materialC color =
+  Phong { defaultMaterialP () with color = color }

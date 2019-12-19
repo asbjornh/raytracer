@@ -53,7 +53,7 @@ let frame (bar: ProgressBar) l fileName =
       let eyeV = negate r.direction
       match i.object.Material with
       | Phong mat ->
-        lighting l point eyeV normalV mat i.object.Transform false
+        lighting l point eyeV normalV mat false
       | _ -> black
       |> add bg
     | None -> black |> add bg |> Color.scale 0.8

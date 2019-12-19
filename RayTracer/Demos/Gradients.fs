@@ -23,35 +23,46 @@ let wall = plane (chain [translateZ 10.; rotateX (rad 80.)]) mat
 
 
 let purple = color 0. 0. 0.2
-let midPattern = gradientPatternT pink yellow (chain [
-  rotateZ (rad 90.)
-  uniformScale 2.
-  translateX 0.5
-])
+let midMat = Gradient {
+  a = materialC pink
+  b = materialC yellow
+  transform = chain [
+    rotateZ (rad 90.)
+    uniformScale 2.
+    translateX 0.5
+  ]
+}
 let middle =
   sphere
   <| (translation -0.5 1. 0.5)
-  <| patternMaterial midPattern 0.25 0.85 0.85
+  <| midMat
 
-let rightPattern = gradientPatternT white pink (chain [
-  rotateZ (rad 90.)
-  uniformScale 2.
-  translateX 0.5
-])
+let rightMat = Gradient {
+  a = materialC white
+  b = materialC pink
+  transform = chain [
+    rotateZ (rad 90.)
+    uniformScale 2.
+    translateX 0.5
+  ]
+}
 let right =
   sphere
   <| (chain [ translate 1.5 0.5 -0.5; uniformScale 0.5 ])
-  <| patternMaterial rightPattern 0.25 0.85 0.85
-
-let leftPattern = gradientPatternT white cyan (chain [
-  rotateZ (rad 90.)
-  uniformScale 2.
-  translateX 0.5
-])
+  <| rightMat
+let leftMat = Gradient {
+  a = materialC white
+  b = materialC cyan
+  transform = chain [
+    rotateZ (rad 90.)
+    uniformScale 2.
+    translateX 0.5
+  ]
+}
 let left =
   sphere
   <| (chain [ translate -1.5 0.33 -0.75; uniformScale 0.33 ])
-  <| patternMaterial leftPattern 0.25 0.85 0.85
+  <| leftMat
 
 let constantColor = Color.scale 0.5 (color 0.4 0.4 1.)
 let pLight = pointLight (point -10. 10. -10.) (color 1. 0.9 0.7)

@@ -3,6 +3,7 @@ module PatternTest
 open Expecto
 
 open Color
+open Material
 open Matrix
 open Pattern
 open Shape
@@ -14,82 +15,80 @@ let i = identity ()
 [<Tests>]
 let tests =
   testList "Tests for Pattern" [
-    testCase "Creating a stripe pattern" <| fun _ ->
-      let pattern = stripePattern white black
-      Expect.equal pattern.A white ""
-      Expect.equal pattern.B black ""
-
     testCase "A stripe pattern is constant in y" <| fun _ ->
-      let pattern = stripePattern white black
-      Expect.equal (patternAt (point 0. 0. 0.) i pattern) white ""
-      Expect.equal (patternAt (point 0. 1. 0.) i pattern) white ""
-      Expect.equal (patternAt (point 0. 2. 0.) i pattern) white ""
+      let pattern = patternAt white black Stripes
+      Expect.equal (pattern (point 0. 0. 0.)) white ""
+      Expect.equal (pattern (point 0. 1. 0.)) white ""
+      Expect.equal (pattern (point 0. 2. 0.)) white ""
 
     testCase "A stripe pattern is constant in z" <| fun _ ->
-      let pattern = stripePattern white black
-      Expect.equal (patternAt (point 0. 0. 0.) i pattern) white ""
-      Expect.equal (patternAt (point 0. 0. 1.) i pattern) white ""
-      Expect.equal (patternAt (point 0. 0. 2.) i pattern) white ""
+      let pattern = patternAt white black Stripes
+      Expect.equal (pattern (point 0. 0. 0.)) white ""
+      Expect.equal (pattern (point 0. 0. 1.)) white ""
+      Expect.equal (pattern (point 0. 0. 2.)) white ""
 
     testCase "A stripe pattern alternates in x" <| fun _ ->
-      let pattern = stripePattern white black
-      Expect.equal (patternAt (point 0. 0. 0.) i pattern) white "One"
-      Expect.equal (patternAt (point 0.9 0. 0.) i pattern) white "Two"
-      Expect.equal (patternAt (point 1. 0. 0.) i pattern) black "Three"
-      Expect.equal (patternAt (point -0.1 0. 0.) i pattern) black "Four"
-      Expect.equal (patternAt (point -1. 0. 0.) i pattern) black "Five"
-      Expect.equal (patternAt (point -1.1 0. 0.) i pattern) white "Six"
+      let pattern = patternAt white black Stripes
+      Expect.equal (pattern (point 0. 0. 0.)) white "One"
+      Expect.equal (pattern (point 0.9 0. 0.)) white "Two"
+      Expect.equal (pattern (point 1. 0. 0.)) black "Three"
+      Expect.equal (pattern (point -0.1 0. 0.)) black "Four"
+      Expect.equal (pattern (point -1. 0. 0.)) black "Five"
+      Expect.equal (pattern (point -1.1 0. 0.)) white "Six"
 
     testCase "Stripes with an object transformation" <| fun _ ->
       let t = scaling 2. 2. 2.
       let object = sphereT t
-      let pattern = stripePattern white black
-      let c = patternAt (point 1.5 0. 0.) object.Transform pattern
+      let p = point 1.5 0. 0.
+      let patternP = patternPoint object.Transform (identity ()) p
+      let c = patternAt white black Stripes patternP
       Expect.equal c white ""
 
     testCase "Stripes with a pattern transformation" <| fun _ ->
       let object = unitSphere ()
-      let pattern = stripePatternT white black (scaling 2. 2. 2.)
-      let c = patternAt (point 1.5 0. 0.) object.Transform pattern
+      let p = point 1.5 0. 0.
+      let patternP = patternPoint object.Transform (scaling 2. 2. 2.) p
+      let c = patternAt white black Stripes patternP
       Expect.equal c white ""
 
     testCase "Stripes with both an object and a pattern transformation" <| fun _ ->
       let t = scaling 2. 2. 2.
       let object = sphereT t
-      let pattern = stripePatternT white black (translation 0.5 0. 0.)
-      let c = patternAt (point 2.5 0. 0.) object.Transform pattern
+      let p = point 2.5 0. 0.
+      let patternP = patternPoint object.Transform (translation 0.5 0. 0.) p
+      let c = patternAt white black Stripes patternP
       Expect.equal c white ""
 
     testCase "A gradient linearly interpolates between colors" <| fun _ ->
-      let pattern = gradientPattern white black
-      Expect.equal (patternAt (point 0. 0. 0.) i pattern) white ""
-      Expect.equal (patternAt (point 0.25 0. 0.) i pattern) (color 0.75 0.75 0.75) ""
-      Expect.equal (patternAt (point 0.5 0. 0.) i pattern) (color 0.5 0.5 0.5) ""
-      Expect.equal (patternAt (point 0.75 0. 0.) i pattern) (color 0.25 0.25 0.25) ""
+      let pattern = gradientAt white black
+      Expect.equal (pattern (point 0. 0. 0.)) white ""
+      Expect.equal (pattern (point 0.25 0. 0.)) (color 0.75 0.75 0.75) ""
+      Expect.equal (pattern (point 0.5 0. 0.)) (color 0.5 0.5 0.5) ""
+      Expect.equal (pattern (point 0.75 0. 0.)) (color 0.25 0.25 0.25) ""
 
     testCase "A ring should extend in both x and z" <| fun _ ->
-      let pattern = ringPattern  white black
-      Expect.equal (patternAt (point 0. 0. 0.) i pattern) white ""
-      Expect.equal (patternAt (point 1. 0. 0.) i pattern) black ""
-      Expect.equal (patternAt (point 0. 0. 1.) i pattern) black ""
+      let pattern = patternAt white black Ring
+      Expect.equal (pattern (point 0. 0. 0.)) white ""
+      Expect.equal (pattern (point 1. 0. 0.)) black ""
+      Expect.equal (pattern (point 0. 0. 1.)) black ""
       // 0.708 = just slightly more than √2/2​
-      Expect.equal (patternAt (point 0.708 0. 0.708) i pattern) black ""
+      Expect.equal (pattern (point 0.708 0. 0.708)) black ""
 
     testCase "Checkers should repeat in x" <| fun _ ->
-      let pattern = checkersPattern white black
-      Expect.equal (patternAt (point 0. 0. 0.) i pattern) white ""
-      Expect.equal (patternAt (point 0.99 0. 0.) i pattern) white ""
-      Expect.equal (patternAt (point 1.01 0. 0.) i pattern) black ""
+      let pattern = patternAt white black Checkers
+      Expect.equal (pattern (point 0. 0. 0.)) white ""
+      Expect.equal (pattern (point 0.99 0. 0.)) white ""
+      Expect.equal (pattern (point 1.01 0. 0.)) black ""
 
     testCase "Checkers should repeat in y" <| fun _ ->
-      let pattern = checkersPattern white black
-      Expect.equal (patternAt (point 0. 0. 0.) i pattern) white ""
-      Expect.equal (patternAt (point 0. 0.99 0.) i pattern) white ""
-      Expect.equal (patternAt (point 0. 1.01 0.) i pattern) black ""
+      let pattern = patternAt white black Checkers
+      Expect.equal (pattern (point 0. 0. 0.)) white ""
+      Expect.equal (pattern (point 0. 0.99 0.)) white ""
+      Expect.equal (pattern (point 0. 1.01 0.)) black ""
 
     testCase "Checkers should repeat in z" <| fun _ ->
-      let pattern = checkersPattern white black
-      Expect.equal (patternAt (point 0. 0. 0.) i pattern) white ""
-      Expect.equal (patternAt (point 0. 0. 0.99) i pattern) white ""
-      Expect.equal (patternAt (point 0. 0. 1.01) i pattern) black ""
+      let pattern = patternAt white black Checkers
+      Expect.equal (pattern (point 0. 0. 0.)) white ""
+      Expect.equal (pattern (point 0. 0. 0.99)) white ""
+      Expect.equal (pattern (point 0. 0. 1.01)) black ""
   ]

@@ -24,30 +24,45 @@ let wall = plane (chain [translateZ 10.; rotateX (rad 80.)]) mat
 
 
 let purple = color 0. 0. 0.2
-let midPattern = stripePatternT purple white (chain [
-  translateX -0.06
-  rotateY (Math.PI / 1.5)
-  uniformScale 0.05
-])
+let midMat = Pattern {
+  a = materialC purple
+  b = materialC white
+  pattern = Stripes
+  transform = chain [
+    translateX -0.06
+    rotateY (Math.PI / 1.5)
+    uniformScale 0.05
+  ]
+}
 let middle =
   sphere
   <| (translation -0.5 1. 0.5)
-  <| patternMaterial midPattern 0.25 0.85 0.85
+  <| midMat
 
-let rightPattern = stripePatternT purple white (chain [
-  rotateZ (Math.PI / 2.)
-  uniformScale 0.3
-])
+let rightMat = Pattern {
+  a = materialC purple
+  b = materialC white
+  pattern = Stripes
+  transform = chain [
+    rotateZ (Math.PI / 2.)
+    uniformScale 0.3
+  ]
+}
 let right =
   sphere
   <| (chain [ translate 1.5 0.5 -0.5; uniformScale 0.5 ])
-  <| patternMaterial rightPattern 0.25 0.85 0.85
+  <| rightMat
 
-let leftPattern = stripePatternT purple white (identity ())
+let leftMat = Pattern {
+  a = materialC purple
+  b = materialC white
+  pattern = Stripes
+  transform = identity ()
+}
 let left =
   sphere
   <| (chain [ translate -1.5 0.33 -0.75; uniformScale 0.33 ])
-  <| patternMaterial leftPattern 0.25 0.85 0.85
+  <| leftMat
 
 let darkBrown = Color.scale 0.15 (color 1. 0.3 0.6)
 let pLight = pointLight (point -10. 10. -10.) (color 1. 0.9 0.7)

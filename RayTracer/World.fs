@@ -6,6 +6,8 @@ open Color
 open Intersection
 open Light
 open Material
+open Matrix
+open Pattern
 open Ray
 open Shape
 open Transform
@@ -55,34 +57,48 @@ let isInShadow point light objects =
     | Some hit -> hit.t < distance
     | None -> false
 
+let shadeTwo world comps remaining matA matB =
+  let objectA = assignMaterial comps.object matA
+  let objectB = assignMaterial comps.object matB
+  let compsA = { comps with object = objectA }
+  let compsB = { comps with object = objectB }
+  let a = shadeHit world compsA remaining
+  let b = shadeHit world compsB remaining
+  (a, b)
+
 let shadeHitSingleLight light world comps remaining =
+  let objectT = comps.object.Transform
+
   match comps.object.Material with
   | Phong mat ->
+    let isShadow = isInShadow comps.overPoint light world.objects
     lighting
-      light
-      comps.point
-      comps.eyeV
-      comps.normalV
-      mat
-      comps.object.Transform
-      (isInShadow comps.overPoint light world.objects)
+      light comps.point comps.eyeV comps.normalV mat isShadow
+
   | Reflective _ ->
     match light with
     | PointLight _ -> reflectedColor world comps remaining
     | ConstantLight _ -> black
+
   | Fresnel mat ->
-    let compsA = { comps with object = assignMaterial comps.object mat.a }
-    let compsB = { comps with object = assignMaterial comps.object mat.b }
-    let a = shadeHit world compsA remaining
-    let b = shadeHit world compsB remaining
+    let (a, b) = shadeTwo world comps remaining mat.a mat.b
     let f = fresnelShade a b comps.normalV comps.eyeV mat.a mat.b
     blend a f mat.mix
+
   | Blend mat ->
-    let compsA = { comps with object = assignMaterial comps.object mat.a }
-    let compsB = { comps with object = assignMaterial comps.object mat.b }
-    let a = shadeHit world compsA remaining
-    let b = shadeHit world compsB remaining
+    let (a, b) = shadeTwo world comps remaining mat.a mat.b
     blend a b mat.mix
+
+  | Pattern mat ->
+    let p = patternPoint objectT mat.transform comps.overPoint
+    let patternMat = patternAt mat.a mat.b mat.pattern p
+    let patternComp = { comps with object = assignMaterial comps.object patternMat }
+    shadeHit world patternComp remaining
+
+  | Gradient mat ->
+    let (a, b) = shadeTwo world comps remaining mat.a mat.b
+    let p = patternPoint objectT mat.transform comps.overPoint
+    gradientAt a b p
 
 let shadeHit world comps remaining =
   world.lights

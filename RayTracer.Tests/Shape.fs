@@ -142,14 +142,19 @@ let tests =
 
     testCase "A sphere has a default material" <| fun _ ->
       let s = unitSphere ()
-      let m = s.Material
-      Expect.equal m (defaultMaterial ()) ""
+      let m =
+        match s.Material with
+        | Phong m -> Some m | _ -> None
+      Expect.equal m (Some <| defaultMaterialP ()) ""
 
     testCase "A sphere may be assigned a material" <| fun _ ->
       let s = unitSphere ()
       let m = defaultMaterial ()
-      let s2 = { s with Material = m}
-      Expect.equal s2.Material m ""
+      let s2 = { s with Material = m }
+      let m2 =
+        match s2.Material with
+        | Phong m -> Some m | _ -> None
+      Expect.equal m2 (Some <| defaultMaterialP () ) ""
 
     testCase "Computing the normal on a translated shape" <| fun _ ->
       let s = testShape (translation 0. 1. 0.)
