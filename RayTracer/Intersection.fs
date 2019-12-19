@@ -42,10 +42,9 @@ let indexFromIntersection (s: IShape) =
 let refractiveIndexes (is: Intersection list) (hit: Intersection) =
   is |> List.fold (fun (containers, n1, n2) i ->
     let newN1 =
-      if refEq i hit then
-        if List.isEmpty containers then 1.
-        else indexFromIntersection (List.last containers)
-      else n1
+      if not (refEq i hit) then n1
+      else if List.isEmpty containers then 1.
+      else indexFromIntersection (List.last containers)
 
     let newC =
       if (containsRef i.object containers) then
@@ -53,10 +52,9 @@ let refractiveIndexes (is: Intersection list) (hit: Intersection) =
       else List.append containers [i.object]
 
     let newN2 =
-      if refEq i hit then
-        if List.isEmpty newC then 1.
-        else indexFromIntersection (List.last newC)
-      else n2
+      if not (refEq i hit) then n2
+      else if List.isEmpty newC then 1.
+      else indexFromIntersection (List.last newC)
     (newC, newN1, newN2)
   ) ([], 1., 1.)
   |> (fun (_, n1, n2) -> (n1, n2))
