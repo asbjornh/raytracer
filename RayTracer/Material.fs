@@ -15,6 +15,7 @@ type Material =
   | Blend of Blend
   | Pattern of Pattern
   | Gradient of Gradient
+  | Transparent of Transparent
 
 type Fresnel = {
   a: Material
@@ -30,6 +31,10 @@ type Blend = {
 
 type Reflective = {
   blend: BlendingMode
+}
+
+type Transparent = {
+  index: float
 }
 
 type Gradient = {

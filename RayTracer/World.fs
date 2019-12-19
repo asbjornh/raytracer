@@ -94,6 +94,8 @@ let shadeHitSingleLight light world comps remaining =
       match mat.blend with
       | Normal -> l.intensity | _ -> black
 
+  | Transparent _ -> white
+
   | Fresnel mat ->
     let (a, b) = shadeTwo world comps remaining mat.a mat.b
     let f = fresnelShade a b comps.normalV comps.eyeV
