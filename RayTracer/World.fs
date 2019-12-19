@@ -42,20 +42,27 @@ let intersectObjects ray (objects: IShape list) =
 let intersect (ray: Ray) (w: World) =
   w.objects |> intersectObjects ray
 
-let isInShadow point light objects =
-  match light with
-  | ConstantLight _ -> false
-  | PointLight l ->
-    let v = l.position - point
-    let distance = magnitude v
-    let direction = normalize v
-    let r = ray point direction
-    let intersections = intersectObjects r objects
-    let h = hit intersections
+let isInShadow pos objects lightPos =
+  let v = lightPos - pos
+  let distance = magnitude v
+  let direction = normalize v
+  let r = ray pos direction
+  let intersections = intersectObjects r objects
+  let h = hit intersections
 
-    match h with
-    | Some hit -> hit.t < distance
-    | None -> false
+  match h with
+  | Some hit -> if hit.t < distance then 1. else 0.
+  | None -> 0.
+
+let shadowAmount point light objects =
+  match light with
+  | ConstantLight _ -> 0.
+  | PointLight l -> isInShadow point objects l.position 
+  | SoftLight l ->
+    let count = List.length l.virtualLights
+    let hits =
+      l.virtualLights |> List.sumBy (isInShadow point objects)
+    hits / float count
 
 let shadeTwo world comps remaining matA matB =
   let objectA = assignMaterial comps.object matA
@@ -71,9 +78,9 @@ let shadeHitSingleLight light world comps remaining =
 
   match comps.object.Material with
   | Phong mat ->
-    let isShadow = isInShadow comps.overPoint light world.objects
+    let s = shadowAmount comps.overPoint light world.objects
     lighting
-      light comps.point comps.eyeV comps.normalV mat isShadow
+      light comps.point comps.eyeV comps.normalV mat s
 
   | Pattern mat ->
     let p = patternPoint objectT mat.transform comps.overPoint
@@ -83,7 +90,7 @@ let shadeHitSingleLight light world comps remaining =
 
   | Reflective mat ->
     match light with
-    | PointLight _ -> reflectedColor world comps remaining
+    | PointLight _ | SoftLight _ -> reflectedColor world comps remaining
     | ConstantLight l -> if mat.additive then black else l.intensity
 
   | Fresnel mat ->
@@ -107,7 +114,7 @@ let shadeHit world comps remaining =
     let colr = shadeHitSingleLight light singleLightW comps remaining
 
     match light with
-    | PointLight _ -> add acc colr
+    | PointLight _ | SoftLight _ -> add acc colr
     | ConstantLight l ->
       if l.additive then add acc colr else lighten acc colr
   ) (color 0. 0. 0.)

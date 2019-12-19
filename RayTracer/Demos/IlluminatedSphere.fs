@@ -53,7 +53,7 @@ let run () =
       let eyeV = negate r.direction
       match i.object.Material with
       | Phong mat ->
-        lighting l point eyeV normalV mat false
+        lighting l point eyeV normalV mat 0.
       | _ -> black
       |> add bg
     | None -> black |> add bg |> Color.scale 0.8

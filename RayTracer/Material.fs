@@ -60,11 +60,11 @@ let phongLighting
   (eyeV: Tuple)
   (normalV: Tuple)
   (mat: Phong)
-  (inShadow: bool) =
+  (shadowAmount: float) =
     let effectiveColor = multiply mat.color light.intensity
     let ambient = scale mat.ambient effectiveColor
 
-    if inShadow
+    if (shadowAmount = 1.)
     then ambient
     else
       let lightV = normalize (light.position - pos)
@@ -87,12 +87,21 @@ let phongLighting
 
       ambient |> add diffuse |> add specular
 
-let constantLighting l _ _ _ _ _ = l.intensity
+let softLighting (light: SoftLight) pos eyeV normalV mat shadowAmount =
+  let phongComponent = phongLighting light.light pos eyeV normalV mat 0.
+  if (shadowAmount = 0.)
+  then phongComponent
+  else
+    let shadowComponent = phongLighting light.light pos eyeV normalV mat 1.
+    blend phongComponent shadowComponent shadowAmount
+
+let constantLighting (l: ConstantLight) _ _ _ _ _ = l.intensity
 
 let lighting light =
   match light with
   | ConstantLight l -> constantLighting l
   | PointLight l -> phongLighting l
+  | SoftLight l -> softLighting l
 
 let fresnelShade a b normalV eyeV =
   let ang = angle (normalize normalV) (normalize eyeV)

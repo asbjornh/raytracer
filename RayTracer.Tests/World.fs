@@ -76,22 +76,22 @@ let tests =
     testCase "There is no shadow when nothing is collinear with point and light" <| fun _ ->
       let w = defaultWorld ()
       let p = point 0. 10. 0.
-      Expect.equal (isInShadow p w.lights.[0] w.objects) false ""
+      Expect.equal (shadowAmount p w.lights.[0] w.objects) 0. ""
 
     testCase "The shadow when an object is between the point and the light" <| fun _ ->
       let w = defaultWorld ()
       let p = point 10. -10. 10.
-      Expect.equal (isInShadow p w.lights.[0] w.objects) true ""
+      Expect.equal (shadowAmount p w.lights.[0] w.objects) 1. ""
 
     testCase "There is no shadow when an object is behind the light" <| fun _ ->
       let w = defaultWorld ()
       let p = point -20. 20. -20.
-      Expect.equal (isInShadow p w.lights.[0] w.objects) false ""
+      Expect.equal (shadowAmount p w.lights.[0] w.objects) 0. ""
 
     testCase "There is no shadow when an object is behind the point" <| fun _ ->
       let w = defaultWorld ()
       let p = point -2. 2. -2.
-      Expect.equal (isInShadow p w.lights.[0] w.objects) false ""
+      Expect.equal (shadowAmount p w.lights.[0] w.objects) 0. ""
 
     testCase "shade_hit() is given an intersection in shadow" <| fun _ ->
       let s = sphereT (translation 0. 0. 10.)

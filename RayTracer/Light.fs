@@ -8,10 +8,12 @@ open Util
 
 type PointLight = { intensity: Color; position: Tuple }
 type ConstantLight = { intensity: Color; additive: bool }
+type SoftLight = { light: PointLight; virtualLights: Tuple list }
 
 type Light =
   | PointLight of PointLight
   | ConstantLight of ConstantLight
+  | SoftLight of SoftLight
 
 let pointLightFactory position intensity =
   { intensity = intensity; position = position }
@@ -37,9 +39,8 @@ let ringLight (position: Tuple) direction intensity count spread =
     pointLight p i
   )
 
-let squareLight (position: Tuple) direction intensity resolution size =
+let squareOfPoints (position: Tuple) direction resolution size =
   let up = vector 0. 0. 1.
-  let count = resolution * resolution
   List.init resolution (fun y ->
     List.init resolution (fun x ->
       let delta = size / (float resolution)
@@ -49,9 +50,19 @@ let squareLight (position: Tuple) direction intensity resolution size =
         translate (float x * delta - offset) (float y * delta - offset) 0.
         rotateAlign up direction
       ]
-      let p = multiplyT transform (point 0. 0. 0.)
-      let i = Color.scale (1. / float count) intensity
-      pointLight p i
+      multiplyT transform (point 0. 0. 0.)
     )
   )
   |> List.reduce (fun a b -> List.concat [a; b])
+
+let softLight (position: Tuple) direction intensity resolution size =
+  let points = squareOfPoints position direction resolution size
+  let l = { position = position; intensity = intensity; }
+  SoftLight { light = l; virtualLights = points }
+
+let squareLight (position: Tuple) direction intensity resolution size =
+  let count = resolution * resolution
+  let i = Color.scale (1. / float count) intensity
+
+  squareOfPoints position direction resolution size
+    |> List.map (fun p -> pointLight p i)

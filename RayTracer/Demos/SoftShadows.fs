@@ -52,10 +52,10 @@ let left =
 
 let lightPos = point -10. 10. -10.
 let origin = point 0. 0. 0.
-let sLights = squareLight lightPos (origin - lightPos) (color 1. 0.9 0.7) 5 1.5
+let sLight = softLight lightPos (origin - lightPos) (color 1. 0.9 0.7) 2 3.
 let darkBrown = Color.scale 0.15 (color 1. 0.3 0.6)
 let cLight = constantLight darkBrown true
-let lights = List.concat [sLights; [cLight]]
+let lights = [sLight; cLight]
 let cam = camera 400 200 (Math.PI / 3.)
 let cTransform = viewTransform (point 0. 1.5 -5.) (point 0. 1. 0.) (vector 0. 1. 0.)
 cam.transform <- cTransform
