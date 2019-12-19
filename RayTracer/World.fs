@@ -64,7 +64,7 @@ let shadeTwo world comps remaining matA matB =
   let compsB = { comps with object = objectB }
   let a = shadeHit world compsA remaining
   let b = shadeHit world compsB remaining
-  (a, b)
+  getBlendComponents matA matB a b
 
 let shadeHitSingleLight light world comps remaining =
   let objectT = comps.object.Transform
@@ -75,6 +75,12 @@ let shadeHitSingleLight light world comps remaining =
     lighting
       light comps.point comps.eyeV comps.normalV mat isShadow
 
+  | Pattern mat ->
+    let p = patternPoint objectT mat.transform comps.overPoint
+    let patternMat = patternAt mat.a mat.b mat.pattern p
+    let patternComp = { comps with object = assignMaterial comps.object patternMat }
+    shadeHit world patternComp remaining
+
   | Reflective mat ->
     match light with
     | PointLight _ -> reflectedColor world comps remaining
@@ -82,28 +88,17 @@ let shadeHitSingleLight light world comps remaining =
 
   | Fresnel mat ->
     let (a, b) = shadeTwo world comps remaining mat.a mat.b
-    let f = fresnelShade a b comps.normalV comps.eyeV mat.a mat.b
+    let f = fresnelShade a b comps.normalV comps.eyeV
     blend a f mat.mix
 
   | Blend mat ->
     let (a, b) = shadeTwo world comps remaining mat.a mat.b
     blend a b mat.mix
 
-  | Pattern mat ->
-    let p = patternPoint objectT mat.transform comps.overPoint
-    let patternMat = patternAt mat.a mat.b mat.pattern p
-    let patternComp = { comps with object = assignMaterial comps.object patternMat }
-    shadeHit world patternComp remaining
-
   | Gradient mat ->
     let (a, b) = shadeTwo world comps remaining mat.a mat.b
-    let (newA, newB) =
-      match (mat.a, mat.b) with
-      | (Reflective r, _) when r.additive -> (add a b, b)
-      | (_, Reflective r) when r.additive -> (a, add a b)
-      | _ -> (a, b)
     let p = patternPoint objectT mat.transform comps.overPoint
-    gradientAt newA newB mat.sharpness p
+    gradientAt a b mat.sharpness p
 
 let shadeHit world comps remaining =
   world.lights

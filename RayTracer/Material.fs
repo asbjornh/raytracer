@@ -94,21 +94,19 @@ let lighting light =
   | ConstantLight l -> constantLighting l
   | PointLight l -> phongLighting l
 
-let fresnelColor a b normalV eyeV =
+let fresnelShade a b normalV eyeV =
   let ang = angle (normalize normalV) (normalize eyeV)
   let mapping = pow 3.
   let max = mapping (Math.PI / 2.)
   let amount = ang |> mapping |> rangeMap (0., max) (0., 1.)
   blend a b amount
 
-let fresnelShade a b normalV eyeV matA matB =
+// If either matA or matB is a Reflective with additive enabled, adds the non-reflective color to the reflected color
+let getBlendComponents matA matB a b =
   match (matA, matB) with
-  | (Reflective r, _) when r.additive ->
-    fresnelColor a black normalV eyeV |> add b
-  | (_, Reflective r) when r.additive ->
-    fresnelColor black b normalV eyeV |> add a
-  | _ -> fresnelColor a b normalV eyeV
-
+  | (Reflective r, _) when r.additive -> (add a b, b)
+  | (_, Reflective r) when r.additive -> (a, add a b)
+  | _ -> (a, b)
 
 let defaultMaterial () = Phong (defaultMaterialP ())
 
