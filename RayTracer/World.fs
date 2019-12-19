@@ -83,15 +83,16 @@ let shadeHitSingleLight light world comps remaining =
       light comps.point comps.eyeV comps.normalV mat s
 
   | Pattern mat ->
+    let (a, b) = shadeTwo world comps remaining mat.a mat.b
     let p = patternPoint objectT mat.transform comps.overPoint
-    let patternMat = patternAt mat.a mat.b mat.pattern p
-    let patternComp = { comps with object = assignMaterial comps.object patternMat }
-    shadeHit world patternComp remaining
+    patternAt a b mat.pattern p
 
   | Reflective mat ->
     match light with
     | PointLight _ | SoftLight _ -> reflectedColor world comps remaining
-    | ConstantLight l -> if mat.additive then black else l.intensity
+    | ConstantLight l ->
+      match mat.blend with
+      | Normal -> l.intensity | _ -> black
 
   | Fresnel mat ->
     let (a, b) = shadeTwo world comps remaining mat.a mat.b

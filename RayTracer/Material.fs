@@ -29,7 +29,7 @@ type Blend = {
 }
 
 type Reflective = {
-  additive: bool
+  blend: BlendingMode
 }
 
 type Gradient = {
@@ -93,7 +93,7 @@ let softLighting (light: SoftLight) pos eyeV normalV mat shadowAmount =
   then phongComponent
   else
     let shadowComponent = phongLighting light.light pos eyeV normalV mat 1.
-    blend phongComponent shadowComponent shadowAmount
+    mix phongComponent shadowComponent shadowAmount
 
 let constantLighting (l: ConstantLight) _ _ _ _ _ = l.intensity
 
@@ -110,11 +110,11 @@ let fresnelShade a b normalV eyeV =
   let amount = ang |> mapping |> rangeMap (0., max) (0., 1.)
   mix a b amount
 
-// If either matA or matB is a Reflective with additive enabled, adds the non-reflective color to the reflected color
+// If either matA or matB is a Reflective, the non-reflective color is blended with the reflective one (using the blending mode in the reflective material)
 let getBlendComponents matA matB a b =
   match (matA, matB) with
-  | (Reflective r, _) when r.additive -> (add a b, b)
-  | (_, Reflective r) when r.additive -> (a, add a b)
+  | (Reflective mat, _) -> (blend mat.blend a b, b)
+  | (_, Reflective mat) -> (a, blend mat.blend a b)
   | _ -> (a, b)
 
 let defaultMaterial () = Phong (defaultMaterialP ())
