@@ -110,7 +110,7 @@ let tests =
       let w = defaultWorld ()
       let mat = Blend {
         a = defaultMaterial ()
-        b = Reflective { additive = false }
+        b = Reflective { blend = Normal }
         mix = 0.5
       }
       let shape = plane (translation 0. -1. 0.) mat
@@ -126,7 +126,7 @@ let tests =
       let w = defaultWorld ()
       let mat = Blend {
         a = defaultMaterial ()
-        b = Reflective { additive = false }
+        b = Reflective { blend = Normal }
         mix = 0.5
       }
       let shape = plane (translation 0. -1. 0.) mat
@@ -140,7 +140,7 @@ let tests =
 
     testCase "color_at() with mutually reflective surfaces" <| fun _ ->
       let light = pointLight (point 0. 0. 0.) (color 1. 1. 1.)
-      let mat = Reflective { additive = false }
+      let mat = Reflective { blend = Normal }
       let lower = plane (translation 0. -1. 0.) mat
       let upper = plane (translation 0. 1. 0.) mat
       let w = world [light] [lower; upper]
@@ -151,7 +151,7 @@ let tests =
       let w = defaultWorld ()
       let mat = Blend {
         a = defaultMaterial ()
-        b = Reflective { additive = false }
+        b = Reflective { blend = Normal }
         mix = 0.5
       }
       let shape = plane (translation 0. -1. 0.) mat
