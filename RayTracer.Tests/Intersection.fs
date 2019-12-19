@@ -131,4 +131,12 @@ let tests =
 
     testCase "Refraction 5" <| fun _ ->
       testRefraction 5 1.5 1.0
+
+    testCase "The under point is offset below the surface" <| fun _ ->
+      let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
+      let shape = glassSphere 1.5 <| translation 0. 0. 1.
+      let i = intersection 5. shape
+      let comps = prepareComputations [i] i r
+      Expect.isGreaterThan comps.underPoint.Z (epsilon / 2.) ""
+      Expect.isLessThan comps.point.Z comps.underPoint.Z ""
   ]

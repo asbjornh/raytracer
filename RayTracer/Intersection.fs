@@ -31,6 +31,7 @@ type Computation<'a> = {
   reflectV: Tuple
   inside: bool
   overPoint: Tuple
+  underPoint: Tuple
   n1: float
   n2: float
 }
@@ -81,6 +82,7 @@ let prepareComputations (is: Intersection list) (hit: Intersection) r =
     reflectV = reflectV
     inside = inside
     overPoint = point + (epsilon * normalV)
+    underPoint = point - (epsilon * normalV)
     n1 = n1
     n2 = n2
   }
