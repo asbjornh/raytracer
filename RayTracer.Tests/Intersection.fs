@@ -2,6 +2,7 @@ module IntersectionTest
 
 open Expecto
 
+open Color
 open Intersection
 open Material
 open Ray
@@ -11,7 +12,7 @@ open Transform
 open Util
 
 let glassSphere index t =
-  sphere t <| Transparent { index = index }
+  sphere t <| Transparent { index = index; blend = Normal }
 
 let testRefraction index n1 n2 =
   let a = glassSphere 1.5 <| scaling 2. 2. 2.
