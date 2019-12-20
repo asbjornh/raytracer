@@ -110,6 +110,11 @@ let shadeHitSingleLight light world comps remaining =
     let p = patternPoint objectT mat.transform comps.overPoint
     gradientAt a b mat.sharpness p
 
+  | TestPattern ->
+    let p = patternPoint objectT (identity ()) comps.overPoint
+    let (x, y, z, _) = p.Return
+    color x y z
+
 let shadeHit world comps remaining =
   world.lights
   |> List.fold (fun acc light ->

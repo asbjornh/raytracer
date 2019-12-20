@@ -16,6 +16,7 @@ type Material =
   | Pattern of Pattern
   | Gradient of Gradient
   | Transparent of Transparent
+  | TestPattern
 
 type Fresnel = {
   a: Material
