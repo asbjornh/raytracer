@@ -36,10 +36,23 @@ type Computation<'a> = {
   n2: float
 }
 
-let indexFromIntersection (s: IShape) =
-  match s.Material with
+let pickIndex (a: float) b =
+  if (a = b) then a
+  else if (a = 1.) then b
+  else a
+
+let rec indexForMaterial = function
   | Transparent m -> m.index
-  | _ -> 1.
+  | Blend m ->
+    pickIndex (indexForMaterial m.a) (indexForMaterial m.b)
+  | Fresnel m ->
+    pickIndex (indexForMaterial m.a) (indexForMaterial m.b)
+  | Gradient _ | Pattern _ | Phong _
+  | Reflective _ | TestPattern _ -> 1.
+
+let indexFromIntersection (s: IShape) =
+  indexForMaterial s.Material
+
 let refractiveIndexes (is: Intersection list) (hit: Intersection) =
   is |> List.fold (fun (containers, n1, n2) i ->
     let newN1 =
@@ -69,10 +82,7 @@ let prepareComputations (is: Intersection list) (hit: Intersection) r =
   let normalV =
     (if inside then negate else id) normalV
   let reflectV = reflect normalV r.direction
-  let (n1, n2) =
-    match hit.object.Material with
-    | Transparent _ -> refractiveIndexes is hit
-    | _ -> (1., 1.)
+  let (n1, n2) = refractiveIndexes is hit
   {
     t = hit.t
     object = hit.object
