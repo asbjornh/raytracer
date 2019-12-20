@@ -81,6 +81,42 @@ let plane t m : Plane = { Transform = t; Material = m }
 
 let defaultPlane () = plane (identity ()) (defaultMaterial ())
 
+type Cube =
+  {
+    Transform: Matrix
+    mutable Material: Material
+  }
+  interface IShape with
+    member this.Transform = this.Transform
+    member this.Material = this.Material
+    member this.SetMaterial mat = this.Material <- mat
+    member this.LocalIntersect ray =
+      let (xtmin, xtmax) = checkAxis ray.origin.X ray.direction.X
+      let (ytmin, ytmax) = checkAxis ray.origin.Y ray.direction.Y
+      let (ztmin, ztmax) = checkAxis ray.origin.Z ray.direction.Z
+
+      let tmin = List.max [xtmin; ytmin; ztmin]
+      let tmax = List.min [xtmax; ytmax; ztmax]
+
+      [(tmin, this :> IShape); (tmax, this :> IShape)]
+    member this.LocalNormal _ = vector 0. 0. 0.
+
+let checkAxis origin direction =
+  let tminNumerator = (-1. - origin)
+  let tmaxNumerator = (1. - origin)
+
+  let (tmin, tmax) =
+    if (abs direction) >= epsilon then
+      (tminNumerator / direction, tmaxNumerator / direction)
+    else
+      (tminNumerator * infinity, tmaxNumerator * infinity)
+
+  if tmin > tmax then (tmax, tmin) else (tmin, tmax)
+
+let cube t m : Cube = { Transform = t; Material = m }
+
+let unitCube () = cube <| identity () <| defaultMaterial ()
+
 let assignMaterial (s: IShape) (m: Material) =
   match s with
   | :? Sphere as s -> sphere s.Transform m :> IShape

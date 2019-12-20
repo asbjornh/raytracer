@@ -11,6 +11,16 @@ open Matrix
 open Material
 open Transform
 
+let testCube origin direction t1 t2 =
+  let c = unitCube ()
+  let r = ray origin direction
+  let xs = (c :> IShape).LocalIntersect r
+  let (localT1, _) = xs.[0]
+  let (localT2, _) = xs.[1]
+  Expect.equal (List.length xs) 2 ""
+  Expect.equal localT1 t1 ""
+  Expect.equal localT2 t2 ""
+
 type TestShape =
   {
     mutable Material: Material
@@ -207,4 +217,25 @@ let tests =
       let (t, object) = xs.[0]
       Expect.equal t 1. ""
       Expect.equal object (p :> IShape) ""
+
+    testCase "Cube intersection +x" <| fun _ ->
+      testCube (point 5. 0.5 0.) (vector -1. 0. 0.) 4. 6.
+
+    testCase "Cube intersection -x" <| fun _ ->
+      testCube (point -5. 0.5 0.) (vector 1. 0. 0.) 4. 6.
+
+    testCase "Cube intersection +y" <| fun _ ->
+      testCube (point 0.5 5. 0.) (vector 0. -1. 0.) 4. 6.
+
+    testCase "Cube intersection -y" <| fun _ ->
+      testCube (point 0.5 -5. 0.) (vector 0. 1. 0.) 4. 6.
+
+    testCase "Cube intersection +z" <| fun _ ->
+      testCube (point 0.5 0. 5.) (vector 0. 0. -1.) 4. 6.
+
+    testCase "Cube intersection -z" <| fun _ ->
+      testCube (point 0.5 0. -5.) (vector 0. 0. 1.) 4. 6.
+
+    testCase "Cube intersection inside" <| fun _ ->
+      testCube (point 0. 0.5 0.) (vector 0. 0. 1.) -1. 1.
   ]
