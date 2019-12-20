@@ -11,7 +11,7 @@ open Matrix
 open Material
 open Transform
 
-let testCube origin direction t1 t2 =
+let testCubeIntersect origin direction t1 t2 =
   let c = unitCube ()
   let r = ray origin direction
   let xs = (c :> IShape).LocalIntersect r
@@ -20,6 +20,12 @@ let testCube origin direction t1 t2 =
   Expect.equal (List.length xs) 2 ""
   Expect.equal localT1 t1 ""
   Expect.equal localT2 t2 ""
+
+let testCubeMiss origin direction =
+  let c = unitCube ()
+  let r = ray origin direction
+  let xs = (c :> IShape).LocalIntersect r
+  Expect.equal (List.length xs) 0 ""
 
 type TestShape =
   {
@@ -219,23 +225,31 @@ let tests =
       Expect.equal object (p :> IShape) ""
 
     testCase "Cube intersection +x" <| fun _ ->
-      testCube (point 5. 0.5 0.) (vector -1. 0. 0.) 4. 6.
+      testCubeIntersect (point 5. 0.5 0.) (vector -1. 0. 0.) 4. 6.
 
     testCase "Cube intersection -x" <| fun _ ->
-      testCube (point -5. 0.5 0.) (vector 1. 0. 0.) 4. 6.
+      testCubeIntersect (point -5. 0.5 0.) (vector 1. 0. 0.) 4. 6.
 
     testCase "Cube intersection +y" <| fun _ ->
-      testCube (point 0.5 5. 0.) (vector 0. -1. 0.) 4. 6.
+      testCubeIntersect (point 0.5 5. 0.) (vector 0. -1. 0.) 4. 6.
 
     testCase "Cube intersection -y" <| fun _ ->
-      testCube (point 0.5 -5. 0.) (vector 0. 1. 0.) 4. 6.
+      testCubeIntersect (point 0.5 -5. 0.) (vector 0. 1. 0.) 4. 6.
 
     testCase "Cube intersection +z" <| fun _ ->
-      testCube (point 0.5 0. 5.) (vector 0. 0. -1.) 4. 6.
+      testCubeIntersect (point 0.5 0. 5.) (vector 0. 0. -1.) 4. 6.
 
     testCase "Cube intersection -z" <| fun _ ->
-      testCube (point 0.5 0. -5.) (vector 0. 0. 1.) 4. 6.
+      testCubeIntersect (point 0.5 0. -5.) (vector 0. 0. 1.) 4. 6.
 
     testCase "Cube intersection inside" <| fun _ ->
-      testCube (point 0. 0.5 0.) (vector 0. 0. 1.) -1. 1.
+      testCubeIntersect (point 0. 0.5 0.) (vector 0. 0. 1.) -1. 1.
+
+    testCase "Cube ray not intersecting" <| fun _ ->
+      testCubeMiss (point -2. 0. 0.) (vector 0.2673 0.5345 0.8018)
+      testCubeMiss (point 0. -2. 0.) (vector 0.8018 0.2673 0.5345)
+      testCubeMiss (point 0. 0. -2.) (vector 0.5345 0.8018 0.2673)
+      testCubeMiss (point 2. 0. 2.) (vector 0. 0. -1.)
+      testCubeMiss (point 0. 2. 2.) (vector 0. -1. 0.)
+      testCubeMiss (point 2. 2. 0.) (vector -1. 0. 0.)
   ]

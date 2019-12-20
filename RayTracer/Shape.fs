@@ -98,7 +98,8 @@ type Cube =
       let tmin = List.max [xtmin; ytmin; ztmin]
       let tmax = List.min [xtmax; ytmax; ztmax]
 
-      [(tmin, this :> IShape); (tmax, this :> IShape)]
+      if tmin > tmax then []
+      else [(tmin, this :> IShape); (tmax, this :> IShape)]
     member this.LocalNormal _ = vector 0. 0. 0.
 
 let checkAxis origin direction =
