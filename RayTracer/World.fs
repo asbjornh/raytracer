@@ -94,7 +94,10 @@ let shadeHitSingleLight light world comps remaining =
       match mat.blend with
       | Normal -> l.intensity | _ -> black
 
-  | Transparent _ -> white
+  | Transparent _ ->
+    match light with
+    | PointLight _ | SoftLight _ -> refractedColor world comps remaining
+    | ConstantLight _ -> black
 
   | Fresnel mat ->
     let (a, b) = shadeTwo world comps remaining mat.a mat.b
@@ -163,3 +166,16 @@ let reflectedColor world comps remaining =
   else
     let r = ray comps.overPoint comps.reflectV
     colorAt world r (remaining - 1)
+
+let refractedColor world comps remaining =
+  if (remaining < 1) then black
+  else
+    let nRatio = comps.n1 / comps.n2
+    let cosI = dot comps.eyeV comps.normalV
+    let sin2t = nRatio ** 2. * (1. - cosI ** 2.)
+    if (sin2t > 1.) then black
+    else
+      let cosT = sqrt (1. - sin2t)
+      let direction = ((nRatio * cosI - cosT) * comps.normalV) - (nRatio * comps.eyeV)
+      let r = ray comps.underPoint direction
+      colorAt world r (remaining - 1)
