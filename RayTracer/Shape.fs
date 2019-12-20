@@ -102,16 +102,9 @@ type Cube =
     member this.LocalNormal _ = vector 0. 0. 0.
 
 let checkAxis origin direction =
-  let tminNumerator = (-1. - origin)
-  let tmaxNumerator = (1. - origin)
-
-  let (tmin, tmax) =
-    if (abs direction) >= epsilon then
-      (tminNumerator / direction, tmaxNumerator / direction)
-    else
-      (tminNumerator * infinity, tmaxNumerator * infinity)
-
-  if tmin > tmax then (tmax, tmin) else (tmin, tmax)
+  let tmin = (-1. - origin) / direction
+  let tmax = (1. - origin) / direction
+  (min tmax tmin, max tmax tmin)
 
 let cube t m : Cube = { Transform = t; Material = m }
 
