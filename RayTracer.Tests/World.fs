@@ -6,11 +6,16 @@ open Color
 open Intersection
 open Light
 open Material
+open Matrix
+open Pattern
 open Ray
 open Shape
 open Tuple
 open Transform
 open World
+
+let expectColorEquals actual expected =
+  Expect.isTrue (equals actual expected) <| Expect.defaultDiffPrinter expected actual
 
 [<Tests>]
 
@@ -162,4 +167,71 @@ let tests =
       let comps = prepareComputations [i] i r
       let c = reflectedColor w comps 0
       Expect.equal c black ""
+
+    testCase "The refracted color at the maximum recursive depth" <| fun _ ->
+      let w = defaultWorld ()
+      let mat = Transparent { index = 1.5; blend = Normal }
+      let shape = assignMaterial w.objects.[0] mat
+      let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
+      let xs = intersections [
+        intersection 4. shape
+        intersection 6. shape
+      ]
+      let comps = prepareComputations xs xs.[0] r
+      let c = refractedColor w comps 0
+      Expect.equal c black ""
+
+    testCase "The refracted color under total internal reflection" <| fun _ ->
+      let w = defaultWorld ()
+      let mat = Transparent { index = 1.5; blend = Normal }
+      let shape = assignMaterial w.objects.[0] mat
+      let a = (sqrt 2.) / 2.
+      let r = ray(point 0. 0. a) (vector 0. 1. 0.)
+      let xs = intersections [
+        intersection -a shape
+        intersection a shape
+      ]
+      // NOTE: this time you're inside the sphere, so you need​
+      // to look at the second intersection, xs[1], not xs[0]​
+      let comps = prepareComputations xs xs.[1] r
+      let c = refractedColor w comps 5
+      Expect.equal c black ""
+
+    testCase "The refracted color with a refracted ray" <| fun _ ->
+      let w = defaultWorld ()
+      let matA = TestPattern
+      let matB = Transparent { index = 1.5; blend = Normal }
+      let a = assignMaterial w.objects.[0] matA
+      let b = assignMaterial w.objects.[1] matB
+      let r = ray (point 0. 0. 0.1) (vector 0. 1. 0.)
+      let xs = intersections [
+        intersection -0.9899 a
+        intersection -0.4899 b
+        intersection 0.4899 b
+        intersection 0.9899 a
+      ]
+      let w = { w with objects = [a; b] }
+      let comps = prepareComputations xs xs.[2] r
+      let c = refractedColor w comps 5
+      expectColorEquals c (color 0. 0.99887 0.04721)
+
+    testCase "shade_hit() with a transparent material" <| fun _ ->
+      let w = defaultWorld ()
+      let floor =
+        plane <| translation 0. -1. 0.
+        <| Blend {
+          a = Transparent { index = 1.5; blend = Add }
+          b = defaultMaterial ()
+          mix = 0.5
+        }
+      let ball =
+        sphere <| translation 0. -3.5 -0.5
+        <| material (color 1. 0. 0.) 0.5 0.9 0.9
+      let w = { w with objects = [floor; ball] }
+      let a = (sqrt 2. / 2.)
+      let r = ray (point 0. 0. -3.) (vector 0. -a a)
+      let xs = intersections [ intersection (sqrt 2.) floor ]
+      let comps = prepareComputations xs xs.[0] r
+      let c = shadeHit w comps 5
+      expectColorEquals c (color 0.93642 0.68642 0.68642)
   ]
