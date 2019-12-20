@@ -100,7 +100,12 @@ type Cube =
 
       if tmin > tmax then []
       else [(tmin, this :> IShape); (tmax, this :> IShape)]
-    member this.LocalNormal _ = vector 0. 0. 0.
+    member this.LocalNormal p =
+      let (x, y, z, _) = Tuple.Map abs p
+      let maxC = List.max [x; y; z]
+      if maxC = x then vector p.X 0. 0.
+      else if maxC = y then vector 0. p.Y 0.
+      else vector 0. 0. p.Z
 
 let checkAxis origin direction =
   let tmin = (-1. - origin) / direction

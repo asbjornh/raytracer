@@ -21,12 +21,6 @@ let testCubeIntersect origin direction t1 t2 =
   Expect.equal localT1 t1 ""
   Expect.equal localT2 t2 ""
 
-let testCubeMiss origin direction =
-  let c = unitCube ()
-  let r = ray origin direction
-  let xs = (c :> IShape).LocalIntersect r
-  Expect.equal (List.length xs) 0 ""
-
 type TestShape =
   {
     mutable Material: Material
@@ -246,10 +240,31 @@ let tests =
       testCubeIntersect (point 0. 0.5 0.) (vector 0. 0. 1.) -1. 1.
 
     testCase "Cube ray not intersecting" <| fun _ ->
-      testCubeMiss (point -2. 0. 0.) (vector 0.2673 0.5345 0.8018)
-      testCubeMiss (point 0. -2. 0.) (vector 0.8018 0.2673 0.5345)
-      testCubeMiss (point 0. 0. -2.) (vector 0.5345 0.8018 0.2673)
-      testCubeMiss (point 2. 0. 2.) (vector 0. 0. -1.)
-      testCubeMiss (point 0. 2. 2.) (vector 0. -1. 0.)
-      testCubeMiss (point 2. 2. 0.) (vector -1. 0. 0.)
+      let testCubeMiss origin direction txt =
+        let c = unitCube ()
+        let r = ray origin direction
+        let xs = (c :> IShape).LocalIntersect r
+        Expect.equal (List.length xs) 0 txt
+
+      testCubeMiss (point -2. 0. 0.) (vector 0.2673 0.5345 0.8018) "First"
+      testCubeMiss (point 0. -2. 0.) (vector 0.8018 0.2673 0.5345) "Second"
+      testCubeMiss (point 0. 0. -2.) (vector 0.5345 0.8018 0.2673) "Third"
+      testCubeMiss (point 2. 0. 2.) (vector 0. 0. -1.) "Fifth"
+      testCubeMiss (point 0. 2. 2.) (vector 0. -1. 0.) "Sixth"
+      testCubeMiss (point 2. 2. 0.) (vector -1. 0. 0.) "Seventh"
+
+    testCase "The normal on the surface of a cube" <| fun _ ->
+      let test point normal txt =
+        let c = unitCube ()
+        let n = (c :> IShape).LocalNormal point
+        Expect.equal n normal txt
+
+      test (point 1. 0.5 -0.8) (vector 1. 0. 0.) "First"
+      test (point -1. -0.2 0.9) (vector -1. 0. 0.) "Second"
+      test (point -0.4 1. -0.1) (vector 0. 1. 0.) "Third"
+      test (point 0.3 -1. -0.7) (vector 0. -1. 0.) "Fourth"
+      test (point -0.6 0.3 1.) (vector 0. 0. 1.) "Fifth"
+      test (point 0.4 0.4 -1.) (vector 0. 0. -1.) "Sixth"
+      test (point 1. 1. 1.) (vector 1. 0. 0.) "Seventh"
+      test (point -1. -1. -1.) (vector -1. 0. 0.) "Eight"
   ]
