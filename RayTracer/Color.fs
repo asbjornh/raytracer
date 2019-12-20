@@ -36,10 +36,7 @@ let toString transform sep =
   >> toList
   >> String.concat sep
 
-let epsilon = 0.00001
-let valueEquals a b = abs (a - b) < epsilon
-
-let equals a b = (Color.Combine valueEquals a b) |> function
+let equals a b = (Color.Combine looseEq a b) |> function
   | (true, true, true) -> true
   | _ -> false
 
