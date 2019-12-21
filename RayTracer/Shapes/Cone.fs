@@ -4,27 +4,24 @@ open Ray
 open Tuple
 open Util
 
-let coneMin = -1.
-let coneMax = 1.
-
-let normal (p: Tuple) =
+let normal minY maxY (p: Tuple) =
   let dist = p.X ** 2. + p.Z ** 2.
-  if (dist < 1. && p.Y >= coneMax - epsilon)
+  if (dist < 1. && p.Y >= maxY - epsilon)
   then vector 0. 1. 0.
-  else if (dist < 1. && p.Y <= coneMin + epsilon)
+  else if (dist < 1. && p.Y <= minY + epsilon)
   then vector 0. -1. 0.
   else
     let _y = sqrt <| p.X ** 2. + p.Z ** 2.
     let y = if p.Y > 0. then -_y else _y
     vector p.X y p.Z
 
-let intersect ray s =
+let intersect minY maxY ray s =
   List.concat [
-    intersectCone ray s
-    intersectCaps ray s
+    intersectCone minY maxY ray s
+    intersectCaps minY maxY ray s
   ]
 
-let intersectCone ray s =
+let intersectCone minY maxY ray s =
   let (oX, oY, oZ, _) = ray.origin.Return
   let (dX, dY, dZ, _) = ray.direction.Return
   let a = (dX ** 2.) - (dY ** 2.) + (dZ ** 2.)
@@ -43,9 +40,9 @@ let intersectCone ray s =
       let y0 = ray.origin.Y + t0 * ray.direction.Y
       let y1 = ray.origin.Y + t1 * ray.direction.Y
       let first =
-        if (coneMin < y0 && y0 < coneMax) then [(t0, s)] else []
+        if (minY < y0 && y0 < maxY) then [(t0, s)] else []
       let second =
-        if (coneMin < y1 && y1 < coneMax) then [(t1, s)] else []
+        if (minY < y1 && y1 < maxY) then [(t1, s)] else []
       List.concat [first; second]
 
 let checkCap ray t r =
@@ -53,13 +50,13 @@ let checkCap ray t r =
   let z = ray.origin.Z + t * ray.direction.Z
   (x ** 2. + z ** 2.) <= r ** 2.
 
-let intersectCaps ray cyl =
+let intersectCaps minY maxY ray cyl =
   if looseEq ray.direction.Y 0. then []
   else
-    let t1 = (coneMin - ray.origin.Y) / ray.direction.Y
-    let t2 = (coneMax - ray.origin.Y) / ray.direction.Y
+    let t1 = (minY - ray.origin.Y) / ray.direction.Y
+    let t2 = (maxY - ray.origin.Y) / ray.direction.Y
     let first =
-      if checkCap ray t1 coneMin then [(t1, cyl)] else []
+      if checkCap ray t1 minY then [(t1, cyl)] else []
     let second =
-      if checkCap ray t2 coneMax then [(t2, cyl)] else []
+      if checkCap ray t2 maxY then [(t2, cyl)] else []
     List.concat [first; second]

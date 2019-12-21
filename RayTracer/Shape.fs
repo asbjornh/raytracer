@@ -11,6 +11,7 @@ type ShapeType =
   | Cylinder
   | OpenCylinder
   | Cone
+  | DoubleCone
   | TestShape
 
 type Shape = {
@@ -26,7 +27,8 @@ let localIntersect ray (s: Shape) =
   | Cylinder -> Cylinder.intersect ray s
   | OpenCylinder -> Cylinder.intersectOpen ray s
   | Cube -> Cube.intersect ray s
-  | Cone -> Cone.intersect ray s
+  | Cone -> Cone.intersect -1. 0. ray s
+  | DoubleCone -> Cone.intersect -1. 1. ray s
   | TestShape -> [(0., s)]
 
 let shapeIntersect ray (shape: Shape) =
@@ -41,7 +43,8 @@ let localNormal p (s: Shape) =
   | TestShape -> p
   | Cylinder -> Cylinder.normal p
   | OpenCylinder -> vector p.X 0. p.Z
-  | Cone -> Cone.normal p
+  | Cone -> Cone.normal -1. 0. p
+  | DoubleCone -> Cone.normal -1. 1. p
   | Cube -> Cube.normal p
 
 let normalAt point (shape: Shape) =
@@ -61,6 +64,7 @@ let plane t = shape Plane t
 let cube t = shape Cube t
 let cylinder t = shape Cylinder t
 let cone t = shape Cone t
+let doubleCone t = shape DoubleCone t
 let openCylinder t = shape OpenCylinder t
 
 let unitSphere () = defaultShape Sphere
@@ -71,3 +75,4 @@ let unitCube () = defaultShape Cube
 let defaultCylinder () = defaultShape Cylinder
 let defaultOpenCylinder () = defaultShape OpenCylinder
 let defaultCone () = defaultShape Cone
+let defaultDoubleCone () = defaultShape DoubleCone

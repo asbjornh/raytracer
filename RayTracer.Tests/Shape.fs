@@ -356,7 +356,7 @@ let tests =
     
     testCase "Intersecting a cone with a ray" <| fun _ ->
       let test origin direction t0 t1 txt =
-        let shape = defaultCone ()
+        let shape = defaultDoubleCone ()
         let r = ray origin <| normalize direction
         let xs = localIntersect r shape
         Expect.equal (List.length xs) 2 txt
@@ -374,14 +374,14 @@ let tests =
       let shape = defaultCone ()
       let direction = normalize (vector 0. 1. 1.)
       let r = ray (point 0. 0. -1.) direction
-      let xs = Cone.intersectCone r shape
+      let xs = Cone.intersectCone -1. 1. r shape
       Expect.equal (List.length xs) 1 ""
       Expect.isTrue (looseEq (fst xs.[0]) 0.35355) ""
 
     testCase "Intersecting a cone's end caps" <| fun _ ->
       let test origin direction count txt =
         let t = scaling 0.5 0.5 0.5
-        let shape = cone t <| defaultMaterial ()
+        let shape = doubleCone t <| defaultMaterial ()
         let r = ray origin <| normalize direction
         let xs = shapeIntersect r shape
         Expect.equal (List.length xs) count txt
@@ -392,7 +392,7 @@ let tests =
     
     testCase "Computing the normal vector on a cone" <| fun _ ->
       let test point normal =
-        let shape = defaultCone ()
+        let shape = defaultDoubleCone ()
         let n = localNormal point shape
         Expect.equal n normal ""
 
