@@ -16,12 +16,14 @@ open Util
 
 type World = {
   background: Color
+  shadows: bool
   objects: Shape list
   lights: Light list
 }
 
 let world lights objects = {
   background = black
+  shadows = true
   objects = objects
   lights = lights
 }
@@ -29,6 +31,7 @@ let world lights objects = {
 let defaultWorld () =
   {
     background = black
+    shadows = true
     lights = [pointLight (point -10. 10. -10.) (color 1. 1. 1.)]
     objects = [
       sphereM (material (color 0.8 1. 0.6) 0.1 0.7 0.2)
@@ -78,7 +81,10 @@ let shadeHitSingleLight light world comps remaining =
 
   match comps.object.material with
   | Phong mat ->
-    let s = shadowAmount comps.overPoint light world.objects
+    let s =
+      if world.shadows then
+        shadowAmount comps.overPoint light world.objects
+      else 0.
     lighting
       light comps.point comps.eyeV comps.normalV mat s
 
