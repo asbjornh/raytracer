@@ -73,7 +73,7 @@ let localNormal p (s: Shape) =
   | Sphere -> p - (point 0. 0. 0.)
   | Plane -> vector 0. 1. 0.
   | TestShape -> p
-  | Cylinder -> vector 0. 1. 0.
+  | Cylinder -> vector p.X 0. p.Z
   | Cube ->
       let (x, y, z, _) = Tuple.Map abs p
       let maxC = List.max [x; y; z]

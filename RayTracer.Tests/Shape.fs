@@ -284,4 +284,15 @@ let tests =
       test (point 1. 0. -5.) (vector 0. 0. 1.) 5. 5.
       test (point 0. 0. -5.) (vector 0. 0. 1.) 4. 6.
       test (point 0.5 0. -5.) (vector 0.1 1. 1.) 6.80798 7.08872
+
+    testCase "Normal vector on a cylinder" <| fun _ ->
+      let test point normal =
+        let cyl = defaultCylinder ()
+        let n = localNormal point cyl
+        Expect.equal n normal ""
+
+      test (point 1. 0. 0.) (vector 1. 0. 0.)
+      test (point 0. 5. -1.) (vector 0. 0. -1.)
+      test (point 0. -2. 1.) (vector 0. 0. 1.)
+      test (point -1. 1. 0.) (vector -1. 0. 0.)
   ]
