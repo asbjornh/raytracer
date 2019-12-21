@@ -262,7 +262,7 @@ let tests =
 
     testCase "A ray misses a cylinder" <| fun _ ->
       let test origin direction txt =
-        let cyl = defaultCylinder ()
+        let cyl = defaultOpenCylinder ()
         let direction = normalize direction
         let r = ray origin direction
         let xs = localIntersect r cyl
@@ -275,7 +275,7 @@ let tests =
     testCase "A ray strikes a cylinder" <| fun _ ->
       let test origin direction t0 t1 =
         let t = scaling 1. 1000. 1.
-        let cyl = cylinder t <| defaultMaterial ()
+        let cyl = openCylinder t <| defaultMaterial ()
         let direction = normalize direction
         let r = ray origin direction
         let xs = shapeIntersect r cyl
@@ -291,7 +291,7 @@ let tests =
 
     testCase "Normal vector on a cylinder" <| fun _ ->
       let test point normal =
-        let cyl = defaultCylinder ()
+        let cyl = defaultOpenCylinder ()
         let n = localNormal point cyl
         Expect.equal n normal ""
 
@@ -306,7 +306,7 @@ let tests =
           translateY 1.5
           uniformScale 0.5
         ]
-        let cyl = cylinder t <| defaultMaterial ()
+        let cyl = openCylinder t <| defaultMaterial ()
         let direction = normalize direction
         let r = ray point direction
         let xs = shapeIntersect r cyl
@@ -318,4 +318,21 @@ let tests =
       test (point 0. 2. -5.) (vector 0. 0. 1.) 0 "Fourth"
       test (point 0. 1. -5.) (vector 0. 0. 1.) 0 "Fifth"
       test (point 0. 1.5 -2.) (vector 0. 0. 1.) 2 "Sixth"
+
+    testCase "Intersecting the caps of a closed cylinder" <| fun _ ->
+      let test point direction count =
+        let t = chain [
+          translateY 1.5
+          uniformScale 0.5
+        ]
+        let cyl = cylinder t <| defaultMaterial ()
+        let r = ray point <| normalize direction
+        let xs = shapeIntersect r cyl
+        Expect.equal (List.length xs) count ""
+
+      test (point 0. 3. 0.) (vector 0. -1. 0.) 2
+      test (point 0. 3. -2.) (vector 0. -1. 2.) 2
+      test (point 0. 4. -2.) (vector 0. -1. 1.) 2 //corner case​
+      test (point 0. 0. -2.) (vector 0. 1. 2.) 2
+      test (point 0. -1. -2.) (vector 0. 1. 1.) 2 //corner case​
   ]
