@@ -304,7 +304,7 @@ let tests =
       let test point direction count txt =
         let t = chain [
           translateY 1.5
-          uniformScale 0.5
+          scaleY 0.5
         ]
         let cyl = openCylinder t <| defaultMaterial ()
         let direction = normalize direction
@@ -320,19 +320,36 @@ let tests =
       test (point 0. 1.5 -2.) (vector 0. 0. 1.) 2 "Sixth"
 
     testCase "Intersecting the caps of a closed cylinder" <| fun _ ->
-      let test point direction count =
+      let test point direction count txt =
         let t = chain [
           translateY 1.5
-          uniformScale 0.5
+          scaleY 0.5
         ]
         let cyl = cylinder t <| defaultMaterial ()
         let r = ray point <| normalize direction
         let xs = shapeIntersect r cyl
-        Expect.equal (List.length xs) count ""
+        Expect.equal (List.length xs) count txt
 
-      test (point 0. 3. 0.) (vector 0. -1. 0.) 2
-      test (point 0. 3. -2.) (vector 0. -1. 2.) 2
-      test (point 0. 4. -2.) (vector 0. -1. 1.) 2 //corner case​
-      test (point 0. 0. -2.) (vector 0. 1. 2.) 2
-      test (point 0. -1. -2.) (vector 0. 1. 1.) 2 //corner case​
+      test (point 0. 3. 0.) (vector 0. -1. 0.) 2 "First"
+      test (point 0. 3. -2.) (vector 0. -1. 2.) 2 "Second"
+      test (point 0. 4. -2.) (vector 0. -1. 1.) 2 "Third" //corner case​
+      test (point 0. 0. -2.) (vector 0. 1. 2.) 2 "Fourth"
+      test (point 0. -1. -2.) (vector 0. 1. 1.) 2 "Fifth" //corner case​
+
+    testCase "The normal vector on a cylinder's end caps" <| fun _ ->
+      let test point normal =
+        let t = chain [
+          translateY 1.5
+          scaleY 0.5
+        ]
+        let cyl = cylinder t <| defaultMaterial ()
+        let n = normalAt point cyl
+        Expect.equal n normal ""
+
+      test (point 0. 1. 0.) (vector 0. -1. 0.)
+      test (point 0.5 1. 0.) (vector 0. -1. 0.)
+      test (point 0. 1. 0.5) (vector 0. -1. 0.)
+      test (point 0. 2. 0.) (vector 0. 1. 0.)
+      test (point 0.5 2. 0.) (vector 0. 1. 0.)
+      test (point 0. 2. 0.5) (vector 0. 1. 0.)
   ]
