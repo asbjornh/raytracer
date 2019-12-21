@@ -16,6 +16,10 @@
     <Compile Include="Light.fs" />
     <Compile Include="Pattern.fs" />
     <Compile Include="Material.fs" />
+    <Compile Include="Shapes/Cube.fs" />
+    <Compile Include="Shapes/Cylinder.fs" />
+    <Compile Include="Shapes/Plane.fs" />
+    <Compile Include="Shapes/Sphere.fs" />
     <Compile Include="Shape.fs" />
     <Compile Include="Intersection.fs" />
     <Compile Include="World.fs" />
