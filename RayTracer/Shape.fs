@@ -48,9 +48,16 @@ let localIntersect ray (s: Shape) =
       let discriminant = b ** 2. - 4. * a * c
       if discriminant < 0. then []
       else
-        let t0 = (-b - sqrt discriminant) / (2. * a)
-        let t1 = (-b + sqrt discriminant) / (2. * a)
-        [(t0, s); (t1, s)]
+        let _t0 = (-b - sqrt discriminant) / (2. * a)
+        let _t1 = (-b + sqrt discriminant) / (2. * a)
+        let (t0, t1) = (max _t0 _t1, min _t0 _t1)
+        let y0 = ray.origin.Y + t0 * ray.direction.Y
+        let y1 = ray.origin.Y + t1 * ray.direction.Y
+        let first =
+          if (-1. < y0 && y0 < 1.) then [(t0, s)] else []
+        let second =
+          if (-1. < y1 && y1 < 1.) then [(t1, s)] else []
+        List.concat [first; second]
   | Cube ->
       let (xtmin, xtmax) = checkAxis ray.origin.X ray.direction.X
       let (ytmin, ytmax) = checkAxis ray.origin.Y ray.direction.Y

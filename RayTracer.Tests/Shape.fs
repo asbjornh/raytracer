@@ -12,6 +12,9 @@ open Material
 open Transform
 open Util
 
+let diff actual expected =
+  Expect.defaultDiffPrinter expected actual
+
 let testCubeIntersect origin direction t1 t2 =
   let c = unitCube ()
   let r = ray origin direction
@@ -271,19 +274,20 @@ let tests =
 
     testCase "A ray strikes a cylinder" <| fun _ ->
       let test origin direction t0 t1 =
-        let cyl = defaultCylinder ()
+        let t = scaling 1. 1000. 1.
+        let cyl = cylinder t <| defaultMaterial ()
         let direction = normalize direction
         let r = ray origin direction
-        let xs = localIntersect r cyl
+        let xs = shapeIntersect r cyl
+        Expect.equal (List.length xs) 2 ""
         let (localT0, _) = xs.[0]
         let (localT1, _) = xs.[1]
-        Expect.equal (List.length xs) 2 ""
-        Expect.isTrue (looseEq localT0 t0) ""
-        Expect.isTrue (looseEq localT1 t1) ""
+        Expect.isTrue (looseEq localT0 t0) <| diff localT0 t0
+        Expect.isTrue (looseEq localT1 t1) <| diff localT1 t1
 
       test (point 1. 0. -5.) (vector 0. 0. 1.) 5. 5.
-      test (point 0. 0. -5.) (vector 0. 0. 1.) 4. 6.
-      test (point 0.5 0. -5.) (vector 0.1 1. 1.) 6.80798 7.08872
+      test (point 0. 0. -5.) (vector 0. 0. 1.) 6. 4.
+      test (point 0.5 0. -5.) (vector 0.1 1. 1.) 7.08872 6.80798
 
     testCase "Normal vector on a cylinder" <| fun _ ->
       let test point normal =
@@ -295,4 +299,23 @@ let tests =
       test (point 0. 5. -1.) (vector 0. 0. -1.)
       test (point 0. -2. 1.) (vector 0. 0. 1.)
       test (point -1. 1. 0.) (vector -1. 0. 0.)
+
+    testCase "Intersecting a constrained cylinder" <| fun _ ->
+      let test point direction count txt =
+        let t = chain [
+          translateY 1.5
+          uniformScale 0.5
+        ]
+        let cyl = cylinder t <| defaultMaterial ()
+        let direction = normalize direction
+        let r = ray point direction
+        let xs = shapeIntersect r cyl
+        Expect.equal (List.length xs) count txt
+
+      test (point 0. 1.5 0.) (vector 0.1 1. 0.) 0 "First"
+      test (point 0. 3. -5.) (vector 0. 0. 1.) 0 "Second"
+      test (point 0. 0. -5.) (vector 0. 0. 1.) 0 "Third"
+      test (point 0. 2. -5.) (vector 0. 0. 1.) 0 "Fourth"
+      test (point 0. 1. -5.) (vector 0. 0. 1.) 0 "Fifth"
+      test (point 0. 1.5 -2.) (vector 0. 0. 1.) 2 "Sixth"
   ]
