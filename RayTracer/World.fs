@@ -16,13 +16,13 @@ open Util
 
 type World = {
   background: Color
-  objects: IShape list
+  objects: Shape list
   lights: Light list
 }
 
 let world lights objects = {
   background = black
-  objects = List.map (fun o -> (o :> IShape)) objects
+  objects = objects
   lights = lights
 }
 
@@ -36,7 +36,7 @@ let defaultWorld () =
     ]
   }
 
-let intersectObjects ray (objects: IShape list) =
+let intersectObjects ray (objects: Shape list) =
   objects |> List.collect (Intersection.intersect ray) |> intersections
 
 let intersect (ray: Ray) (w: World) =
@@ -65,8 +65,8 @@ let shadowAmount point light objects =
     hits / float count
 
 let shadeTwo world comps remaining matA matB =
-  let objectA = assignMaterial comps.object matA
-  let objectB = assignMaterial comps.object matB
+  let objectA = { comps.object with material = matA }
+  let objectB = { comps.object with material = matB }
   let compsA = { comps with object = objectA }
   let compsB = { comps with object = objectB }
   let a = shadeHit world compsA remaining
@@ -74,9 +74,9 @@ let shadeTwo world comps remaining matA matB =
   getBlendComponents matA matB a b
 
 let shadeHitSingleLight light world comps remaining =
-  let objectT = comps.object.Transform
+  let objectT = comps.object.transform
 
-  match comps.object.Material with
+  match comps.object.material with
   | Phong mat ->
     let s = shadowAmount comps.overPoint light world.objects
     lighting

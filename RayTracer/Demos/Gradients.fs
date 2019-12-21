@@ -16,7 +16,7 @@ open World
 
 let mat = material blue 0.3 0.8 0.8
 
-let floor = { defaultPlane () with Material = mat }
+let floor = { defaultPlane () with material = mat }
 
 let wall = plane (chain [translateZ 10.; rotateX (rad 80.)]) mat
 
@@ -68,8 +68,7 @@ let cam = camera 100 50 (Math.PI / 3.)
 let cTransform = viewTransform (point 0. 1.5 -5.) (point 0. 1. 0.) (vector 0. 1. 0.)
 cam.transform <- cTransform
 
-let objects: IShape list =
-  [middle; right; left; floor; wall]
+let objects = [middle; right; left; floor; wall]
 
 let w = world [pLight; cLight] objects
 

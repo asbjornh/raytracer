@@ -38,7 +38,7 @@ let tests =
       let s = unitSphere ()
       let i = intersection 3.5 s
       Expect.equal i.t 3.5 ""
-      Expect.equal i.object (s :> IShape) ""
+      Expect.equal i.object s ""
 
     testCase "The hit, when all intersections have positive t" <| fun _ ->
       let s = unitSphere ()

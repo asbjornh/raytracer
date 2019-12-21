@@ -51,7 +51,7 @@ let run () =
       let point = position i.t r
       let normalV = normalAt point i.object
       let eyeV = negate r.direction
-      match i.object.Material with
+      match i.object.material with
       | Phong mat ->
         lighting l point eyeV normalV mat 0.
       | _ -> black

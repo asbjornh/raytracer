@@ -40,14 +40,14 @@ let tests =
       let t = scaling 2. 2. 2.
       let object = sphereT t
       let p = point 1.5 0. 0.
-      let patternP = patternPoint object.Transform (identity ()) p
+      let patternP = patternPoint object.transform (identity ()) p
       let c = patternAt white black Stripes patternP
       Expect.equal c white ""
 
     testCase "Stripes with a pattern transformation" <| fun _ ->
       let object = unitSphere ()
       let p = point 1.5 0. 0.
-      let patternP = patternPoint object.Transform (scaling 2. 2. 2.) p
+      let patternP = patternPoint object.transform (scaling 2. 2. 2.) p
       let c = patternAt white black Stripes patternP
       Expect.equal c white ""
 
@@ -55,7 +55,7 @@ let tests =
       let t = scaling 2. 2. 2.
       let object = sphereT t
       let p = point 2.5 0. 0.
-      let patternP = patternPoint object.Transform (translation 0.5 0. 0.) p
+      let patternP = patternPoint object.transform (translation 0.5 0. 0.) p
       let c = patternAt white black Stripes patternP
       Expect.equal c white ""
 

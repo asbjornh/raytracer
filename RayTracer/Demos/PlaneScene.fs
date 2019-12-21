@@ -14,7 +14,7 @@ open World
 
 let mat = materialC (color 0.5 0.1 0.6)
 
-let floor = { defaultPlane () with Material = mat }
+let floor = { defaultPlane () with material = mat }
 
 let middle =
   sphere
@@ -38,7 +38,7 @@ let cam = camera 400 200 (Math.PI / 3.)
 let cTransform = viewTransform (point 0. 1.5 -5.) (point 0. 1. 0.) (vector 0. 1. 0.)
 cam.transform <- cTransform
 
-let objects: IShape list =
+let objects =
   [middle; right; left; floor]
 
 let w = {

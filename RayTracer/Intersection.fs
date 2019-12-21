@@ -6,7 +6,7 @@ open Shape
 open Tuple
 open Util
 
-type Intersection = { t: float; object: IShape }
+type Intersection = { t: float; object: Shape }
 
 let getT i = i.t
 
@@ -24,7 +24,7 @@ let hit (l: Intersection list) =
 
 type Computation<'a> = {
   t: float
-  object: IShape
+  object: Shape
   point: Tuple
   eyeV: Tuple
   normalV: Tuple
@@ -50,8 +50,8 @@ let rec indexForMaterial = function
   | Gradient _ | Pattern _ | Phong _
   | Reflective _ | TestPattern _ -> 1.
 
-let indexFromIntersection (s: IShape) =
-  indexForMaterial s.Material
+let indexFromIntersection (s: Shape) =
+  indexForMaterial s.material
 
 let refractiveIndexes (is: Intersection list) (hit: Intersection) =
   is |> List.fold (fun (containers, n1, n2) i ->
@@ -97,5 +97,5 @@ let prepareComputations (is: Intersection list) (hit: Intersection) r =
     n2 = n2
   }
 
-let intersect (ray: Ray) (s: IShape) =
+let intersect (ray: Ray) (s: Shape) =
   s |> shapeIntersect ray |> List.map (fun (t, o) -> intersection t o)

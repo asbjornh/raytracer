@@ -40,7 +40,7 @@ let backdropMat = Pattern {
 let backdrop = plane <| chain [rotateX (rad 90.); translateY 80.] <| backdropMat
 
 let light = pointLight (point -10. 10. -10.) white
-let objects: IShape list = [backdrop; ball; floor; roof; wallL; wallR]
+let objects = [backdrop; ball; floor; roof; wallL; wallR]
 let w = world [light] objects
 
 let cam = camera 200 200 (rad 30.)

@@ -67,13 +67,13 @@ let tests =
     testCase "The color with an intersection behind the ray" <| fun _ ->
       let w = defaultWorld ()
       let outer = w.objects.[0]
-      outer.SetMaterial <| Phong { defaultMaterialP () with ambient = 1. }
+      outer.material <- Phong { defaultMaterialP () with ambient = 1. }
       let inner = w.objects.[1]
-      inner.SetMaterial <| Phong { defaultMaterialP () with ambient = 1. }
+      inner.material <- Phong { defaultMaterialP () with ambient = 1. }
       let r = ray (point 0. 0. 0.75) (vector 0. 0. -1.)
       let c = colorAt w r 1
       let actual =
-        match inner.Material with
+        match inner.material with
         | Phong m -> m.color
         | _ -> red
       Expect.equal c actual ""
@@ -171,7 +171,8 @@ let tests =
     testCase "The refracted color at the maximum recursive depth" <| fun _ ->
       let w = defaultWorld ()
       let mat = Transparent { index = 1.5; blend = Normal }
-      let shape = assignMaterial w.objects.[0] mat
+      let shape = w.objects.[0]
+      shape.material <- mat
       let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
       let xs = intersections [
         intersection 4. shape
@@ -184,7 +185,8 @@ let tests =
     testCase "The refracted color under total internal reflection" <| fun _ ->
       let w = defaultWorld ()
       let mat = Transparent { index = 1.5; blend = Normal }
-      let shape = assignMaterial w.objects.[0] mat
+      let shape = w.objects.[0]
+      shape.material <- mat
       let a = (sqrt 2.) / 2.
       let r = ray(point 0. 0. a) (vector 0. 1. 0.)
       let xs = intersections [
@@ -201,8 +203,8 @@ let tests =
       let w = defaultWorld ()
       let matA = TestPattern
       let matB = Transparent { index = 1.5; blend = Normal }
-      let a = assignMaterial w.objects.[0] matA
-      let b = assignMaterial w.objects.[1] matB
+      let a = { w.objects.[0] with material = matA }
+      let b = { w.objects.[1] with material = matB }
       let r = ray (point 0. 0. 0.1) (vector 0. 1. 0.)
       let xs = intersections [
         intersection -0.9899 a
