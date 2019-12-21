@@ -1,7 +1,5 @@
 module rec World
 
-open System
-
 open Color
 open Intersection
 open Light
@@ -92,6 +90,9 @@ let shadeHitSingleLight light world comps remaining =
     let (a, b) = shadeTwo world comps remaining mat.a mat.b
     let p = patternPoint objectT mat.transform comps.overPoint
     patternAt a b mat.pattern p
+
+  | Textured mat ->
+    Texture.colorAt comps.overPoint mat.tex
 
   | Reflective mat ->
     match light with

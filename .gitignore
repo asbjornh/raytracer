@@ -2,6 +2,7 @@
 
 *.ppm
 *.mov
+tex/*.*
 
 # Build results
 [Dd]ebug/

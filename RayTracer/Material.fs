@@ -16,6 +16,7 @@ type Material =
   | Pattern of Pattern
   | Gradient of Gradient
   | Transparent of Transparent
+  | Textured of Textured
   | TestPattern
 
 type Fresnel = {
@@ -28,6 +29,10 @@ type Blend = {
   a: Material
   b: Material
   mix: float
+}
+
+type Textured = {
+  tex: Color list list
 }
 
 type Reflective = {
@@ -150,3 +155,6 @@ let materialC color =
 
 let gradient a b t =
   Gradient { a = a; b = b; sharpness = 0.; transform = t }
+
+let texture path =
+  Textured { tex = Texture.read path }

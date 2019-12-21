@@ -48,7 +48,7 @@ let rec indexForMaterial = function
   | Fresnel m ->
     pickIndex (indexForMaterial m.a) (indexForMaterial m.b)
   | Gradient _ | Pattern _ | Phong _
-  | Reflective _ | TestPattern _ -> 1.
+  | Reflective _ | TestPattern _ | Textured _ -> 1.
 
 let indexFromIntersection (s: Shape) =
   indexForMaterial s.material
