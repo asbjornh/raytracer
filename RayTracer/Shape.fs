@@ -10,6 +10,7 @@ type ShapeType =
   | Sphere
   | Plane
   | Cube
+  | Cylinder
   | TestShape
 
 type Shape = {
@@ -36,6 +37,20 @@ let localIntersect ray (s: Shape) =
       if (looseEq ray.direction.Y 0.)
       then []
       else [(-ray.origin.Y / ray.direction.Y, s)]
+  | Cylinder ->
+    let a = ray.direction.X ** 2. + ray.direction.Z ** 2.
+    if a < epsilon then []
+    else
+      let b =
+        2. * ray.origin.X * ray.direction.X +
+        2. * ray.origin.Z * ray.direction.Z
+      let c = ray.origin.X ** 2. + ray.origin.Z ** 2. - 1.
+      let discriminant = b ** 2. - 4. * a * c
+      if discriminant < 0. then []
+      else
+        let t0 = (-b - sqrt discriminant) / (2. * a)
+        let t1 = (-b + sqrt discriminant) / (2. * a)
+        [(t0, s); (t1, s)]
   | Cube ->
       let (xtmin, xtmax) = checkAxis ray.origin.X ray.direction.X
       let (ytmin, ytmax) = checkAxis ray.origin.Y ray.direction.Y
@@ -48,11 +63,17 @@ let localIntersect ray (s: Shape) =
       else [(tmin, s); (tmax, s)]
   | TestShape -> [(0., s)]
 
+let checkAxis origin direction =
+  let tmin = (-1. - origin) / direction
+  let tmax = (1. - origin) / direction
+  (min tmax tmin, max tmax tmin)
+
 let localNormal p (s: Shape) =
   match s.shape with
   | Sphere -> p - (point 0. 0. 0.)
   | Plane -> vector 0. 1. 0.
   | TestShape -> p
+  | Cylinder -> vector 0. 1. 0.
   | Cube ->
       let (x, y, z, _) = Tuple.Map abs p
       let maxC = List.max [x; y; z]
@@ -82,14 +103,11 @@ let unitSphere () = sphere (identity ()) (defaultMaterial ())
 let sphereT t = sphere t (defaultMaterial ())
 let sphereM m = sphere (identity ()) m
 
-
 let plane t m = { transform = t; material = m; shape = Plane }
 let defaultPlane () = plane (identity ()) (defaultMaterial ())
 
-let checkAxis origin direction =
-  let tmin = (-1. - origin) / direction
-  let tmax = (1. - origin) / direction
-  (min tmax tmin, max tmax tmin)
-
 let cube t m = { transform = t; material = m; shape = Cube }
 let unitCube () = cube <| identity () <| defaultMaterial ()
+
+let cylinder t m = { transform = t; material = m; shape = Cylinder }
+let defaultCylinder () = cylinder <| identity () <| defaultMaterial ()

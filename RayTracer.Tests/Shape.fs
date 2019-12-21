@@ -10,6 +10,7 @@ open Intersection
 open Matrix
 open Material
 open Transform
+open Util
 
 let testCubeIntersect origin direction t1 t2 =
   let c = unitCube ()
@@ -255,4 +256,32 @@ let tests =
       test (point 0.4 0.4 -1.) (vector 0. 0. -1.) "Sixth"
       test (point 1. 1. 1.) (vector 1. 0. 0.) "Seventh"
       test (point -1. -1. -1.) (vector -1. 0. 0.) "Eight"
+
+    testCase "A ray misses a cylinder" <| fun _ ->
+      let test origin direction txt =
+        let cyl = defaultCylinder ()
+        let direction = normalize direction
+        let r = ray origin direction
+        let xs = localIntersect r cyl
+        Expect.equal (List.length xs) 0 txt
+
+      test (point 1. 0. 0.) (vector 0. 1. 0.) "First"
+      test (point 0. 0. 0.) (vector 0. 1. 0.) "Second"
+      test (point 0. 0. -5.) (vector 1. 1. 1.) "Third"
+
+    testCase "A ray strikes a cylinder" <| fun _ ->
+      let test origin direction t0 t1 =
+        let cyl = defaultCylinder ()
+        let direction = normalize direction
+        let r = ray origin direction
+        let xs = localIntersect r cyl
+        let (localT0, _) = xs.[0]
+        let (localT1, _) = xs.[1]
+        Expect.equal (List.length xs) 2 ""
+        Expect.isTrue (looseEq localT0 t0) ""
+        Expect.isTrue (looseEq localT1 t1) ""
+
+      test (point 1. 0. -5.) (vector 0. 0. 1.) 5. 5.
+      test (point 0. 0. -5.) (vector 0. 0. 1.) 4. 6.
+      test (point 0.5 0. -5.) (vector 0.1 1. 1.) 6.80798 7.08872
   ]
