@@ -38,6 +38,7 @@ type Blend = {
   mode: BlendingMode
 }
 
+// TODO: Add scaleU, scaleV, offsetU, offsetV
 type Textured = {
   tex: Color list list
   transform: Matrix.Matrix
