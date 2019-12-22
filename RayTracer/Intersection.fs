@@ -45,6 +45,8 @@ let rec indexForMaterial = function
   | Transparent m -> m.index
   | Mix m ->
     pickIndex (indexForMaterial m.a) (indexForMaterial m.b)
+  | Blend m ->
+    pickIndex (indexForMaterial m.a) (indexForMaterial m.b)
   | Fresnel m ->
     pickIndex (indexForMaterial m.a) (indexForMaterial m.b)
   | Gradient _ | Pattern _ | Phong _

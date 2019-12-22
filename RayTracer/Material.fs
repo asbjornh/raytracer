@@ -13,6 +13,7 @@ type Material =
   | Reflective of Reflective
   | Fresnel of Fresnel
   | Mix of Mix
+  | Blend of Blend
   | Pattern of Pattern
   | Gradient of Gradient
   | Transparent of Transparent
@@ -29,6 +30,12 @@ type Mix = {
   a: Material
   b: Material
   mix: float
+}
+
+type Blend = {
+  a: Material
+  b: Material
+  mode: BlendingMode
 }
 
 type Textured = {

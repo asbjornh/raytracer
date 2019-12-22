@@ -117,6 +117,10 @@ let shadeHitSingleLight light world comps remaining =
     let (a, b) = shadeTwo world comps remaining mat.a mat.b
     mix a b mat.mix
 
+  | Blend mat ->
+    let (a, b) = shadeTwo world comps remaining mat.a mat.b
+    blend mat.mode a b
+
   | Gradient mat ->
     let (a, b) = shadeTwo world comps remaining mat.a mat.b
     let p = patternPoint objectT mat.transform comps.overPoint
