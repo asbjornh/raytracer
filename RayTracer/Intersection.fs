@@ -43,7 +43,7 @@ let pickIndex (a: float) b =
 
 let rec indexForMaterial = function
   | Transparent m -> m.index
-  | Blend m ->
+  | Mix m ->
     pickIndex (indexForMaterial m.a) (indexForMaterial m.b)
   | Fresnel m ->
     pickIndex (indexForMaterial m.a) (indexForMaterial m.b)

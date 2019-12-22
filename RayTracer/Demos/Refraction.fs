@@ -12,7 +12,7 @@ open Tuple
 open Util
 open World
 
-let baseMat = Blend {
+let baseMat = Mix {
   a = material (color 0. 0.15 0.75) 1. 0.0 1.
   b = Transparent { index = 1.17; blend = Multiply }
   mix = 1.

@@ -12,7 +12,7 @@ type Material =
   | Phong of Phong
   | Reflective of Reflective
   | Fresnel of Fresnel
-  | Blend of Blend
+  | Mix of Mix
   | Pattern of Pattern
   | Gradient of Gradient
   | Transparent of Transparent
@@ -25,7 +25,7 @@ type Fresnel = {
   mix: float
 }
 
-type Blend = {
+type Mix = {
   a: Material
   b: Material
   mix: float

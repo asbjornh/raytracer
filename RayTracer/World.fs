@@ -113,7 +113,7 @@ let shadeHitSingleLight light world comps remaining =
     let f = fresnelShade a b comps.normalV comps.eyeV
     mix b f mat.mix
 
-  | Blend mat ->
+  | Mix mat ->
     let (a, b) = shadeTwo world comps remaining mat.a mat.b
     mix a b mat.mix
 

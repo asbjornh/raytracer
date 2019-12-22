@@ -113,7 +113,7 @@ let tests =
 
     testCase "The reflected color for a reflective material" <| fun _ ->
       let w = defaultWorld ()
-      let mat = Blend {
+      let mat = Mix {
         a = defaultMaterial ()
         b = Reflective { blend = Normal }
         mix = 0.5
@@ -129,7 +129,7 @@ let tests =
 
     testCase "shade_hit() with a reflective material" <| fun _ ->
       let w = defaultWorld ()
-      let mat = Blend {
+      let mat = Mix {
         a = defaultMaterial ()
         b = Reflective { blend = Normal }
         mix = 0.5
@@ -154,7 +154,7 @@ let tests =
 
     testCase "The reflected color at the maximum recursive depth" <| fun _ ->
       let w = defaultWorld ()
-      let mat = Blend {
+      let mat = Mix {
         a = defaultMaterial ()
         b = Reflective { blend = Normal }
         mix = 0.5
@@ -221,7 +221,7 @@ let tests =
       let w = defaultWorld ()
       let floor =
         plane <| translation 0. -1. 0.
-        <| Blend {
+        <| Mix {
           a = Transparent { index = 1.5; blend = Add }
           b = defaultMaterial ()
           mix = 0.5
