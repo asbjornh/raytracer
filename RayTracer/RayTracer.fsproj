@@ -40,6 +40,7 @@
     <Compile Include="Demos/SphereRing.fs" />
     <Compile Include="Demos/SoftShadows.fs" />
     <Compile Include="Demos/Refraction.fs" />
+    <Compile Include="Demos/Textures.fs" />
 
     <Compile Include="Program.fs" />
   </ItemGroup>
