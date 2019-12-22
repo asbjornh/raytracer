@@ -33,6 +33,7 @@ type Blend = {
 
 type Textured = {
   tex: Color list list
+  transform: Matrix.Matrix
 }
 
 type Reflective = {
@@ -156,5 +157,5 @@ let materialC color =
 let gradient a b t =
   Gradient { a = a; b = b; sharpness = 0.; transform = t }
 
-let texture path =
-  Textured { tex = Texture.read path }
+let texture path t =
+  Textured { tex = Texture.read path; transform = t }

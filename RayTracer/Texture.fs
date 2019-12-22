@@ -1,5 +1,6 @@
 module Texture
 
+open System
 open System.Drawing
 
 open Color
@@ -25,9 +26,9 @@ let rec wrapAround max n =
   else if (n >= 0) then n
   else (max - n) % max
 
-let colorAt (p: Tuple) (cs: Color list list) =
+let colorAt u v (cs: Color list list) =
   let w = List.length cs.[0]
   let h = List.length cs
-  let x = wrapAround w (int p.X)
-  let y = wrapAround h (int p.Z)
+  let x = Math.Floor (u * float w) |> int |> wrapAround w
+  let y = Math.Floor (v * float h) |> int |> wrapAround h
   cs.[y].[x]

@@ -1,7 +1,15 @@
 module Sphere
 
+open System
+
 open Ray
 open Tuple
+
+let uv (p: Tuple) =
+  let d = p - (point 0. 0. 0.) |> normalize
+  let u = 0.5 + Math.Atan2 (d.Z, d.X) / (2. * Math.PI)
+  let v = 0.5 - Math.Asin d.Y / Math.PI
+  (u, v)
 
 let intersect ray s =
   let sphereToRay = ray.origin - (point 0. 0. 0.)

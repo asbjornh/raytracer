@@ -92,7 +92,9 @@ let shadeHitSingleLight light world comps remaining =
     patternAt a b mat.pattern p
 
   | Textured mat ->
-    Texture.colorAt comps.overPoint mat.tex
+    let p = patternPoint objectT mat.transform comps.overPoint
+    let (u, v) = uvAt p comps.object
+    Texture.colorAt u v mat.tex
 
   | Reflective mat ->
     match light with

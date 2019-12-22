@@ -36,6 +36,17 @@ let shapeIntersect ray (shape: Shape) =
   <| Ray.transform (inverse shape.transform) ray
   <| shape
 
+let uvAt p s =
+  match s.shape with
+  | Sphere -> Sphere.uv p
+  | Plane -> Plane.uv p
+  | TestShape -> (0., 0.)
+  | Cylinder -> failwith "Missing UV implementation for Plane"
+  | OpenCylinder -> failwith "Missing UV implementation for OpenCylinder"
+  | Cone -> failwith "Missing UV implementation for Cone"
+  | DoubleCone -> failwith "Missing UV implementation for DoubleCone"
+  | Cube -> failwith "Missing UV implementation for Cube"
+
 let localNormal p (s: Shape) =
   match s.shape with
   | Sphere -> p - (point 0. 0. 0.)
