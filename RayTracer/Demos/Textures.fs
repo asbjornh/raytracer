@@ -16,7 +16,7 @@ open World
 
 let marble t = Blend {
   a = materialC white
-  b = texture "../tex/checkers.png" t
+  b = texture "../tex/checkers.png" (1., 1.) (0., 0.) t
   mode = Multiply
 }
 

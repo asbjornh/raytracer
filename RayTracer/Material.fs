@@ -38,9 +38,12 @@ type Blend = {
   mode: BlendingMode
 }
 
-// TODO: Add scaleU, scaleV, offsetU, offsetV
 type Textured = {
   tex: Color list list
+  uScale: float
+  uOffset: float
+  vScale: float
+  vOffset: float
   transform: Matrix.Matrix
 }
 
@@ -165,5 +168,13 @@ let materialC color =
 let gradient a b t =
   Gradient { a = a; b = b; sharpness = 0.; transform = t }
 
-let texture path t =
-  Textured { tex = Texture.read path; transform = t }
+let texture path (uScale, vScale) (uOffset, vOffset) t =
+  Textured {
+    tex = Texture.read path;
+    transform = t
+    uOffset = uOffset
+    uScale = uScale
+    vOffset = vOffset
+    vScale = vScale
+  }
+let textureT path = texture path (1., 1.) (0., 0.)
