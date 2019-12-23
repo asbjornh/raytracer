@@ -24,11 +24,12 @@ let read path =
 let rec wrapAround max n =
   if n >= max then (n - max) % max
   else if (n >= 0) then n
-  else (max - n) % max
+  else ((n - max) % max) + max
+
 
 let colorAt u v (cs: Color list list) =
   let w = List.length cs.[0]
   let h = List.length cs
-  let x = Math.Floor (u * float w) |> int |> wrapAround w
-  let y = Math.Floor (v * float h) |> int |> wrapAround h
+  let x = Math.Floor (u * float w) |> int |> wrapAround (w - 1)
+  let y = Math.Floor (v * float h) |> int |> wrapAround (h - 1)
   cs.[y].[x]

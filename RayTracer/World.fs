@@ -98,6 +98,32 @@ let shadeHitSingleLight light world comps remaining =
     let v2 = v / mat.vScale + mat.vOffset
     Texture.colorAt u2 v2 mat.tex
 
+  | NormalMap mat ->
+    let objectTex = { comps.object with material = mat.tex }
+    let compsTex = { comps with object = objectTex }
+    let rotation = rotateAlignment (vector 0. 1. 0.) comps.normalV
+    let t = multiplyT rotation (vector 0. 0. 1.)
+    let b = multiplyT rotation (vector -1. 0. 0.)
+    let n = comps.normalV
+    let transform = matrix [
+      [ t.X ; b.X ; n.X ; 0. ]
+      [ -t.Y ; -b.Y ; n.Y ; 0. ]
+      [ t.Z ; b.Z ; n.Z ; 0. ]
+      [ 0.  ; 0.  ; 0.  ; 1. ]
+    ]
+    let normalC =
+      shadeHit world compsTex remaining
+      |> Color.Map (rangeMap (0., 1.) (-1., 1.))
+    let (r, g, b) = normalC
+    let normalV = multiplyT transform <| vector r g b
+
+    let compsNormal =
+      { comps with
+          normalV = normalize normalV
+          object = { comps.object with material = mat.mat }
+      }
+    shadeHit world compsNormal remaining
+
   | Reflective mat ->
     match light with
     | PointLight _ | SoftLight _ -> reflectedColor world comps remaining

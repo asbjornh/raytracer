@@ -32,10 +32,10 @@ let shearing xy xz yx yz zx zy =
   |> set 2 0 zx |> set 2 1 zy
 
 
-let rotateAlignment (from: Tuple) (To: Tuple) =
+let rotateAlignment (fromV: Tuple) (toV: Tuple) =
   // NOTE: https://gist.github.com/kevinmoran/b45980723e53edeb8a5a43c49f134724
-  let f = normalize from
-  let t = normalize To
+  let f = normalize fromV
+  let t = normalize toV
   let cosA = dot f t
   if (f = t)
     then identity ()

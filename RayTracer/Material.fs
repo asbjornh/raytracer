@@ -18,6 +18,7 @@ type Material =
   | Gradient of Gradient
   | Transparent of Transparent
   | Textured of Textured
+  | NormalMap of NormalMap
   | TestPattern
 
 type Fresnel = {
@@ -45,6 +46,11 @@ type Textured = {
   vScale: float
   vOffset: float
   transform: Matrix.Matrix
+}
+
+type NormalMap = {
+  mat: Material
+  tex: Material
 }
 
 type Reflective = {
