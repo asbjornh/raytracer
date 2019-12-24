@@ -14,25 +14,24 @@ open Util
 open World
 
 
-let marble t = NormalMap {
-  mat = materialC white
-  tex = texture "../tex/brick-wall-normal.png" (1., 1.) (0., 0.) t
+let i = identity ()
+let marble = NormalMap {
+  mat = Blend {
+    a = materialC white
+    b = texture "../tex/metal-plate-color.jpg" (0.5, 0.5) (0., 0.) i
+    mode = Multiply
+  }
+  tex = texture "../tex/metal-plate-normal.jpg" (0.5, 0.5) (0., 0.) i
 }
 
 let t = rotateAlignment (vector 0. 1. 0.) (vector 0. 0. 1.)
 
-let mat =
-  marble
-  // <| chain [translateX 5.; scale 1. 0.5 0.5]
-  <| identity ()
-
-let floor = { defaultPlane () with material = mat; }
+let floor = { defaultPlane () with material = marble; }
 
 let middle =
   sphere
   <| (translation 0. 1. 0.)
-  // <| marble (scaling 1. 1. 1.)
-  <| marble (identity ())
+  <| marble
 
 let right =
   sphere
@@ -44,9 +43,9 @@ let left =
   <| (chain [ translate -1.5 0.33 -0.75; uniformScale 0.33 ])
   <| defaultMaterial ()
 
-let darkBlue = color 0. 0.1 0.2
+let darkBlue = color 0.1 0.1 0.2
 let pLight = pointLight (point -10. 10. -10.) (color 1. 0.9 0.7)
-let cLight = constantLight darkBlue true
+let cLight = constantLight (color 0.25 0.25 0.35) true
 let cam = camera 200 200 (Math.PI / 3.)
 let cTransform = viewTransform (point 0. 2. -3.) (point 0. 1. 0.) (vector 0. 1. 0.)
 cam.transform <- cTransform
