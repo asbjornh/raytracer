@@ -4,7 +4,10 @@ open System
 open System.Drawing
 
 open Color
+open Matrix
+open Pattern
 open Tuple
+open Transform
 open Util
 
 let toColor = float >> rangeMap (0., 255.) (0., 1.)
@@ -27,9 +30,25 @@ let rec wrapAround max n =
   else ((n - max) % max) + max
 
 
-let colorAt u v (cs: Color list list) =
+let colorAt u v uScale vScale uOffset vOffset (cs: Color list list) =
+  let u2 = u / uScale + uOffset
+  let v2 = v / vScale + vOffset
   let w = List.length cs.[0]
   let h = List.length cs
-  let x = Math.Floor (u * float w) |> int |> wrapAround (w - 1)
-  let y = Math.Floor (v * float h) |> int |> wrapAround (h - 1)
+  let x = Math.Floor (u2 * float w) |> int |> wrapAround (w - 1)
+  let y = Math.Floor (v2 * float h) |> int |> wrapAround (h - 1)
   cs.[y].[x]
+
+let mappedNormalAt (normalV: Tuple) (color: Color) =
+  let rotation = rotateAlignment (vector 0. 1. 0.) normalV
+  let t = multiplyT rotation (vector 0. 0. 1.)
+  let b = multiplyT rotation (vector -1. 0. 0.)
+  let n = normalV
+  let transform = matrix [
+    [ t.X ; b.X ; n.X ; 0. ]
+    [ -t.Y; -b.Y; n.Y ; 0. ]
+    [ t.Z ; b.Z ; n.Z ; 0. ]
+    [ 0.  ; 0.  ; 0.  ; 1. ]
+  ]
+  let (r, g, b) = color.Return
+  multiplyT transform <| vector r g b

@@ -8,6 +8,7 @@ open Matrix
 open Pattern
 open Ray
 open Shape
+open Texture
 open Transform
 open Tuple
 open Util
@@ -92,37 +93,16 @@ let shadeHitSingleLight light world comps remaining =
     patternAt a b mat.pattern p
 
   | Textured mat ->
-    let p = patternPoint objectT mat.transform comps.overPoint
-    let (u, v) = uvAt p comps.object
-    let u2 = u / mat.uScale + mat.uOffset
-    let v2 = v / mat.vScale + mat.vOffset
-    Texture.colorAt u2 v2 mat.tex
+    textureAt comps mat
 
   | NormalMap mat ->
-    let objectTex = { comps.object with material = mat.tex }
-    let compsTex = { comps with object = objectTex }
-    let rotation = rotateAlignment (vector 0. 1. 0.) comps.normalV
-    let t = multiplyT rotation (vector 0. 0. 1.)
-    let b = multiplyT rotation (vector -1. 0. 0.)
-    let n = comps.normalV
-    let transform = matrix [
-      [ t.X ; b.X ; n.X ; 0. ]
-      [ -t.Y ; -b.Y ; n.Y ; 0. ]
-      [ t.Z ; b.Z ; n.Z ; 0. ]
-      [ 0.  ; 0.  ; 0.  ; 1. ]
-    ]
-    let normalC =
-      shadeHit world compsTex remaining
-      |> Color.Map (rangeMap (0., 1.) (-1., 1.))
-    let (r, g, b) = normalC
-    let normalV = multiplyT transform <| vector r g b
+    let normalV =
+      textureAt comps mat.tex
+      |> Color.MapC (rangeMap (0., 1.) (-1., 1.))
+      |> mappedNormalAt comps.normalV |> normalize
 
-    let compsNormal =
-      { comps with
-          normalV = normalize normalV
-          object = { comps.object with material = mat.mat }
-      }
-    shadeHit world compsNormal remaining
+    let newObj = { comps.object with material = mat.mat }
+    shadeHit world { comps with normalV = normalV; object = newObj } remaining
 
   | Reflective mat ->
     match light with
@@ -176,6 +156,11 @@ let colorAt world ray remaining =
   match (is |> hit) with
   | Some i -> prepareComputations is i ray |> shadeHit world <| remaining
   | None -> world.background
+
+let textureAt comps (mat: Textured) =
+  let p = patternPoint comps.object.transform mat.transform comps.overPoint
+  let (u, v) = uvAt p comps.object
+  Texture.colorAt u v mat.uScale mat.vScale mat.uOffset mat.vOffset mat.tex
 
 let colorAndDepthAt world ray remaining =
   let is = intersect ray world

@@ -21,7 +21,7 @@ let marble = NormalMap {
     b = texture "../tex/metal-plate-color.jpg" (0.5, 0.5) (0., 0.) i
     mode = Multiply
   }
-  tex = texture "../tex/metal-plate-normal.jpg" (0.5, 0.5) (0., 0.) i
+  tex = textureRaw "../tex/metal-plate-normal.jpg" (0.5, 0.5) (0., 0.) i
 }
 
 let t = rotateAlignment (vector 0. 1. 0.) (vector 0. 0. 1.)

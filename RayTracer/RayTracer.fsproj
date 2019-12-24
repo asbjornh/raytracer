@@ -14,8 +14,8 @@
     <Compile Include="Transform.fs" />
     <Compile Include="Ray.fs" />
     <Compile Include="Light.fs" />
-    <Compile Include="Texture.fs" />
     <Compile Include="Pattern.fs" />
+    <Compile Include="Texture.fs" />
     <Compile Include="Material.fs" />
     <Compile Include="Shapes/Cone.fs" />
     <Compile Include="Shapes/Cube.fs" />

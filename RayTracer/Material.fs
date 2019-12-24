@@ -50,7 +50,7 @@ type Textured = {
 
 type NormalMap = {
   mat: Material
-  tex: Material
+  tex: Textured
 }
 
 type Reflective = {
@@ -174,8 +174,8 @@ let materialC color =
 let gradient a b t =
   Gradient { a = a; b = b; sharpness = 0.; transform = t }
 
-let texture path (uScale, vScale) (uOffset, vOffset) t =
-  Textured {
+let textureRaw path (uScale, vScale) (uOffset, vOffset) t =
+  {
     tex = Texture.read path;
     transform = t
     uOffset = uOffset
@@ -183,4 +183,7 @@ let texture path (uScale, vScale) (uOffset, vOffset) t =
     vOffset = vOffset
     vScale = vScale
   }
+let texture path (uScale, vScale) (uOffset, vOffset) t =
+  textureRaw path (uScale, vScale) (uOffset, vOffset) t |> Textured
 let textureT path = texture path (1., 1.) (0., 0.)
+
