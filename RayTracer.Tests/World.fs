@@ -220,7 +220,7 @@ let tests =
     testCase "shade_hit() with a transparent material" <| fun _ ->
       let w = defaultWorld ()
       let floor =
-        plane <| translation 0. -1. 0.
+        plane <| chain [translateY -1.; uniformScale 10.]
         <| Mix {
           a = Transparent { index = 1.5; blend = Add }
           b = defaultMaterial ()
