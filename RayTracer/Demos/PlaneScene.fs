@@ -6,6 +6,7 @@ open Camera
 open Color
 open Light
 open Material
+open Matrix
 open Shape
 open Transform
 open Tuple
@@ -14,7 +15,7 @@ open World
 
 let mat = materialC (color 0.5 0.1 0.6)
 
-let floor = { defaultPlane () with material = mat }
+let floor = plane (scaling 10000. 1. 10000.) mat
 
 let middle =
   sphere
