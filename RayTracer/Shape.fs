@@ -3,6 +3,7 @@ module rec Shape
 open Matrix
 open Material
 open Tuple
+open Util
 
 type ShapeType =
   | Sphere
@@ -13,11 +14,16 @@ type ShapeType =
   | Cone
   | DoubleCone
   | TestShape
+  | Group of Group
 
 type Shape = {
   mutable transform: Matrix
   mutable material: Material
   shape: ShapeType
+}
+
+type Group = {
+  children: Shape list
 }
 
 let localIntersect ray (s: Shape) =
@@ -30,6 +36,8 @@ let localIntersect ray (s: Shape) =
   | Cone -> Cone.intersect -1. 0. ray s
   | DoubleCone -> Cone.intersect -1. 1. ray s
   | TestShape -> [(0., s)]
+  | Group g ->
+    List.collect (shapeIntersect ray) g.children
 
 let shapeIntersect ray (shape: Shape) =
   localIntersect
@@ -46,6 +54,7 @@ let uvAt p s =
   | Cone -> failwith "Missing UV implementation for Cone"
   | DoubleCone -> failwith "Missing UV implementation for DoubleCone"
   | Cube -> failwith "Missing UV implementation for Cube"
+  | Group _ -> failwith "Missing UV implementation for Group"
 
 let localNormal p (s: Shape) =
   match s.shape with
@@ -57,6 +66,7 @@ let localNormal p (s: Shape) =
   | Cone -> Cone.normal -1. 0. p
   | DoubleCone -> Cone.normal -1. 1. p
   | Cube -> Cube.normal p
+  | Group _ -> failwith "Missing localNormal implementation for Group"
 
 let normalAt point (shape: Shape) =
   let invT = inverse shape.transform
@@ -65,6 +75,23 @@ let normalAt point (shape: Shape) =
   let worldN = multiplyT (transpose invT) localN
   let (x, y, z, _) = worldN.Return
   normalize (vector x y z)
+
+let groupParents (group: Group) (inner: Shape) =
+  group.children |> List.collect (fun c ->
+    match c.shape with
+    | Group g -> c :: groupParents g inner
+    | _ -> if refEq c inner then [c] else []
+  )
+
+let worldToObject (p: Tuple) (shape: Shape) (inner: Shape) =
+  match shape.shape with
+  | Group g ->
+    shape :: groupParents g inner
+    |> List.map (fun s -> inverse s.transform)
+    |> List.rev
+    |> List.reduce multiply
+    |> flip multiplyT p
+  | _ -> multiplyT (shape.transform) p
 
 let shape s t m = { transform = t; material = m; shape = s }
 let shapeM s m = shape s (identity ()) m
@@ -77,6 +104,7 @@ let cylinder t = shape Cylinder t
 let cone t = shape Cone t
 let doubleCone t = shape DoubleCone t
 let openCylinder t = shape OpenCylinder t
+let group c t = shape (Group { children = c }) t
 
 let unitSphere () = defaultShape Sphere
 let sphereT t = shapeT Sphere t
@@ -87,3 +115,4 @@ let defaultCylinder () = defaultShape Cylinder
 let defaultOpenCylinder () = defaultShape OpenCylinder
 let defaultCone () = defaultShape Cone
 let defaultDoubleCone () = defaultShape DoubleCone
+let groupT c t = group c t <| defaultMaterial ()

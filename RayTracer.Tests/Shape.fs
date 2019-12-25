@@ -399,4 +399,38 @@ let tests =
       test (point 0. 0. 0.) (vector 0. 0. 0.)
       test (point 1. 1. 1.) (vector 1. -(sqrt 2.) 1.)
       test (point -1. -1. 0.) (vector -1. 1. 0.)
+
+    testCase "Intersecting a ray with an empty group" <| fun _ ->
+      let g = groupT [] <| identity ()
+      let r = ray (point 0. 0. 0.) (vector 0. 0. 1.)
+      let xs = localIntersect r g
+      Expect.equal (List.length xs) 0 ""
+
+    testCase "Intersecting a ray with a nonempty group" <| fun _ ->
+      let s1 = unitSphere ()
+      let s2 = sphereT (translation 0. 0. -3.)
+      let s3 = sphereT (translation 5. 0. 0.)
+      let g = groupT [s1; s2; s3] <| identity ()
+      let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
+      let xs = localIntersect r g
+      let objects = List.map snd xs
+      Expect.equal (List.length xs) 4 ""
+      Expect.equal objects.[0] s1 ""
+      Expect.equal objects.[1] s1 ""
+      Expect.equal objects.[2] s2 ""
+      Expect.equal objects.[3] s2 ""
+
+    testCase "Intersecting a transformed group" <| fun _ ->
+      let s = sphereT <| translation 5. 0. 0.
+      let g = groupT [s] <| scaling 2. 2. 2.
+      let r = ray (point 10. 0. -10.) (vector 0. 0. 1.)
+      let xs = shapeIntersect r g
+      Expect.equal (List.length xs) 2 ""
+
+    testCase "Converting a point from world to object space" <| fun _ ->
+      let s = sphereT <| translation 5. 0. 0.
+      let g2 = groupT [s] <| scaling 2. 2. 2.
+      let g1 = groupT [g2] (rotationY <| Math.PI / 2.)
+      let p = worldToObject (point -2. 0. -10.) g1 s
+      Expect.equal p (point 0. 0. -1.) ""
   ]
