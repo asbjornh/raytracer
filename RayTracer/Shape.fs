@@ -26,18 +26,20 @@ type Group = {
   children: Shape list
 }
 
+let noGroup = List.map (fun (t, s) -> (t, s, None))
 let localIntersect ray (s: Shape) =
   match s.shape with
-  | Sphere -> Sphere.intersect ray s
-  | Plane -> Plane.intersect ray s
-  | Cylinder -> Cylinder.intersect ray s
-  | OpenCylinder -> Cylinder.intersectOpen ray s
-  | Cube -> Cube.intersect ray s
-  | Cone -> Cone.intersect -1. 0. ray s
-  | DoubleCone -> Cone.intersect -1. 1. ray s
-  | TestShape -> [(0., s)]
+  | Sphere -> Sphere.intersect ray s |> noGroup
+  | Plane -> Plane.intersect ray s |> noGroup
+  | Cylinder -> Cylinder.intersect ray s |> noGroup
+  | OpenCylinder -> Cylinder.intersectOpen ray s |> noGroup
+  | Cube -> Cube.intersect ray s |> noGroup
+  | Cone -> Cone.intersect -1. 0. ray s |> noGroup
+  | DoubleCone -> Cone.intersect -1. 1. ray s |> noGroup
+  | TestShape -> [(0., s, None)]
   | Group g ->
     List.collect (shapeIntersect ray) g.children
+    |> List.map (fun (t, o, _) -> (t, o, Some s))
 
 let shapeIntersect ray (shape: Shape) =
   localIntersect

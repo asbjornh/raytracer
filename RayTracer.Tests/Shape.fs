@@ -20,8 +20,8 @@ let testCubeIntersect origin direction t1 t2 =
   let c = unitCube ()
   let r = ray origin direction
   let xs = localIntersect r c
-  let (localT1, _) = xs.[0]
-  let (localT2, _) = xs.[1]
+  let (localT1, _, _) = xs.[0]
+  let (localT2, _, _) = xs.[1]
   Expect.equal (List.length xs) 2 ""
   Expect.equal localT1 t1 ""
   Expect.equal localT2 t2 ""
@@ -198,7 +198,7 @@ let tests =
       let r = ray (point 0. 1. 0.) (vector 0. -1. 0.)
       let xs = localIntersect r p
       Expect.equal (List.length xs) 1 ""
-      let (t, object) = xs.[0]
+      let (t, object, _) = xs.[0]
       Expect.equal t 1. ""
       Expect.equal object p ""
 
@@ -207,7 +207,7 @@ let tests =
       let r = ray (point 0. -1. 0.) (vector 0. 1. 0.)
       let xs = localIntersect r p
       Expect.equal (List.length xs) 1 ""
-      let (t, object) = xs.[0]
+      let (t, object, _) = xs.[0]
       Expect.equal t 1. ""
       Expect.equal object p ""
 
@@ -281,8 +281,8 @@ let tests =
         let r = ray origin direction
         let xs = shapeIntersect r cyl
         Expect.equal (List.length xs) 2 ""
-        let (localT0, _) = xs.[0]
-        let (localT1, _) = xs.[1]
+        let (localT0, _, _) = xs.[0]
+        let (localT1, _, _) = xs.[1]
         Expect.isTrue (looseEq localT0 t0) <| diff localT0 t0
         Expect.isTrue (looseEq localT1 t1) <| diff localT1 t1
 
@@ -360,8 +360,8 @@ let tests =
         let r = ray origin <| normalize direction
         let xs = localIntersect r shape
         Expect.equal (List.length xs) 2 txt
-        let (_t0, _) = xs.[0]
-        let (_t1, _) = xs.[1]
+        let (_t0, _, _) = xs.[0]
+        let (_t1, _, _) = xs.[1]
         Expect.isTrue (looseEq _t0 t0) (diff _t0 t0)
         Expect.isTrue (looseEq _t1 t1) (diff _t1 t1)
 
@@ -413,7 +413,7 @@ let tests =
       let g = groupT [s1; s2; s3] <| identity ()
       let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
       let xs = localIntersect r g
-      let objects = List.map snd xs
+      let (_, objects, _) = List.unzip3 xs
       Expect.equal (List.length xs) 4 ""
       Expect.equal objects.[0] s1 ""
       Expect.equal objects.[1] s1 ""

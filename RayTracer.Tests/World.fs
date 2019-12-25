@@ -35,7 +35,7 @@ let tests =
       let w = defaultWorld ()
       let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
       let shape = w.objects.[0]
-      let i = intersection 4. shape
+      let i = intersection 4. shape None
       let comps = prepareComputations [i] i r
       let c = shadeHit w comps 1
       Expect.equal c (color 0.38066 0.47583 0.2855) ""
@@ -47,7 +47,7 @@ let tests =
       }
       let r = ray (point 0. 0. 0.) (vector 0. 0. 1.)
       let shape = w.objects.[1]
-      let i = intersection 0.5 shape
+      let i = intersection 0.5 shape None
       let comps = prepareComputations [i] i r
       let c = shadeHit w comps 1
       Expect.equal c (color 0.90498 0.90498 0.90498) ""
@@ -106,7 +106,7 @@ let tests =
         <| [unitSphere (); s]
 
       let r = ray (point 0. 0. 5.) (vector 0. 0. 1.)
-      let i = intersection 4. s
+      let i = intersection 4. s None
       let comps = prepareComputations [i] i r
       let c = shadeHit w comps 1
       Expect.equal c (color 0.1 0.1 0.1) ""
@@ -122,7 +122,7 @@ let tests =
       let w = { w with objects = List.concat [w.objects; [shape]] }
       let a = (sqrt 2.) / 2.
       let r = ray (point 0. 0. -3.) (vector 0. -a a)
-      let i = intersection (sqrt 2.) shape
+      let i = intersection (sqrt 2.) shape None
       let comps = prepareComputations [i] i r
       let c = reflectedColor w comps 1
       Expect.equal c (color 0.38066 0.47583 0.28549) ""
@@ -138,7 +138,7 @@ let tests =
       let w = { w with objects = List.concat [w.objects; [shape]] }
       let a = (sqrt 2.) / 2.
       let r = ray (point 0. 0. -3.) (vector 0. -a a)
-      let i = intersection (sqrt 2.) shape
+      let i = intersection (sqrt 2.) shape None
       let comps = prepareComputations [i] i r
       let c = shadeHit w comps 1
       Expect.equal c (color 0.53354 0.58112 0.48596) ""
@@ -163,7 +163,7 @@ let tests =
       let w = { w with objects = List.concat [w.objects; [shape]] }
       let a = (sqrt 2.) / 2.
       let r = ray (point 0. 0. -3.) (vector 0. -a a)
-      let i = intersection (sqrt 2.) shape
+      let i = intersection (sqrt 2.) shape None
       let comps = prepareComputations [i] i r
       let c = reflectedColor w comps 0
       Expect.equal c black ""
@@ -175,8 +175,8 @@ let tests =
       shape.material <- mat
       let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
       let xs = intersections [
-        intersection 4. shape
-        intersection 6. shape
+        intersection 4. shape None
+        intersection 6. shape None
       ]
       let comps = prepareComputations xs xs.[0] r
       let c = refractedColor w comps 0
@@ -190,8 +190,8 @@ let tests =
       let a = (sqrt 2.) / 2.
       let r = ray(point 0. 0. a) (vector 0. 1. 0.)
       let xs = intersections [
-        intersection -a shape
-        intersection a shape
+        intersection -a shape None
+        intersection a shape None
       ]
       // NOTE: this time you're inside the sphere, so you need​
       // to look at the second intersection, xs[1], not xs[0]​
@@ -207,10 +207,10 @@ let tests =
       let b = { w.objects.[1] with material = matB }
       let r = ray (point 0. 0. 0.1) (vector 0. 1. 0.)
       let xs = intersections [
-        intersection -0.9899 a
-        intersection -0.4899 b
-        intersection 0.4899 b
-        intersection 0.9899 a
+        intersection -0.9899 a None
+        intersection -0.4899 b None
+        intersection 0.4899 b None
+        intersection 0.9899 a None
       ]
       let w = { w with objects = [a; b] }
       let comps = prepareComputations xs xs.[2] r
@@ -232,7 +232,7 @@ let tests =
       let w = { w with objects = [floor; ball] }
       let a = (sqrt 2. / 2.)
       let r = ray (point 0. 0. -3.) (vector 0. -a a)
-      let xs = intersections [ intersection (sqrt 2.) floor ]
+      let xs = intersections [ intersection (sqrt 2.) floor None ]
       let comps = prepareComputations xs xs.[0] r
       let c = shadeHit w comps 5
       expectColorEquals c (color 0.93642 0.68642 0.68642)
