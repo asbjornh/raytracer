@@ -19,6 +19,7 @@ type Material =
   | Transparent of Transparent
   | Textured of Textured
   | NormalMap of NormalMap
+  | Luminance of Color
   | TestPattern
 
 type Fresnel = {
@@ -186,4 +187,3 @@ let textureRaw path (uScale, vScale) (uOffset, vOffset) t =
 let texture path (uScale, vScale) (uOffset, vOffset) t =
   textureRaw path (uScale, vScale) (uOffset, vOffset) t |> Textured
 let textureT path = texture path (1., 1.) (0., 0.)
-

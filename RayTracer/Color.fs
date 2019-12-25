@@ -77,3 +77,4 @@ let yellow = color 1. 0.9 0.
 let darkGray = color 0.1 0.1 0.1
 let pink = color 1. 0.3 0.9
 let cyan = color 0.2 1. 1.
+let gold = color 0.83 0.69 0.22

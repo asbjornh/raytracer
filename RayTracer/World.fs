@@ -87,6 +87,8 @@ let shadeHitSingleLight light world comps remaining =
     lighting
       light comps.point comps.eyeV comps.normalV mat s
 
+  | Luminance c -> c
+
   | Pattern mat ->
     let (a, b) = shadeTwo world comps remaining mat.a mat.b
     let p = patternPoint objectT mat.transform comps.overPoint
