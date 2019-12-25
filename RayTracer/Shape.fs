@@ -76,6 +76,11 @@ let normalAt point (shape: Shape) =
   let (x, y, z, _) = worldN.Return
   normalize (vector x y z)
 
+let normalAtGroup point (group: Shape) (shape: Shape) =
+  let localP = worldToObject point group shape
+  let localN = localNormal localP shape
+  normalToWorld localN group shape
+
 let groupParents (group: Group) (inner: Shape) =
   group.children |> List.collect (fun c ->
     match c.shape with
@@ -83,15 +88,31 @@ let groupParents (group: Group) (inner: Shape) =
     | _ -> if refEq c inner then [c] else []
   )
 
-let worldToObject (p: Tuple) (shape: Shape) (inner: Shape) =
-  match shape.shape with
+let worldToObject (p: Tuple) (group: Shape) (inner: Shape) =
+  match group.shape with
   | Group g ->
-    shape :: groupParents g inner
+    group :: groupParents g inner
     |> List.map (fun s -> inverse s.transform)
     |> List.rev
     |> List.reduce multiply
     |> flip multiplyT p
-  | _ -> multiplyT (shape.transform) p
+  | _ -> multiplyT (inverse group.transform) p
+
+let mapNormal = inverse >> transpose
+let normalToWorld (v: Tuple) (group: Shape) (inner: Shape) =
+  match group.shape with
+  | Group g ->
+    let v =
+      group :: groupParents g inner
+      |> List.map (fun s -> mapNormal s.transform)
+      |> List.reduce multiply
+      |> flip multiplyT v
+    let (x, y, z, _) = v.Return
+    vector x y z |> normalize
+  | _ ->
+    let newV = multiplyT (mapNormal group.transform) v
+    let (x, y, z, _) = newV.Return
+    vector x y z |> normalize
 
 let shape s t m = { transform = t; material = m; shape = s }
 let shapeM s m = shape s (identity ()) m

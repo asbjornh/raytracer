@@ -433,4 +433,19 @@ let tests =
       let g1 = groupT [g2] (rotationY <| Math.PI / 2.)
       let p = worldToObject (point -2. 0. -10.) g1 s
       Expect.equal p (point 0. 0. -1.) ""
+
+    testCase "Converting a normal from object to world space" <| fun _ ->
+      let s = sphereT <| translation 5. 0. 0.
+      let g2 = groupT [s] <| scaling 1. 2. 3.
+      let g1 = groupT [g2] <| rotationY (Math.PI / 2.)
+      let a = (sqrt 3.) / 3.
+      let n = normalToWorld (vector a a a) g1 s
+      Expect.equal n (vector 0.28571 0.42857 -0.85714) ""
+
+    testCase "Finding the normal on a child object" <| fun _ ->
+      let s = sphereT <| translation 5. 0. 0.
+      let g2 = groupT [s] <| scaling 1. 2. 3.
+      let g1 = groupT [g2] <| rotationY (Math.PI / 2.)
+      let n = normalAtGroup (point 1.7321 1.1547 -5.5774) g1 s
+      Expect.equal n (vector 0.2857 0.42854 -0.85716) ""
   ]
