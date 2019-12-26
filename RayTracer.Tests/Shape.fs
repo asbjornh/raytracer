@@ -86,13 +86,13 @@ let tests =
       Expect.equal s.transform (identity ()) ""
 
     testCase "Changing a sphere's transformation" <| fun _ ->
-      let t = translation 2. 3. 4.
+      let t = translate 2. 3. 4.
       let s = sphere t (defaultMaterial ())
       Expect.equal s.transform t ""
 
     testCase "Intersecting a scaled sphere with a ray" <| fun _ ->
       let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
-      let s = sphere (scaling 2. 2. 2.) (defaultMaterial ())
+      let s = sphere (scale 2. 2. 2.) (defaultMaterial ())
       let xs = intersect r s
       Expect.equal (List.length xs) 2 ""
       Expect.equal xs.[0].t 3. ""
@@ -100,7 +100,7 @@ let tests =
 
     testCase "Intersecting a translated sphere with a ray" <| fun _ ->
       let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
-      let s = sphere (translation 5. 0. 0.) (defaultMaterial ())
+      let s = sphere (translate 5. 0. 0.) (defaultMaterial ())
       let xs = intersect r s
       Expect.equal (List.length xs) 0 ""
 
@@ -132,12 +132,12 @@ let tests =
       Expect.equal n (normalize n) ""
 
     testCase "Computing the normal on a translated sphere" <| fun _ ->
-      let s = sphere (translation 0. 1. 0.) (defaultMaterial ())
+      let s = sphere (translate 0. 1. 0.) (defaultMaterial ())
       let n = normalAt (point 0. 1.70711 -0.70711) s
       Expect.equal n (vector 0. 0.70711 -0.70711) ""
 
     testCase "Computing the normal on a transformed sphere" <| fun _ ->
-      let m = (scaling 1. 0.5 1.) * (rotationZ (Math.PI / 5.))
+      let m = (scale 1. 0.5 1.) * (rotateZ (Math.PI / 5.))
       let s = sphere m (defaultMaterial ())
       let a = (sqrt 2.) / 2.
       let n = normalAt (point 0. a -a) s
@@ -160,7 +160,7 @@ let tests =
       Expect.equal m2 (Some <| defaultMaterialP () ) ""
 
     testCase "Computing the normal on a translated shape" <| fun _ ->
-      let s = testShape (translation 0. 1. 0.)
+      let s = testShape (translate 0. 1. 0.)
       let n = normalAt (point 0. 1.70711 -0.70711) s
       Expect.equal n (vector 0. 0.70711 -0.70711) ""
 
@@ -275,7 +275,7 @@ let tests =
 
     testCase "A ray strikes a cylinder" <| fun _ ->
       let test origin direction t0 t1 =
-        let t = scaling 1. 1000. 1.
+        let t = scale 1. 1000. 1.
         let cyl = openCylinder t <| defaultMaterial ()
         let direction = normalize direction
         let r = ray origin direction
@@ -380,7 +380,7 @@ let tests =
 
     testCase "Intersecting a cone's end caps" <| fun _ ->
       let test origin direction count txt =
-        let t = scaling 0.5 0.5 0.5
+        let t = scale 0.5 0.5 0.5
         let shape = doubleCone t <| defaultMaterial ()
         let r = ray origin <| normalize direction
         let xs = shapeIntersect r shape
@@ -408,8 +408,8 @@ let tests =
 
     testCase "Intersecting a ray with a nonempty group" <| fun _ ->
       let s1 = unitSphere ()
-      let s2 = sphereT (translation 0. 0. -3.)
-      let s3 = sphereT (translation 5. 0. 0.)
+      let s2 = sphereT (translate 0. 0. -3.)
+      let s3 = sphereT (translate 5. 0. 0.)
       let g = groupT [s1; s2; s3] <| identity ()
       let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
       let xs = localIntersect r g
@@ -421,31 +421,31 @@ let tests =
       Expect.equal objects.[3] s2 ""
 
     testCase "Intersecting a transformed group" <| fun _ ->
-      let s = sphereT <| translation 5. 0. 0.
-      let g = groupT [s] <| scaling 2. 2. 2.
+      let s = sphereT <| translate 5. 0. 0.
+      let g = groupT [s] <| scale 2. 2. 2.
       let r = ray (point 10. 0. -10.) (vector 0. 0. 1.)
       let xs = shapeIntersect r g
       Expect.equal (List.length xs) 2 ""
 
     testCase "Converting a point from world to object space" <| fun _ ->
-      let s = sphereT <| translation 5. 0. 0.
-      let g2 = groupT [s] <| scaling 2. 2. 2.
-      let g1 = groupT [g2] (rotationY <| Math.PI / 2.)
+      let s = sphereT <| translate 5. 0. 0.
+      let g2 = groupT [s] <| scale 2. 2. 2.
+      let g1 = groupT [g2] (rotateY <| Math.PI / 2.)
       let p = worldToObject (point -2. 0. -10.) g1 s
       Expect.equal p (point 0. 0. -1.) ""
 
     testCase "Converting a normal from object to world space" <| fun _ ->
-      let s = sphereT <| translation 5. 0. 0.
-      let g2 = groupT [s] <| scaling 1. 2. 3.
-      let g1 = groupT [g2] <| rotationY (Math.PI / 2.)
+      let s = sphereT <| translate 5. 0. 0.
+      let g2 = groupT [s] <| scale 1. 2. 3.
+      let g1 = groupT [g2] <| rotateY (Math.PI / 2.)
       let a = (sqrt 3.) / 3.
       let n = normalToWorld (vector a a a) g1 s
       Expect.equal n (vector 0.28571 0.42857 -0.85714) ""
 
     testCase "Finding the normal on a child object" <| fun _ ->
-      let s = sphereT <| translation 5. 0. 0.
-      let g2 = groupT [s] <| scaling 1. 2. 3.
-      let g1 = groupT [g2] <| rotationY (Math.PI / 2.)
+      let s = sphereT <| translate 5. 0. 0.
+      let g2 = groupT [s] <| scale 1. 2. 3.
+      let g1 = groupT [g2] <| rotateY (Math.PI / 2.)
       let n = normalAtGroup (point 1.7321 1.1547 -5.5774) g1 s
       Expect.equal n (vector 0.2857 0.42854 -0.85716) ""
   ]

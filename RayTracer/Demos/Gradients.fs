@@ -33,7 +33,7 @@ let midMat =
 
 let middle =
   sphere
-  <| (translation -0.5 1. 0.5)
+  <| (translate -0.5 1. 0.5)
   <| midMat
 
 let rightMat =

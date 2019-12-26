@@ -51,7 +51,7 @@ let tests =
 
     testCase "Constructing a ray when the camera is transformed" <| fun _ ->
       let c = camera 201 101 (Math.PI / 2.)
-      let t = (rotationY (Math.PI / 4.)) * (translation 0. -2. 5.)
+      let t = (rotateY (Math.PI / 4.)) * (translate 0. -2. 5.)
       let c = { c with transform = t }
       let r = rayForPixel 100 50 c
       let a = (sqrt 2.) / 2.

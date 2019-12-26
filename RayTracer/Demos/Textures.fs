@@ -24,13 +24,13 @@ let marble = NormalMap {
   tex = textureRaw "../tex/metal-plate-normal.jpg" (0.5, 0.5) (0., 0.) i
 }
 
-let t = rotateAlignment (vector 0. 1. 0.) (vector 0. 0. 1.)
+let t = rotateAlign (vector 0. 1. 0.) (vector 0. 0. 1.)
 
 let floor = { defaultPlane () with material = marble; }
 
 let middle =
   sphere
-  <| (translation 0. 1. 0.)
+  <| (translate 0. 1. 0.)
   <| marble
 
 let right =

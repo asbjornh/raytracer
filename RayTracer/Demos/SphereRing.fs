@@ -28,7 +28,7 @@ let sphereRing direction t count spread =
 
 let wallMaterial = materialC (color 0.5 0.1 0.6)
 
-let floor = sphere (scaling 10. 0.01 10.) wallMaterial
+let floor = sphere (scale 10. 0.01 10.) wallMaterial
 
 let leftWall =
   sphere

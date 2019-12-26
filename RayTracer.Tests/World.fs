@@ -99,7 +99,7 @@ let tests =
       Expect.equal (shadowAmount p w.lights.[0] w.objects) 0. ""
 
     testCase "shade_hit() is given an intersection in shadow" <| fun _ ->
-      let s = sphereT (translation 0. 0. 10.)
+      let s = sphereT (translate 0. 0. 10.)
       let w =
         world
         <| [pointLight (point 0. 0. -10.) (color 1. 1. 1.)]
@@ -118,7 +118,7 @@ let tests =
         b = Reflective { blend = Normal }
         mix = 0.5
       }
-      let shape = plane (translation 0. -1. 0.) mat
+      let shape = plane (translate 0. -1. 0.) mat
       let w = { w with objects = List.concat [w.objects; [shape]] }
       let a = (sqrt 2.) / 2.
       let r = ray (point 0. 0. -3.) (vector 0. -a a)
@@ -134,7 +134,7 @@ let tests =
         b = Reflective { blend = Normal }
         mix = 0.5
       }
-      let shape = plane (translation 0. -1. 0.) mat
+      let shape = plane (translate 0. -1. 0.) mat
       let w = { w with objects = List.concat [w.objects; [shape]] }
       let a = (sqrt 2.) / 2.
       let r = ray (point 0. 0. -3.) (vector 0. -a a)
@@ -146,8 +146,8 @@ let tests =
     testCase "color_at() with mutually reflective surfaces" <| fun _ ->
       let light = pointLight (point 0. 0. 0.) (color 1. 1. 1.)
       let mat = Reflective { blend = Normal }
-      let lower = plane (translation 0. -1. 0.) mat
-      let upper = plane (translation 0. 1. 0.) mat
+      let lower = plane (translate 0. -1. 0.) mat
+      let upper = plane (translate 0. 1. 0.) mat
       let w = world [light] [lower; upper]
       let r = ray (point 0. 0. 0.) (vector 0. 1. 0.)
       Expect.equal (colorAt w r 1) black ""
@@ -159,7 +159,7 @@ let tests =
         b = Reflective { blend = Normal }
         mix = 0.5
       }
-      let shape = plane (translation 0. -1. 0.) mat
+      let shape = plane (translate 0. -1. 0.) mat
       let w = { w with objects = List.concat [w.objects; [shape]] }
       let a = (sqrt 2.) / 2.
       let r = ray (point 0. 0. -3.) (vector 0. -a a)
@@ -227,7 +227,7 @@ let tests =
           mix = 0.5
         }
       let ball =
-        sphere <| translation 0. -3.5 -0.5
+        sphere <| translate 0. -3.5 -0.5
         <| material (color 1. 0. 0.) 0.5 0.9 0.9
       let w = { w with objects = [floor; ball] }
       let a = (sqrt 2. / 2.)

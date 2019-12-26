@@ -9,44 +9,44 @@ open Tuple
 let tests =
   testList "Tests for Transform" [
     testCase "Multiplying by a translation matrix" <| fun _ ->
-      let transform = translation 5. -3. 2.
+      let transform = translate 5. -3. 2.
       let p = point -3. 4. 5.
       Expect.equal (multiplyT transform p) (point 2. 1. 7.) ""
 
     testCase "Multiplying by the inverse of a translation matrix" <| fun _ ->
-      let transform = translation 5. -3. 2.
+      let transform = translate 5. -3. 2.
       let p = point -3. 4. 5.
       Expect.equal (multiplyT (inverse transform) p) (point -8. 7. 3.) ""
 
     testCase "Translation does not affect vectors" <| fun _ ->
-      let transform = translation 5. -3. 2.
+      let transform = translate 5. -3. 2.
       let v = vector -3. 4. 5.
       Expect.equal (multiplyT transform v) v ""
 
     testCase "A scaling matrix applied to a point" <| fun _ ->
-      let transform = scaling 2. 3. 4.
+      let transform = scale 2. 3. 4.
       let p = point -4. 6. 8.
       Expect.equal (multiplyT transform p) (point -8. 18. 32.) ""
 
     testCase "A scaling matrix applied to a vector" <| fun _ ->
-      let transform = scaling 2. 3. 4.
+      let transform = scale 2. 3. 4.
       let v = vector -4. 6. 8.
       Expect.equal (multiplyT transform v) (vector -8. 18. 32.) ""
 
     testCase "Multiplying by the inverse of a scaling matrix" <| fun _ ->
-      let transform = scaling 2. 3. 4.
+      let transform = scale 2. 3. 4.
       let v = vector -4. 6. 8.
       Expect.equal (multiplyT (inverse transform) v) (vector -2. 2. 2.) ""
 
     testCase "Reflection is scaling by a negative value" <| fun _ ->
-      let transform = scaling -1. 1. 1.
+      let transform = scale -1. 1. 1.
       let p = point 2. 3. 4.
       Expect.equal (multiplyT transform p) (point -2. 3. 4.) ""
 
     testCase "Rotating a point around the x axis" <| fun _ ->
       let p = point 0. 1. 0.
-      let halfQuarter = rotationX (Util.rad 45.)
-      let fullQuarter = rotationX (Util.rad 90.)
+      let halfQuarter = rotateX (Util.rad 45.)
+      let fullQuarter = rotateX (Util.rad 90.)
       let a = (sqrt 2.) / 2.
 
       let result1 = multiplyT halfQuarter p
@@ -59,7 +59,7 @@ let tests =
 
     testCase "The inverse of an x-rotation rotates in the opposite direction" <| fun _ ->
       let p = point 0. 1. 0.
-      let halfQuarter = rotationX (Util.rad 45.)
+      let halfQuarter = rotateX (Util.rad 45.)
       let inv = inverse halfQuarter
 
       let a = (sqrt 2.) / 2.
@@ -69,8 +69,8 @@ let tests =
 
     testCase "Rotating a point around the y axis" <| fun _ ->
       let p = point 0. 0. 1.
-      let halfQuarter = rotationY (Util.rad 45.)
-      let fullQuarter = rotationY (Util.rad 90.)
+      let halfQuarter = rotateY (Util.rad 45.)
+      let fullQuarter = rotateY (Util.rad 90.)
 
       let a = (sqrt 2.) / 2.
       let result1 = multiplyT halfQuarter p
@@ -83,8 +83,8 @@ let tests =
 
     testCase "Rotating a point around the z axis" <| fun _ ->
       let p = point 0. 1. 0.
-      let halfQuarter = rotationZ (Util.rad 45.)
-      let fullQuarter = rotationZ (Util.rad 90.)
+      let halfQuarter = rotateZ (Util.rad 45.)
+      let fullQuarter = rotateZ (Util.rad 90.)
 
       let a = (sqrt 2.) / 2.
       let result1 = multiplyT halfQuarter p
@@ -96,42 +96,42 @@ let tests =
       Expect.equal result2 expected2 ""
 
     testCase "A shearing transformation moves x in proportion to y" <| fun _ ->
-      let transform = shearing 1. 0. 0. 0. 0. 0.
+      let transform = shear 1. 0. 0. 0. 0. 0.
       let p = point 2. 3. 4.
       let result = multiplyT transform p
       let expected = point 5. 3. 4.
       Expect.equal result expected ""
 
     testCase "A shearing transformation moves x in proportion to z" <| fun _ ->
-      let transform = shearing 0. 1. 0. 0. 0. 0.
+      let transform = shear 0. 1. 0. 0. 0. 0.
       let p = point 2. 3. 4.
       let result = multiplyT transform p
       let expected = point 6. 3. 4.
       Expect.equal result expected ""
 
     testCase "A shearing transformation moves y in proportion to x" <| fun _ ->
-      let transform = shearing 0. 0. 1. 0. 0. 0.
+      let transform = shear 0. 0. 1. 0. 0. 0.
       let p = point 2. 3. 4.
       let result = multiplyT transform p
       let expected = point 2. 5. 4.
       Expect.equal result expected ""
 
     testCase "A shearing transformation moves y in proportion to z" <| fun _ ->
-      let transform = shearing 0. 0. 0. 1. 0. 0.
+      let transform = shear 0. 0. 0. 1. 0. 0.
       let p = point 2. 3. 4.
       let result = multiplyT transform p
       let expected = point 2. 7. 4.
       Expect.equal result expected ""
 
     testCase "A shearing transformation moves z in proportion to x" <| fun _ ->
-      let transform = shearing 0. 0. 0. 0. 1. 0.
+      let transform = shear 0. 0. 0. 0. 1. 0.
       let p = point 2. 3. 4.
       let result = multiplyT transform p
       let expected = point 2. 3. 6.
       Expect.equal result expected ""
 
     testCase "A shearing transformation moves z in proportion to y" <| fun _ ->
-      let transform = shearing 0. 0. 0. 0. 0. 1.
+      let transform = shear 0. 0. 0. 0. 0. 1.
       let p = point 2. 3. 4.
       let result = multiplyT transform p
       let expected = point 2. 3. 7.
@@ -139,9 +139,9 @@ let tests =
 
     testCase "Individual transformations are applied in sequence" <| fun _ ->
       let p = point 1. 0. 1.
-      let a = rotationX (Util.rad 90.)
-      let b = scaling 5. 5. 5.
-      let c = translation 10. 5. 7.
+      let a = rotateX (Util.rad 90.)
+      let b = scale 5. 5. 5.
+      let c = translate 10. 5. 7.
       // apply rotation first​
       let p2 = multiplyT a p
       Expect.equal p2 (point 1. -1. 0.) ""
@@ -156,9 +156,9 @@ let tests =
 
     testCase "Chained transformations must be applied in reverse order" <| fun _ ->
       let p = point 1. 0. 1.
-      let a = rotationX (Util.rad 90.)
-      let b = scaling 5. 5. 5.
-      let c = translation 10. 5. 7.
+      let a = rotateX (Util.rad 90.)
+      let b = scale 5. 5. 5.
+      let c = translate 10. 5. 7.
       let t = c * b * a
       Expect.equal (multiplyT t p) (point 15. 0. 7.) ""
 
@@ -182,14 +182,14 @@ let tests =
       let To = point 0. 0. 1.
       let up = vector 0. 1. 0.
       let t = viewTransform from To up
-      Expect.equal t (scaling -1. 1. -1.) ""
+      Expect.equal t (scale -1. 1. -1.) ""
 
     testCase "The view transformation moves the world" <| fun _ ->
       let from = point 0. 0. 8.
       let To = point 0. 0. 0.
       let up = vector 0. 1. 0.
       let t = viewTransform from To up
-      Expect.equal t (translation 0. 0. -8.) ""
+      Expect.equal t (translate 0. 0. -8.) ""
 
     testCase "An arbitrary view transformation" <| fun _ ->
       let from = point 1. 3. 2.

@@ -4,35 +4,40 @@ open System
 open Matrix
 open Tuple
 
-let translation x y z =
+let translate x y z =
   identity () |> set 0 3 x |> set 1 3 y |> set 2 3 z
+let translateX x = translate x 0. 0.
+let translateY y = translate 0. y 0.
+let translateZ z = translate 0. 0. z
 
-let scaling x y z =
+let scale x y z =
   identity () |> set 0 0 x |> set 1 1 y |> set 2 2 z
+let scaleX x = scale x 1. 1.
+let scaleY y = scale 1. y 1.
+let scaleZ z = scale 1. 1. z
+let uniformScale s = scale s s s
 
-let rotationX rad =
+let rotateX rad =
   identity ()
   |> set 1 1 (cos rad) |> set 1 2 (- sin rad)
   |> set 2 1 (sin rad) |> set 2 2 (cos rad)
-
-let rotationY rad =
+let rotateY rad =
   identity ()
   |> set 0 0 (cos rad) |> set 0 2 (sin rad)
   |> set 2 0 (-sin rad) |> set 2 2 (cos rad)
-
-let rotationZ rad =
+let rotateZ rad =
   identity ()
   |> set 0 0 (cos rad) |> set 0 1 (-sin rad)
   |> set 1 0 (sin rad) |> set 1 1 (cos rad)
 
-let shearing xy xz yx yz zx zy =
+let shear xy xz yx yz zx zy =
   identity ()
   |> set 0 1 xy |> set 0 2 xz
   |> set 1 0 yx |> set 1 2 yz
   |> set 2 0 zx |> set 2 1 zy
 
 
-let rotateAlignment (fromV: Tuple) (toV: Tuple) =
+let rotateAlign (fromV: Tuple) (toV: Tuple) =
   // NOTE: https://gist.github.com/kevinmoran/b45980723e53edeb8a5a43c49f134724
   let f = normalize fromV
   let t = normalize toV
@@ -60,23 +65,7 @@ let rotateAlignment (fromV: Tuple) (toV: Tuple) =
       [ 0.0 ; 0.0 ; 0.0 ; 1.0 ]
     ];
 
-let translate x y z = translation x y z |> multiply
-let translateX x = translation x 0. 0. |> multiply
-let translateY y = translation 0. y 0. |> multiply
-let translateZ z = translation 0. 0. z |> multiply
-let scale x y z = scaling x y z |> multiply
-let scaleX x = scaling x 1. 1. |> multiply
-let scaleY y = scaling 1. y 1. |> multiply
-let scaleZ z = scaling 1. 1. z |> multiply
-let uniformScale s = scaling s s s |> multiply
-let rotateX rad = rotationX rad |> multiply
-let rotateY rad = rotationY rad |> multiply
-let rotateZ rad = rotationZ rad |> multiply
-let rotateAlign f t = rotateAlignment f t |> multiply
-let shear xy xz yx yz zx zy =
-  shearing xy xz yx yz zx zy |> multiply
-
-let chain fns = List.rev fns |> List.reduce (>>) <| identity ()
+let chain = List.reduce multiply
 
 let viewTransform (from: Tuple) (To: Tuple) up =
   let forward = To - from |> normalize
@@ -88,4 +77,4 @@ let viewTransform (from: Tuple) (To: Tuple) up =
     [ -forward.X ; -forward.Y ; -forward.Z ; 0. ]
     [ 0. ; 0. ; 0. ; 1. ]
   ]
-  orientation * (translation -from.X -from.Y -from.Z)
+  orientation * (translate -from.X -from.Y -from.Z)

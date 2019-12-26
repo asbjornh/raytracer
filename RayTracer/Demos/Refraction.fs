@@ -27,8 +27,8 @@ let ball = sphere (identity ()) ballMat
 
 let wallMat = material white 1. 0. 0.
 
-let roof = plane <| translation 0. 30. 0. <| wallMat
-let floor = plane <| translation 0. -30. 0. <| wallMat
+let roof = plane <| translate 0. 30. 0. <| wallMat
+let floor = plane <| translate 0. -30. 0. <| wallMat
 let wallL = plane <| chain [rotateZ (rad -90.); translateY -30.] <| wallMat
 let wallR = plane <| chain [rotateZ (rad -90.); translateY 30.] <| wallMat
 let backdropMat = Pattern {

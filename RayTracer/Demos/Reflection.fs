@@ -14,7 +14,7 @@ open World
 
 let wallMaterial = material red 0.1 0.9 0.
 
-let floor = sphere (scaling 10. 0.01 10.) wallMaterial
+let floor = sphere (scale 10. 0.01 10.) wallMaterial
 
 let leftWall =
   sphere
@@ -44,7 +44,7 @@ let sphereMat = Fresnel {
 
 let middle =
   sphere
-  <| (translation -0.5 1. 0.5)
+  <| (translate -0.5 1. 0.5)
   <| sphereMat
 
 let right =

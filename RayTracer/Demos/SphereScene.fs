@@ -14,7 +14,7 @@ open World
 
 let wallMaterial = materialC (color 0.5 0.1 0.6)
 
-let floor = sphere (scaling 10. 0.01 10.) wallMaterial
+let floor = sphere (scale 10. 0.01 10.) wallMaterial
 
 let leftWall =
   sphere
@@ -38,7 +38,7 @@ let rightWall =
 
 let middle =
   sphere
-  <| (translation -0.5 1. 0.5)
+  <| (translate -0.5 1. 0.5)
   <| defaultMaterial ()
 
 let right =

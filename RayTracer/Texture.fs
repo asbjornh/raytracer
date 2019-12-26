@@ -40,7 +40,7 @@ let colorAt u v uScale vScale uOffset vOffset (cs: Color list list) =
   cs.[y].[x]
 
 let mappedNormalAt (normalV: Tuple) (color: Color) =
-  let rotation = rotateAlignment (vector 0. 1. 0.) normalV
+  let rotation = rotateAlign (vector 0. 1. 0.) normalV
   let t = multiplyT rotation (vector 0. 0. 1.)
   let b = multiplyT rotation (vector -1. 0. 0.)
   let n = normalV

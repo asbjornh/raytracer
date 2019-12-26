@@ -15,11 +15,11 @@ open World
 
 let mat = materialC (color 0.5 0.1 0.6)
 
-let floor = plane (scaling 10000. 1. 10000.) mat
+let floor = plane (scale 10000. 1. 10000.) mat
 
 let middle =
   sphere
-  <| (translation -0.5 1. 0.5)
+  <| (translate -0.5 1. 0.5)
   <| defaultMaterial ()
 
 let right =

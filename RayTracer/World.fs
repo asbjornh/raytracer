@@ -34,7 +34,7 @@ let defaultWorld () =
     lights = [pointLight (point -10. 10. -10.) (color 1. 1. 1.)]
     objects = [
       sphereM (material (color 0.8 1. 0.6) 0.1 0.7 0.2)
-      sphereT (scaling 0.5 0.5 0.5)
+      sphereT (scale 0.5 0.5 0.5)
     ]
   }
 

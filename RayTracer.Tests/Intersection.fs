@@ -15,9 +15,9 @@ let glassSphere index t =
   sphere t <| Transparent { index = index; blend = Normal }
 
 let testRefraction index n1 n2 =
-  let a = glassSphere 1.5 <| scaling 2. 2. 2.
-  let b = glassSphere 2.0 <| translation 0. 0. -0.25
-  let c = glassSphere 2.5 <| translation 0. 0. 0.25
+  let a = glassSphere 1.5 <| scale 2. 2. 2.
+  let b = glassSphere 2.0 <| translate 0. 0. -0.25
+  let c = glassSphere 2.5 <| translate 0. 0. 0.25
   let r = ray (point 0. 0. -4.) (vector 0. 0. 1.)
   let xs = intersections [
     intersection 2. a None
@@ -101,7 +101,7 @@ let tests =
 
     testCase "The hit should offset the point" <| fun _ ->
       let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
-      let shape = sphereT (translation 0. 0. 1.)
+      let shape = sphereT (translate 0. 0. 1.)
       let i = intersection 5. shape None
       let comps = prepareComputations [i] i r
       Expect.isLessThan comps.overPoint.Z (-epsilon / 2.) ""
@@ -135,7 +135,7 @@ let tests =
 
     testCase "The under point is offset below the surface" <| fun _ ->
       let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
-      let shape = glassSphere 1.5 <| translation 0. 0. 1.
+      let shape = glassSphere 1.5 <| translate 0. 0. 1.
       let i = intersection 5. shape None
       let comps = prepareComputations [i] i r
       Expect.isGreaterThan comps.underPoint.Z (epsilon / 2.) ""
