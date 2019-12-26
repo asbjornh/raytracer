@@ -10,10 +10,11 @@ let normal p =
   else if maxC = y then vector 0. p.Y 0.
   else vector 0. 0. p.Z
 
-let intersect ray s =
-  let (xtmin, xtmax) = checkAxis ray.origin.X ray.direction.X
-  let (ytmin, ytmax) = checkAxis ray.origin.Y ray.direction.Y
-  let (ztmin, ztmax) = checkAxis ray.origin.Z ray.direction.Z
+
+let intersectBox (xMin, xMax) (yMin, yMax) (zMin, zMax) ray s =
+  let (xtmin, xtmax) = checkAxis xMin xMax ray.origin.X ray.direction.X
+  let (ytmin, ytmax) = checkAxis yMin yMax ray.origin.Y ray.direction.Y
+  let (ztmin, ztmax) = checkAxis zMin zMax ray.origin.Z ray.direction.Z
 
   let tmin = List.max [xtmin; ytmin; ztmin]
   let tmax = List.min [xtmax; ytmax; ztmax]
@@ -21,7 +22,10 @@ let intersect ray s =
   if tmin > tmax then []
   else [(tmin, s); (tmax, s)]
 
-let checkAxis origin direction =
-  let tmin = (-1. - origin) / direction
-  let tmax = (1. - origin) / direction
+let intersect ray =
+  intersectBox (-1., 1.) (-1., 1.) (-1., 1.) ray
+
+let checkAxis minimum maximum origin direction =
+  let tmin = (minimum - origin) / direction
+  let tmax = (maximum - origin) / direction
   (min tmax tmin, max tmax tmin)

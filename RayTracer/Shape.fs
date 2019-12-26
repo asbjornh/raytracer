@@ -24,6 +24,7 @@ type Shape = {
 
 type Group = {
   children: Shape list
+  bounds: (float * float) * (float * float) * (float * float)
 }
 
 let noGroup = List.map (fun (t, s) -> (t, s, None))
@@ -38,8 +39,12 @@ let localIntersect ray (s: Shape) =
   | DoubleCone -> Cone.intersect -1. 1. ray s |> noGroup
   | TestShape -> [(0., s, None)]
   | Group g ->
-    List.collect (shapeIntersect ray) g.children
-    |> List.map (fun (t, o, _) -> (t, o, Some s))
+    let (boundsX, boundsY, boundsZ) = g.bounds
+    let i = Cube.intersectBox boundsX boundsY boundsZ ray s
+    if List.isEmpty i then []
+    else
+      List.collect (shapeIntersect ray) g.children
+      |> List.map (fun (t, o, _) -> (t, o, Some s))
 
 let shapeIntersect ray (shape: Shape) =
   localIntersect
@@ -116,6 +121,44 @@ let normalToWorld (v: Tuple) (group: Shape) (inner: Shape) =
     let (x, y, z, _) = newV.Return
     vector x y z |> normalize
 
+let bounds (minX, maxX) (minY, maxY) (minZ, maxZ) =
+  [
+    point minX maxY maxZ; point minX maxY minZ;
+    point maxX maxY maxZ; point maxX maxY minZ;
+    point minX minY maxZ; point minX minY minZ;
+    point maxX minY maxZ; point maxX minY minZ;
+  ]
+
+let boundsForShape s =
+  let cube = bounds (-1., 1.) (-1., 1.) (-1., 1.)
+  match s.shape with
+  | Sphere -> cube
+  | Plane -> bounds (-1., 1.) (0., 0.) (-1., 1.)
+  | TestShape -> []
+  | Cylinder -> cube
+  | OpenCylinder -> cube
+  | Cone -> bounds (-1., 1.) (-1., 0.) (-1., 1.)
+  | DoubleCone -> cube
+  | Cube -> cube
+  | Group g ->
+    boundsForShapes g.children
+
+let boundsForShapes (objects: Shape list) =
+  objects
+  |> List.collect (fun s ->
+    s |> boundsForShape |> List.map (multiplyT s.transform)
+  )
+
+let boundingBox (objects: Shape list) =
+  if List.isEmpty objects
+  then ( (0., 0.), (0., 0.), (0., 0.) )
+  else
+    let (xs, ys, zs) =
+      objects |> boundsForShapes |> List.map toXYZ |> List.unzip3
+    ( (List.min xs, List.max xs),
+      (List.min ys, List.max ys),
+      (List.min zs, List.max zs) )
+
 let shape s t m = { transform = t; material = m; shape = s }
 let shapeM s m = shape s (identity ()) m
 let shapeT s t = shape s t <| defaultMaterial ()
@@ -127,7 +170,9 @@ let cylinder t = shape Cylinder t
 let cone t = shape Cone t
 let doubleCone t = shape DoubleCone t
 let openCylinder t = shape OpenCylinder t
-let group c t = shape (Group { children = c }) t
+let group c t =
+  let g = Group { children = c; bounds = boundingBox c }
+  shape g t
 
 let unitSphere () = defaultShape Sphere
 let sphereT t = shapeT Sphere t

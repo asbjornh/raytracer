@@ -80,6 +80,9 @@ let toArray (a: Tuple) =
   let (x, y, z, w) = a.Return
   [| [|x|]; [|y|]; [|z|]; [|w|]; |]
 
+let toXYZ (a: Tuple) =
+  let (x, y, z, _) = a.Return
+  (x, y, z)
 let toPixel (a: Tuple) =
   a
   |> Tuple.Map (Math.Round >> int)
