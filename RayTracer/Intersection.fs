@@ -9,12 +9,11 @@ open Util
 type Intersection = {
   t: float;
   object: Shape
-  group: Shape option
 }
 
 let getT i = i.t
 
-let intersection t o g = { t=t; object=o; group=g }
+let intersection t o = { t=t; object=o }
 
 let intersections (l: Intersection list) =
   List.sortBy getT l
@@ -83,8 +82,8 @@ let refractiveIndexes (is: Intersection list) (hit: Intersection) =
 let prepareComputations (is: Intersection list) (hit: Intersection) r =
   let point = position hit.t r
   let normalV =
-    match hit.group with
-    | Some g -> normalAtGroup point g hit.object
+    match hit.object.parent with
+    | Some _ -> normalAtGroup point hit.object
     | None -> normalAt point hit.object
   let eyeV = negate r.direction
   let inside = (dot normalV eyeV) < 0.
@@ -107,4 +106,4 @@ let prepareComputations (is: Intersection list) (hit: Intersection) r =
   }
 
 let intersect (ray: Ray) (s: Shape) =
-  s |> shapeIntersect ray |> List.map (fun (t, o, g) -> intersection t o g)
+  s |> shapeIntersect ray |> List.map (fun (t, o) -> intersection t o)

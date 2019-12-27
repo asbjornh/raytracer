@@ -76,6 +76,9 @@ let reflect (normal: Tuple) (v: Tuple) =
 let angle a b =
   (dot a b) / (magnitude a * magnitude b) |> Math.Acos
 
+let toVector (a: Tuple) =
+  let (x, y, z, _) = a.Return
+  vector x y z
 let toArray (a: Tuple) =
   let (x, y, z, w) = a.Return
   [| [|x|]; [|y|]; [|z|]; [|w|]; |]

@@ -20,31 +20,30 @@ type Shape = {
   mutable transform: Matrix
   mutable material: Material
   shape: ShapeType
+  mutable parent: Shape option
+  mutable children: Shape list
 }
 
 type Group = {
-  children: Shape list
   bounds: (float * float) * (float * float) * (float * float)
 }
 
-let noGroup = List.map (fun (t, s) -> (t, s, None))
 let localIntersect ray (s: Shape) =
   match s.shape with
-  | Sphere -> Sphere.intersect ray s |> noGroup
-  | Plane -> Plane.intersect ray s |> noGroup
-  | Cylinder -> Cylinder.intersect ray s |> noGroup
-  | OpenCylinder -> Cylinder.intersectOpen ray s |> noGroup
-  | Cube -> Cube.intersect ray s |> noGroup
-  | Cone -> Cone.intersect -1. 0. ray s |> noGroup
-  | DoubleCone -> Cone.intersect -1. 1. ray s |> noGroup
-  | TestShape -> [(0., s, None)]
+  | Sphere -> Sphere.intersect ray s
+  | Plane -> Plane.intersect ray s
+  | Cylinder -> Cylinder.intersect ray s
+  | OpenCylinder -> Cylinder.intersectOpen ray s
+  | Cube -> Cube.intersect ray s
+  | Cone -> Cone.intersect -1. 0. ray s
+  | DoubleCone -> Cone.intersect -1. 1. ray s
+  | TestShape -> [(0., s)]
   | Group g ->
     let (boundsX, boundsY, boundsZ) = g.bounds
     let i = Cube.intersectBox boundsX boundsY boundsZ ray s
     if List.isEmpty i then []
     else
-      List.collect (shapeIntersect ray) g.children
-      |> List.map (fun (t, o, _) -> (t, o, Some s))
+      List.collect (shapeIntersect ray) s.children
 
 let shapeIntersect ray (shape: Shape) =
   localIntersect
@@ -83,43 +82,24 @@ let normalAt point (shape: Shape) =
   let (x, y, z, _) = worldN.Return
   normalize (vector x y z)
 
-let normalAtGroup point (group: Shape) (shape: Shape) =
-  let localP = worldToObject point group shape
+let normalAtGroup point (shape: Shape) =
+  let localP = worldToObject point shape
   let localN = localNormal localP shape
-  normalToWorld localN group shape
+  normalToWorld localN shape
 
-let groupParents (group: Group) (inner: Shape) =
-  group.children |> List.collect (fun c ->
-    match c.shape with
-    | Group g -> c :: groupParents g inner
-    | _ -> if refEq c inner then [c] else []
-  )
+let worldToObject (p: Tuple) (shape: Shape) =
+  match shape.parent with
+  | Some parent -> worldToObject p parent
+  | None -> p
+  |> multiplyT (inverse shape.transform)
 
-let worldToObject (p: Tuple) (group: Shape) (inner: Shape) =
-  match group.shape with
-  | Group g ->
-    group :: groupParents g inner
-    |> List.map (fun s -> inverse s.transform)
-    |> List.rev
-    |> List.reduce multiply
-    |> flip multiplyT p
-  | _ -> multiplyT (inverse group.transform) p
+let normalToWorld (v: Tuple) (shape: Shape) : Tuple =
+  let t = shape.transform |> inverse |> transpose
+  let n1 = multiplyT t v |> toVector |> normalize
+  match shape.parent with
+  | Some parent -> normalToWorld n1 parent
+  | None -> n1
 
-let mapNormal = inverse >> transpose
-let normalToWorld (v: Tuple) (group: Shape) (inner: Shape) =
-  match group.shape with
-  | Group g ->
-    let v =
-      group :: groupParents g inner
-      |> List.map (fun s -> mapNormal s.transform)
-      |> List.reduce multiply
-      |> flip multiplyT v
-    let (x, y, z, _) = v.Return
-    vector x y z |> normalize
-  | _ ->
-    let newV = multiplyT (mapNormal group.transform) v
-    let (x, y, z, _) = newV.Return
-    vector x y z |> normalize
 
 let bounds (minX, maxX) (minY, maxY) (minZ, maxZ) =
   [
@@ -141,7 +121,8 @@ let boundsForShape s =
   | DoubleCone -> cube
   | Cube -> cube
   | Group g ->
-    boundsForShapes g.children
+    if List.isEmpty s.children then cube
+    else boundsForShapes s.children
 
 let boundsForShapes (objects: Shape list) =
   objects
@@ -159,7 +140,13 @@ let boundingBox (objects: Shape list) =
       (List.min ys, List.max ys),
       (List.min zs, List.max zs) )
 
-let shape s t m = { transform = t; material = m; shape = s }
+let shape s t m = {
+  transform = t
+  material = m
+  shape = s
+  parent = None
+  children = []
+}
 let shapeM s m = shape s (identity ()) m
 let shapeT s t = shape s t <| defaultMaterial ()
 let defaultShape s = shape s <| identity () <| defaultMaterial ()
@@ -170,9 +157,19 @@ let cylinder t = shape Cylinder t
 let cone t = shape Cone t
 let doubleCone t = shape DoubleCone t
 let openCylinder t = shape OpenCylinder t
-let group c t =
-  let g = Group { children = c; bounds = boundingBox c }
-  shape g t
+
+let updateParent parent shape =
+  let newS = { shape with parent = Some parent }
+  newS.children |> List.iter (fun s ->
+    s.parent <- Some newS
+  )
+  newS
+
+let group c t m =
+  let g = Group { bounds = boundingBox c }
+  let s = shape g t m
+  s.children <- c |> List.map (updateParent s)
+  s
 
 let unitSphere () = defaultShape Sphere
 let sphereT t = shapeT Sphere t

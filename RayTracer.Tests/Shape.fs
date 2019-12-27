@@ -20,8 +20,8 @@ let testCubeIntersect origin direction t1 t2 =
   let c = unitCube ()
   let r = ray origin direction
   let xs = localIntersect r c
-  let (localT1, _, _) = xs.[0]
-  let (localT2, _, _) = xs.[1]
+  let (localT1, _) = xs.[0]
+  let (localT2, _) = xs.[1]
   Expect.equal (List.length xs) 2 ""
   Expect.equal localT1 t1 ""
   Expect.equal localT2 t2 ""
@@ -30,6 +30,8 @@ let testShape t = {
   transform = t
   material = Material.defaultMaterial ()
   shape = TestShape
+  parent = None
+  children = []
 }
 
 [<Tests>]
@@ -198,7 +200,7 @@ let tests =
       let r = ray (point 0. 1. 0.) (vector 0. -1. 0.)
       let xs = localIntersect r p
       Expect.equal (List.length xs) 1 ""
-      let (t, object, _) = xs.[0]
+      let (t, object) = xs.[0]
       Expect.equal t 1. ""
       Expect.equal object p ""
 
@@ -207,7 +209,7 @@ let tests =
       let r = ray (point 0. -1. 0.) (vector 0. 1. 0.)
       let xs = localIntersect r p
       Expect.equal (List.length xs) 1 ""
-      let (t, object, _) = xs.[0]
+      let (t, object) = xs.[0]
       Expect.equal t 1. ""
       Expect.equal object p ""
 
@@ -281,8 +283,8 @@ let tests =
         let r = ray origin direction
         let xs = shapeIntersect r cyl
         Expect.equal (List.length xs) 2 ""
-        let (localT0, _, _) = xs.[0]
-        let (localT1, _, _) = xs.[1]
+        let (localT0, _) = xs.[0]
+        let (localT1, _) = xs.[1]
         Expect.isTrue (looseEq localT0 t0) <| diff localT0 t0
         Expect.isTrue (looseEq localT1 t1) <| diff localT1 t1
 
@@ -360,8 +362,8 @@ let tests =
         let r = ray origin <| normalize direction
         let xs = localIntersect r shape
         Expect.equal (List.length xs) 2 txt
-        let (_t0, _, _) = xs.[0]
-        let (_t1, _, _) = xs.[1]
+        let (_t0, _) = xs.[0]
+        let (_t1, _) = xs.[1]
         Expect.isTrue (looseEq _t0 t0) (diff _t0 t0)
         Expect.isTrue (looseEq _t1 t1) (diff _t1 t1)
 
@@ -413,12 +415,13 @@ let tests =
       let g = groupT [s1; s2; s3] <| identity ()
       let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
       let xs = localIntersect r g
-      let (_, objects, _) = List.unzip3 xs
+      let (_, objects) = List.unzip xs
       Expect.equal (List.length xs) 4 ""
-      Expect.equal objects.[0] s1 ""
-      Expect.equal objects.[1] s1 ""
-      Expect.equal objects.[2] s2 ""
-      Expect.equal objects.[3] s2 ""
+      // NOTE: s1 and s2 do not have a reference to their parent since the group isn't created until after they're initialized
+      Expect.equal { objects.[0] with parent = None } s1 ""
+      Expect.equal { objects.[1] with parent = None } s1 ""
+      Expect.equal { objects.[2] with parent = None } s2 ""
+      Expect.equal { objects.[3] with parent = None } s2 ""
 
     testCase "Intersecting a transformed group" <| fun _ ->
       let s = sphereT <| translate 5. 0. 0.
@@ -431,7 +434,10 @@ let tests =
       let s = sphereT <| translate 5. 0. 0.
       let g2 = groupT [s] <| scale 2. 2. 2.
       let g1 = groupT [g2] (rotateY <| Math.PI / 2.)
-      let p = worldToObject (point -2. 0. -10.) g1 s
+
+      // NOTE: Reassign s to its corresponding element in the group to get the sphere with references to the parent groups
+      let s = g1.children.[0].children.[0]
+      let p = worldToObject (point -2. 0. -10.) s
       Expect.equal p (point 0. 0. -1.) ""
 
     testCase "Converting a normal from object to world space" <| fun _ ->
@@ -439,13 +445,19 @@ let tests =
       let g2 = groupT [s] <| scale 1. 2. 3.
       let g1 = groupT [g2] <| rotateY (Math.PI / 2.)
       let a = (sqrt 3.) / 3.
-      let n = normalToWorld (vector a a a) g1 s
+
+      // NOTE: Reassign s to its corresponding element in the group to get the sphere with references to the parent groups
+      let s = g1.children.[0].children.[0]
+      let n = normalToWorld (vector a a a) s
       Expect.equal n (vector 0.28571 0.42857 -0.85714) ""
 
     testCase "Finding the normal on a child object" <| fun _ ->
       let s = sphereT <| translate 5. 0. 0.
       let g2 = groupT [s] <| scale 1. 2. 3.
       let g1 = groupT [g2] <| rotateY (Math.PI / 2.)
-      let n = normalAtGroup (point 1.7321 1.1547 -5.5774) g1 s
+
+      // NOTE: Reassign s to its corresponding element in the group to get the sphere with references to the parent groups
+      let s = g1.children.[0].children.[0]
+      let n = normalAtGroup (point 1.7321 1.1547 -5.5774) s
       Expect.equal n (vector 0.2857 0.42854 -0.85716) ""
   ]

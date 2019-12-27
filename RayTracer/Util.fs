@@ -7,6 +7,7 @@ let refEq = LanguagePrimitives.PhysicalEquality
 // Function helpers
 let always a _ = a
 let flip fn a b = fn b a
+let trace label v = printfn label v; v
 
 // Numbers
 let epsilon = 0.00001
