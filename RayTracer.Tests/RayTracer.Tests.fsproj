@@ -20,6 +20,7 @@
     <Compile Include="Shape.fs" />
     <Compile Include="Sphere.fs" />
     <Compile Include="Plane.fs" />
+    <Compile Include="Cube.fs" />
     <Compile Include="World.fs" />
     <Compile Include="Camera.fs" />
 
