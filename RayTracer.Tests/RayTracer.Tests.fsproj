@@ -18,6 +18,7 @@
     <Compile Include="Material.fs" />
     <Compile Include="Light.fs" />
     <Compile Include="Shape.fs" />
+    <Compile Include="Sphere.fs" />
     <Compile Include="World.fs" />
     <Compile Include="Camera.fs" />
 
