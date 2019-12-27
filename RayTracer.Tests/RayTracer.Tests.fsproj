@@ -23,6 +23,7 @@
     <Compile Include="Cube.fs" />
     <Compile Include="Cylinder.fs" />
     <Compile Include="Cone.fs" />
+    <Compile Include="Group.fs" />
     <Compile Include="World.fs" />
     <Compile Include="Camera.fs" />
 
