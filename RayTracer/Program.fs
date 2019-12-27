@@ -3,5 +3,5 @@
 
 [<EntryPoint>]
 let main argv =
-  Textures.run ()
+  Hexagon.run ()
   0
