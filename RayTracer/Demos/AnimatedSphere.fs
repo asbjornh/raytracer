@@ -49,7 +49,7 @@ let frame (bar: ProgressBar) l fileName =
     match h with
     | Some i ->
       let point = position i.t r
-      let normalV = normalAt point i.object
+      let normalV = normalAt i.object point
       let eyeV = negate r.direction
       match i.object.material with
       | Phong mat ->

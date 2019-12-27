@@ -108,41 +108,41 @@ let tests =
 
     testCase "The normal on a sphere at a point on the x axis" <| fun _ ->
       let s = unitSphere ()
-      let n = normalAt (point 1. 0. 0.) s
+      let n = normalAt s (point 1. 0. 0.)
       Expect.equal n (vector 1. 0. 0.) ""
 
     testCase "The normal on a sphere at a point on the y axis" <| fun _ ->
       let s = unitSphere ()
-      let n = normalAt (point 0. 1. 0.) s
+      let n = normalAt s (point 0. 1. 0.)
       Expect.equal n (vector 0. 1. 0.) ""
 
     testCase "The normal on a sphere at a point on the z axis" <| fun _ ->
       let s = unitSphere ()
-      let n = normalAt (point 0. 0. 1.) s
+      let n = normalAt s (point 0. 0. 1.)
       Expect.equal n (vector 0. 0. 1.) ""
 
     testCase "The normal on a sphere at a nonaxial point" <| fun _ ->
       let s = unitSphere ()
       let a = (sqrt 3.) / 3.
-      let n = normalAt (point a a a) s
+      let n = normalAt s (point a a a)
       Expect.equal n (vector a a a) ""
 
     testCase "The normal is a normalized vector" <| fun _ ->
       let s = unitSphere ()
       let a = (sqrt 3.) / 3.
-      let n = normalAt (point a a a) s
+      let n = normalAt s (point a a a)
       Expect.equal n (normalize n) ""
 
     testCase "Computing the normal on a translated sphere" <| fun _ ->
       let s = sphere (translate 0. 1. 0.) (defaultMaterial ())
-      let n = normalAt (point 0. 1.70711 -0.70711) s
+      let n = normalAt s (point 0. 1.70711 -0.70711)
       Expect.equal n (vector 0. 0.70711 -0.70711) ""
 
     testCase "Computing the normal on a transformed sphere" <| fun _ ->
       let m = (scale 1. 0.5 1.) * (rotateZ (Math.PI / 5.))
       let s = sphere m (defaultMaterial ())
       let a = (sqrt 2.) / 2.
-      let n = normalAt (point 0. a -a) s
+      let n = normalAt s (point 0. a -a)
       Expect.equal n (vector 0. 0.97014 -0.24254) ""
 
     testCase "A sphere has a default material" <| fun _ ->
@@ -163,7 +163,7 @@ let tests =
 
     testCase "Computing the normal on a translated shape" <| fun _ ->
       let s = testShape (translate 0. 1. 0.)
-      let n = normalAt (point 0. 1.70711 -0.70711) s
+      let n = normalAt s (point 0. 1.70711 -0.70711)
       Expect.equal n (vector 0. 0.70711 -0.70711) ""
 
     testCase "Computing the normal on a transformed shape" <| fun _ ->
@@ -171,14 +171,14 @@ let tests =
         testShape
         <| chain [scale 1. 0.5 1.; rotateZ (Math.PI / 5.)]
       let a = (sqrt 2.) / 2.
-      let n = normalAt (point 0. a -a) s
+      let n = normalAt s (point 0. a -a)
       Expect.equal n (vector 0. 0.97014 -0.24254) ""
 
     testCase "The normal of a plane is constant everywhere" <| fun _ ->
       let p = defaultPlane ()
-      let n1 = localNormal (point 0. 0. 0.) p
-      let n2 = localNormal (point 10. 0. -10.) p
-      let n3 = localNormal (point -5. 0. 150.) p
+      let n1 = localNormal p (point 0. 0. 0.)
+      let n2 = localNormal p (point 10. 0. -10.)
+      let n3 = localNormal p (point -5. 0. 150.)
       Expect.equal n1 (vector 0. 1. 0.) ""
       Expect.equal n2 (vector 0. 1. 0.) ""
       Expect.equal n3 (vector 0. 1. 0.) ""
@@ -251,7 +251,7 @@ let tests =
     testCase "The normal on the surface of a cube" <| fun _ ->
       let test point normal txt =
         let c = unitCube ()
-        let n = localNormal point c
+        let n = localNormal c point
         Expect.equal n normal txt
 
       test (point 1. 0.5 -0.8) (vector 1. 0. 0.) "First"
@@ -295,7 +295,7 @@ let tests =
     testCase "Normal vector on a cylinder" <| fun _ ->
       let test point normal =
         let cyl = defaultOpenCylinder ()
-        let n = localNormal point cyl
+        let n = localNormal cyl point
         Expect.equal n normal ""
 
       test (point 1. 0. 0.) (vector 1. 0. 0.)
@@ -346,7 +346,7 @@ let tests =
           scaleY 0.5
         ]
         let cyl = cylinder t <| defaultMaterial ()
-        let n = normalAt point cyl
+        let n = normalAt cyl point
         Expect.equal n normal ""
 
       test (point 0. 1. 0.) (vector 0. -1. 0.)
@@ -395,7 +395,7 @@ let tests =
     testCase "Computing the normal vector on a cone" <| fun _ ->
       let test point normal =
         let shape = defaultDoubleCone ()
-        let n = localNormal point shape
+        let n = localNormal shape point
         Expect.equal n normal ""
 
       test (point 0. 0. 0.) (vector 0. 0. 0.)
@@ -437,7 +437,7 @@ let tests =
 
       // NOTE: Reassign s to its corresponding element in the group to get the sphere with references to the parent groups
       let s = g1.children.[0].children.[0]
-      let p = worldToObject (point -2. 0. -10.) s
+      let p = worldToObject s (point -2. 0. -10.)
       Expect.equal p (point 0. 0. -1.) ""
 
     testCase "Converting a normal from object to world space" <| fun _ ->
@@ -448,7 +448,7 @@ let tests =
 
       // NOTE: Reassign s to its corresponding element in the group to get the sphere with references to the parent groups
       let s = g1.children.[0].children.[0]
-      let n = normalToWorld (vector a a a) s
+      let n = normalToWorld s (vector a a a)
       Expect.equal n (vector 0.28571 0.42857 -0.85714) ""
 
     testCase "Finding the normal on a child object" <| fun _ ->
@@ -458,6 +458,6 @@ let tests =
 
       // NOTE: Reassign s to its corresponding element in the group to get the sphere with references to the parent groups
       let s = g1.children.[0].children.[0]
-      let n = normalAtGroup (point 1.7321 1.1547 -5.5774) s
+      let n = normalAt s (point 1.7321 1.1547 -5.5774)
       Expect.equal n (vector 0.2857 0.42854 -0.85716) ""
   ]

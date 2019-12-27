@@ -81,10 +81,7 @@ let refractiveIndexes (is: Intersection list) (hit: Intersection) =
 
 let prepareComputations (is: Intersection list) (hit: Intersection) r =
   let point = position hit.t r
-  let normalV =
-    match hit.object.parent with
-    | Some _ -> normalAtGroup point hit.object
-    | None -> normalAt point hit.object
+  let normalV = normalAt hit.object point
   let eyeV = negate r.direction
   let inside = (dot normalV eyeV) < 0.
   let normalV =

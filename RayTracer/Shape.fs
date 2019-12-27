@@ -62,7 +62,7 @@ let uvAt p s =
   | Cube -> failwith "Missing UV implementation for Cube"
   | Group _ -> failwith "Missing UV implementation for Group"
 
-let localNormal p (s: Shape) =
+let localNormal (s: Shape) p =
   match s.shape with
   | Sphere -> p - (point 0. 0. 0.)
   | Plane -> vector 0. 1. 0.
@@ -74,30 +74,22 @@ let localNormal p (s: Shape) =
   | Cube -> Cube.normal p
   | Group _ -> failwith "Missing localNormal implementation for Group"
 
-let normalAt point (shape: Shape) =
-  let invT = inverse shape.transform
-  let localP = multiplyT invT point
-  let localN = localNormal localP shape
-  let worldN = multiplyT (transpose invT) localN
-  let (x, y, z, _) = worldN.Return
-  normalize (vector x y z)
+let normalAt shape =
+  worldToObject shape
+  >> localNormal shape
+  >> normalToWorld shape
 
-let normalAtGroup point (shape: Shape) =
-  let localP = worldToObject point shape
-  let localN = localNormal localP shape
-  normalToWorld localN shape
-
-let worldToObject (p: Tuple) (shape: Shape) =
+let worldToObject (shape: Shape) (p: Tuple) =
   match shape.parent with
-  | Some parent -> worldToObject p parent
+  | Some parent -> worldToObject parent p
   | None -> p
   |> multiplyT (inverse shape.transform)
 
-let normalToWorld (v: Tuple) (shape: Shape) : Tuple =
+let normalToWorld (shape: Shape) (v: Tuple) =
   let t = shape.transform |> inverse |> transpose
   let n1 = multiplyT t v |> toVector |> normalize
   match shape.parent with
-  | Some parent -> normalToWorld n1 parent
+  | Some parent -> normalToWorld parent n1
   | None -> n1
 
 
