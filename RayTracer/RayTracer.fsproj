@@ -24,6 +24,7 @@
     <Compile Include="Shapes/Sphere.fs" />
     <Compile Include="Shapes/Poly.fs" />
     <Compile Include="Shape.fs" />
+    <Compile Include="ObjParser.fs" />
     <Compile Include="Intersection.fs" />
     <Compile Include="World.fs" />
     <Compile Include="Camera.fs" />
@@ -48,6 +49,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="FParsec" Version="1.0.3" />
     <PackageReference Include="ShellProgressBar" Version="4.3.0" />
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
   </ItemGroup>
