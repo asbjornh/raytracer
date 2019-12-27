@@ -113,8 +113,8 @@ let boundsForShape s =
   | DoubleCone -> cube
   | Cube -> cube
   | Group g ->
-    if List.isEmpty s.children then cube
-    else boundsForShapes s.children
+    let (x, y, z) = g.bounds
+    bounds x y z
 
 let boundsForShapes (objects: Shape list) =
   objects
