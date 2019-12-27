@@ -460,4 +460,14 @@ let tests =
       let s = g1.children.[0].children.[0]
       let n = normalAt s (point 1.7321 1.1547 -5.5774)
       Expect.equal n (vector 0.2857 0.42854 -0.85716) ""
+
+    testCase "Finding the normal on a triangle" <| fun _ ->
+      let p = polyP <| point 0. 1. 0. <| point -1. 0. 0. <| point 1. 0. 0.
+      let t = shapeT (Poly p) <| identity ()
+      let n1 = localNormal t <| point 0. 0.5 0.
+      let n2 = localNormal t <| point -0.5 0.75 0.
+      let n3 = localNormal t <| point 0.5 0.25 0.
+      Expect.equal n1 p.normal ""
+      Expect.equal n2 p.normal ""
+      Expect.equal n3 p.normal ""
   ]

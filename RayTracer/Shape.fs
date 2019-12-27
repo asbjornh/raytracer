@@ -2,6 +2,7 @@ module rec Shape
 
 open Matrix
 open Material
+open Poly
 open Tuple
 open Util
 
@@ -15,6 +16,7 @@ type ShapeType =
   | DoubleCone
   | TestShape
   | Group of Group
+  | Poly of Poly
 
 type Shape = {
   mutable transform: Matrix
@@ -38,6 +40,7 @@ let localIntersect ray (s: Shape) =
   | Cone -> Cone.intersect -1. 0. ray s
   | DoubleCone -> Cone.intersect -1. 1. ray s
   | TestShape -> [(0., s)]
+  | Poly p -> Poly.intersect p ray |> List.map (fun t -> (t, s))
   | Group g ->
     let (boundsX, boundsY, boundsZ) = g.bounds
     let i = Cube.intersectBox boundsX boundsY boundsZ ray s
@@ -61,6 +64,7 @@ let uvAt p s =
   | DoubleCone -> failwith "Missing UV implementation for DoubleCone"
   | Cube -> failwith "Missing UV implementation for Cube"
   | Group _ -> failwith "Missing UV implementation for Group"
+  | Poly _ -> failwith "Missing UV implementation for Poly"
 
 let localNormal (s: Shape) p =
   match s.shape with
@@ -72,6 +76,7 @@ let localNormal (s: Shape) p =
   | Cone -> Cone.normal -1. 0. p
   | DoubleCone -> Cone.normal -1. 1. p
   | Cube -> Cube.normal p
+  | Poly p -> p.normal
   | Group _ -> failwith "Missing localNormal implementation for Group"
 
 let normalAt shape =
@@ -112,6 +117,9 @@ let boundsForShape s =
   | Cone -> bounds (-1., 1.) (-1., 0.) (-1., 1.)
   | DoubleCone -> cube
   | Cube -> cube
+  | Poly p ->
+    let (x, y, z) = Poly.bounds p
+    bounds x y z
   | Group g ->
     let (x, y, z) = g.bounds
     bounds x y z
@@ -149,6 +157,10 @@ let cylinder t = shape Cylinder t
 let cone t = shape Cone t
 let doubleCone t = shape DoubleCone t
 let openCylinder t = shape OpenCylinder t
+let polyP = Poly.make
+let poly p1 p2 p3 t =
+  let p = polyP p1 p2 p3
+  shape (Poly p) t
 
 let updateParent parent shape =
   let newS = { shape with parent = Some parent }
@@ -172,4 +184,5 @@ let defaultCylinder () = defaultShape Cylinder
 let defaultOpenCylinder () = defaultShape OpenCylinder
 let defaultCone () = defaultShape Cone
 let defaultDoubleCone () = defaultShape DoubleCone
+let polyT p1 p2 p3 t = shapeT (Poly <| Poly.make p1 p2 p3) t
 let groupT c t = group c t <| defaultMaterial ()
