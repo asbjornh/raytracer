@@ -185,4 +185,5 @@ let defaultOpenCylinder () = defaultShape OpenCylinder
 let defaultCone () = defaultShape Cone
 let defaultDoubleCone () = defaultShape DoubleCone
 let polyT p1 p2 p3 t = shapeT (Poly <| Poly.make p1 p2 p3) t
+let defaultPoly p1 p2 p3 = defaultShape (Poly <| Poly.make p1 p2 p3)
 let groupT c t = group c t <| defaultMaterial ()
