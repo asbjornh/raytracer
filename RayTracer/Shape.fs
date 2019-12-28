@@ -27,6 +27,7 @@ type Shape = {
 }
 
 type Group = {
+  name: string
   bounds: (float * float) * (float * float) * (float * float)
 }
 
@@ -169,11 +170,13 @@ let updateParent parent shape =
   )
   newS
 
-let group c t m =
-  let g = Group { bounds = boundingBox c }
+let namedGroup n c t m =
+  let g = Group { name = n; bounds = boundingBox c }
   let s = shape g t m
   s.children <- c |> List.map (updateParent s)
   s
+
+let group c t m = namedGroup "N/A" c t m
 
 let unitSphere () = defaultShape Sphere
 let sphereT t = shapeT Sphere t
@@ -187,3 +190,4 @@ let defaultDoubleCone () = defaultShape DoubleCone
 let polyT p1 p2 p3 t = shapeT (Poly <| Poly.make p1 p2 p3) t
 let defaultPoly p1 p2 p3 = defaultShape (Poly <| Poly.make p1 p2 p3)
 let groupT c t = group c t <| defaultMaterial ()
+let namedGroupT n c t = namedGroup n c t  <| defaultMaterial ()
