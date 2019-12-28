@@ -63,7 +63,7 @@ let getVertices =
 
 let getFaces vertices =
   List.collect
-    (List.map (int >> flip (-) 1) >> polys vertices)
+    (List.map (List.head >> int >> flip (-) 1) >> polys vertices)
 
 let polys vs face =
   match face with
@@ -83,10 +83,11 @@ let fanTriangulation = function
     )
 
 let str = pstring
-let coords = sepBy pfloat (str " ")
-let vertex = pchar 'v' >>. str " " >>. coords
+let vertexCoords = sepBy pfloat (str " ")
+let vertex = pchar 'v' >>. str " " >>. vertexCoords
 let vertices = sepEndBy vertex newline
-let face = pchar 'f' >>. str " " >>. coords
+let faceCoords = sepBy (sepBy1 pint16 <| str "/") (str " ")
+let face = pchar 'f' >>. str " " >>. faceCoords
 let faces = sepEndBy face newline
 let groupStart = pchar 'g' >>. str " " >>. (manyChars asciiLetter)
 let group = groupStart .>>. (newline >>. faces)

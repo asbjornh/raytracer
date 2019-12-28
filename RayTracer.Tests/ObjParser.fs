@@ -51,7 +51,7 @@ let tests =
         "v 1 1 0"
         ""
         "f 1 2 3"
-        "f 1 3 4"
+        "f 1/1 3/1 4/1" // NOTE: vertex index/texture index
       ]
       let r = parse file
       let g = r.defaultGroup
