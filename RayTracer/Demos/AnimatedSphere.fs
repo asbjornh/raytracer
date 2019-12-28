@@ -59,7 +59,7 @@ let frame (bar: ProgressBar) l fileName =
     | None -> black |> add bg |> Color.scale 0.8
   )
   |> Canvas.toPpm
-  |> writeFile ("./frames/" + fileName)
+  |> writeFile ("../render/frames/" + fileName)
 
 
 let run () =
