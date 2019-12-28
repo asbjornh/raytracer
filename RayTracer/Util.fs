@@ -90,5 +90,8 @@ let subGrid x y size arr =
 let writeFile (path: string) content =
   System.IO.File.WriteAllLines (path, content)
 
+let readFile path =
+  System.IO.File.ReadAllLines path
+
 let nowStr () =
   DateTimeOffset.Now.ToString "d.MMMM_yyyy_HH.mm"

@@ -2,6 +2,7 @@ module ObjParserTest
 
 open Expecto
 
+open Matrix
 open ObjParser
 open Shape
 open Tuple
@@ -125,4 +126,10 @@ let tests =
       Expect.equal t2.p1 r.vertices.[0] ""
       Expect.equal t2.p2 r.vertices.[2] ""
       Expect.equal t2.p3 r.vertices.[3] ""
+
+    testCase "Converting an OBJ file to a group" <| fun _ ->
+      let g = objFromFile "./fixtures/triangles.obj" <| identity ()
+      Expect.equal (List.length g.children) 2 ""
+      Expect.equal ((g.children.[0] |> getGroup).name) "FirstGroup" ""
+      Expect.equal ((g.children.[1] |> getGroup).name) "SecondGroup" ""
   ]

@@ -14,6 +14,15 @@ type ParseResult = {
   groups: Shape list
 }
 
+let objFromFile path =
+  let result =
+    readFile path |> Array.toList |> parse
+  let children =
+    if List.isEmpty result.defaultGroup.children
+    then result.groups
+    else result.defaultGroup :: result.groups
+  groupT children
+
 let parse (t: string list) =
   let txt =
     t |> List.filter (String.length >> flip (>) 0)
