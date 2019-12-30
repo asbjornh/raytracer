@@ -44,6 +44,7 @@
     <Compile Include="Demos/Refraction.fs" />
     <Compile Include="Demos/Textures.fs" />
     <Compile Include="Demos/Hexagon.fs" />
+    <Compile Include="Demos/Teapot.fs" />
 
     <Compile Include="Program.fs" />
   </ItemGroup>

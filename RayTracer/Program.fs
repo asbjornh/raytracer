@@ -3,5 +3,5 @@
 
 [<EntryPoint>]
 let main argv =
-  Hexagon.run ()
+  Teapot.run ()
   0
