@@ -3,6 +3,7 @@
 *.ppm
 *.mov
 tex/*.*
+models/*.*
 
 # Build results
 [Dd]ebug/
