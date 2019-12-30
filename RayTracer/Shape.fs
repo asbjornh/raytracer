@@ -191,3 +191,4 @@ let polyT p1 p2 p3 t = shapeT (Poly <| Poly.make p1 p2 p3) t
 let defaultPoly p1 p2 p3 = defaultShape (Poly <| Poly.make p1 p2 p3)
 let groupT c t = group c t <| defaultMaterial ()
 let namedGroupT n c t = namedGroup n c t  <| defaultMaterial ()
+let defaultGroup c = groupT c <| identity ()

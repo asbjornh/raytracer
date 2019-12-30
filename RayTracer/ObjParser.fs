@@ -25,7 +25,11 @@ let objFromFile path =
 
 let parse (t: string list) =
   let txt =
-    t |> List.filter (String.length >> flip (>) 0)
+    t |> List.filter (fun s ->
+      String.length s > 0 &&
+      not <| isComment s
+    )
+    |> List.map (fun s -> s.Trim (' '))
     |> String.concat "\n"
 
   let i = identity ()
@@ -71,8 +75,11 @@ let polys vs face =
     [defaultPoly vs.[one] vs.[two] vs.[three]]
   | [] -> []
   | _ ->
-    face |> List.map (fun i -> vs.[i])
+    face
+    |> List.map (fun i -> vs.[i])
     |> fanTriangulation
+    |> defaultGroup |> always
+    |> List.init 1
 
 let fanTriangulation = function
   | [] -> []
@@ -82,13 +89,15 @@ let fanTriangulation = function
       defaultPoly start second third
     )
 
+let comment = spaces >>. pchar '#' >>. restOfLine false
+let isComment s = match run comment s with | Success _ -> true | Failure _ -> false
 let str = pstring
 let vertexCoords = sepBy pfloat (str " ")
-let vertex = pchar 'v' >>. str " " >>. vertexCoords
+let vertex = pchar 'v' >>. spaces >>. vertexCoords
 let vertices = sepEndBy vertex newline
 let faceCoords = sepBy (sepBy1 pint16 <| str "/") (str " ")
-let face = pchar 'f' >>. str " " >>. faceCoords
+let face = pchar 'f' >>. spaces >>. faceCoords
 let faces = sepEndBy face newline
-let groupStart = pchar 'g' >>. str " " >>. (manyChars asciiLetter)
+let groupStart = pchar 'g' >>. spaces >>. restOfLine false
 let group = groupStart .>>. (newline >>. faces)
 let obj = tuple3 vertices faces (many group)

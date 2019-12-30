@@ -66,15 +66,18 @@ let tests =
       Expect.equal t2.p2 r.vertices.[2] ""
       Expect.equal t2.p3 r.vertices.[3] ""
 
-    testCase "Parsing triangle faces with texture indices" <| fun _ ->
+    testCase "Parsing triangle faces with texture indices and weird whitespace" <| fun _ ->
       let file = [
-        "v -1 1 0"
-        "v -1 0 0"
-        "v 1 0 0"
-        "v 1 1 0"
+        "v  -1 1 0"
+        "v  -1 0 0"
+        "v  1 0 0"
+        "v  1 1 0"
+        "# Some comment"
         ""
-        "f 1/1 2/1 3/1" // NOTE: vertex index/texture index
-        "f 1/1 3/1 4/1"
+        "f 1/1 2/1 3/1 " // NOTE: vertex index/texture index
+        "f 1/1 3/1 4/1 "
+        "g BlahBlah01" // NOTE: Should support numbers in group
+        "f 1/1 3/1 4/1 "
       ]
       let r = parse file
       let g = r.defaultGroup
@@ -82,6 +85,7 @@ let tests =
       let t1 = getPoly g.children.[0]
       let t2 = getPoly g.children.[1]
       Expect.equal (List.length r.vertices) 4 ""
+      Expect.equal (List.length r.groups) 1 ""
       Expect.equal t1.p1 r.vertices.[0] ""
       Expect.equal t1.p2 r.vertices.[1] ""
       Expect.equal t1.p3 r.vertices.[2] ""
@@ -100,7 +104,7 @@ let tests =
         "f 1 2 3 4 5"
       ]
       let r = parse file
-      let g = r.defaultGroup
+      let g = r.defaultGroup.children.[0]
 
       Expect.equal (List.length g.children) 3 ""
       let t1 = getPoly g.children.[0]
