@@ -27,8 +27,7 @@ let tests =
       let s1 = unitSphere ()
       let s2 = sphereT (translate 0. 0. -3.)
       let s3 = sphereT (translate 5. 0. 0.)
-      // NOTE: Transparent material in order to make localIntersect check all objects
-      let g = group [s1; s2; s3] <| identity () <| Transparent { index = 1.; blend = Normal }
+      let g = groupT [s1; s2; s3] <| identity ()
       let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
       let xs = localIntersect r g
       let (_, objects) = List.unzip xs
