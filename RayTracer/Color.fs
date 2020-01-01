@@ -5,12 +5,12 @@ open Util
 type Color (r, g, b) =
   member x.Return = (r, g, b)
 
-  static member Combine fn (a: Color) (b: Color) =
+  static member Map2 fn (a: Color) (b: Color) =
     let (r1, g1, b1) = a.Return
     let (r2, g2, b2) = b.Return
     (fn r1 r2, fn g1 g2, fn b1 b2)
 
-  static member CombineC fn a b = Color.Combine fn a b |> Color
+  static member Map2C fn a b = Color.Map2 fn a b |> Color
 
   static member Map fn (c: Color) =
     let (r, g, b) = c.Return
@@ -23,7 +23,7 @@ type Color (r, g, b) =
   override x.Equals a =
     match a with
     | :? Color as c ->
-      let (r, g, b) = Color.Combine looseEq c x
+      let (r, g, b) = Color.Map2 looseEq c x
       r && g && b
     | _ -> false
 
@@ -36,16 +36,16 @@ let toString transform sep =
   >> toList
   >> String.concat sep
 
-let equals a b = (Color.Combine looseEq a b) |> function
+let equals a b = (Color.Map2 looseEq a b) |> function
   | (true, true, true) -> true
   | _ -> false
 
-let add c = Color.CombineC (+) c
-let subtract c = Color.CombineC (-) c
-let multiply c = Color.CombineC (*) c
+let add c = Color.Map2C (+) c
+let subtract c = Color.Map2C (-) c
+let multiply c = Color.Map2C (*) c
 let scale n = Color.MapC ((*) n)
 let divide n = Color.MapC (flip (/) n)
-let lighten c = Color.CombineC max c
+let lighten c = Color.Map2C max c
 let invert c = subtract (color 1. 1. 1.) c
 let screen a b =
   invert (multiply (invert a) (invert b))
