@@ -7,9 +7,9 @@ open ObjParser
 open Shape
 open Tuple
 
-let getPoly s =
+let getTriangle s =
   match s.shape with
-  | Poly p -> p | _ -> failwith "Not a Poly"
+  | Triangle p -> p | _ -> failwith "Not a Poly"
 
 let getGroup s =
   match s.shape with
@@ -56,8 +56,8 @@ let tests =
       let r = parse file
       let g = r.defaultGroup
       Expect.equal (List.length g.children) 2 ""
-      let t1 = getPoly g.children.[0]
-      let t2 = getPoly g.children.[1]
+      let t1 = getTriangle g.children.[0]
+      let t2 = getTriangle g.children.[1]
       Expect.equal (List.length r.vertices) 4 ""
       Expect.equal t1.p1 r.vertices.[0] ""
       Expect.equal t1.p2 r.vertices.[1] ""
@@ -82,8 +82,8 @@ let tests =
       let r = parse file
       let g = r.defaultGroup
       Expect.equal (List.length g.children) 2 ""
-      let t1 = getPoly g.children.[0]
-      let t2 = getPoly g.children.[1]
+      let t1 = getTriangle g.children.[0]
+      let t2 = getTriangle g.children.[1]
       Expect.equal (List.length r.vertices) 4 ""
       Expect.equal (List.length r.groups) 1 ""
       Expect.equal t1.p1 r.vertices.[0] ""
@@ -107,9 +107,9 @@ let tests =
       let g = r.defaultGroup.children.[0]
 
       Expect.equal (List.length g.children) 3 ""
-      let t1 = getPoly g.children.[0]
-      let t2 = getPoly g.children.[1]
-      let t3 = getPoly g.children.[2]
+      let t1 = getTriangle g.children.[0]
+      let t2 = getTriangle g.children.[1]
+      let t3 = getTriangle g.children.[2]
 
       Expect.equal (List.length r.vertices) 5 ""
       Expect.equal t1.p1 r.vertices.[0] ""
@@ -143,8 +143,8 @@ let tests =
       let g2 =
         r.groups
         |> List.find (fun s -> (getGroup s).name = "SecondGroup")
-      let t1 = g1.children.[0] |> getPoly
-      let t2 = g2.children.[0] |> getPoly
+      let t1 = g1.children.[0] |> getTriangle
+      let t2 = g2.children.[0] |> getTriangle
 
       Expect.equal (List.length r.vertices) 4 ""
       Expect.equal t1.p1 r.vertices.[0] ""

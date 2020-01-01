@@ -2,7 +2,7 @@ module rec Shape
 
 open Matrix
 open Material
-open Poly
+open Triangle
 open Tuple
 open Util
 
@@ -16,7 +16,7 @@ type ShapeType =
   | DoubleCone
   | TestShape
   | Group of Group
-  | Poly of Poly
+  | Triangle of Triangle
 
 type Shape = {
   mutable transform: Matrix
@@ -41,7 +41,7 @@ let localIntersect ray (s: Shape) =
   | Cone -> Cone.intersect -1. 0. ray s
   | DoubleCone -> Cone.intersect -1. 1. ray s
   | TestShape -> [(0., s)]
-  | Poly p -> Poly.intersect p ray |> List.map (fun t -> (t, s))
+  | Triangle p -> Triangle.intersect p ray |> List.map (fun t -> (t, s))
   | Group g ->
     let (boundsX, boundsY, boundsZ) = g.bounds
     match Cube.intersectBox boundsX boundsY boundsZ ray s with
@@ -67,7 +67,7 @@ let uvAt p s =
   | DoubleCone -> failwith "Missing UV implementation for DoubleCone"
   | Cube -> failwith "Missing UV implementation for Cube"
   | Group _ -> failwith "Missing UV implementation for Group"
-  | Poly _ -> failwith "Missing UV implementation for Poly"
+  | Triangle _ -> failwith "Missing UV implementation for Poly"
 
 let localNormal (s: Shape) p =
   match s.shape with
@@ -79,7 +79,7 @@ let localNormal (s: Shape) p =
   | Cone -> Cone.normal -1. 0. p
   | DoubleCone -> Cone.normal -1. 1. p
   | Cube -> Cube.normal p
-  | Poly p -> p.normal
+  | Triangle p -> p.normal
   | Group _ -> failwith "Missing localNormal implementation for Group"
 
 let normalAt shape =
@@ -120,8 +120,8 @@ let boundsForShape s =
   | Cone -> bounds (-1., 1.) (-1., 0.) (-1., 1.)
   | DoubleCone -> cube
   | Cube -> cube
-  | Poly p ->
-    let (x, y, z) = Poly.bounds p
+  | Triangle p ->
+    let (x, y, z) = Triangle.bounds p
     bounds x y z
   | Group g ->
     let (x, y, z) = g.bounds
@@ -160,10 +160,9 @@ let cylinder t = shape Cylinder t
 let cone t = shape Cone t
 let doubleCone t = shape DoubleCone t
 let openCylinder t = shape OpenCylinder t
-let polyP = Poly.make
-let poly p1 p2 p3 t =
-  let p = polyP p1 p2 p3
-  shape (Poly p) t
+let triangle p1 p2 p3 t =
+  let p = Triangle.make p1 p2 p3
+  shape (Triangle p) t
 
 let updateParent parent shape =
   let newS = { shape with parent = Some parent }
@@ -189,8 +188,8 @@ let defaultCylinder () = defaultShape Cylinder
 let defaultOpenCylinder () = defaultShape OpenCylinder
 let defaultCone () = defaultShape Cone
 let defaultDoubleCone () = defaultShape DoubleCone
-let polyT p1 p2 p3 t = shapeT (Poly <| Poly.make p1 p2 p3) t
-let defaultPoly p1 p2 p3 = defaultShape (Poly <| Poly.make p1 p2 p3)
+let triangleT p1 p2 p3 t = shapeT (Triangle <| Triangle.make p1 p2 p3) t
+let defaultTriangle p1 p2 p3 = defaultShape (Triangle <| Triangle.make p1 p2 p3)
 let groupT c t = group c t <| defaultMaterial ()
 let namedGroupT n c t = namedGroup n c t  <| defaultMaterial ()
 let defaultGroup c = groupT c <| identity ()

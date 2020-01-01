@@ -1,10 +1,10 @@
-module Poly
+module Triangle
 
 open Ray
 open Tuple
 open Util
 
-type Poly = {
+type Triangle = {
   p1: Tuple
   p2: Tuple
   p3: Tuple
@@ -26,17 +26,17 @@ let bounds p =
     (List.min ys, List.max ys),
     (List.min zs, List.max zs) )
 
-let intersect (p: Poly) ray =
-  let dirCrossE2 = cross ray.direction p.e2
-  let determinant = dot dirCrossE2 p.e1
+let intersect t ray =
+  let dirCrossE2 = cross ray.direction t.e2
+  let determinant = dot dirCrossE2 t.e1
   if (looseEq determinant 0.) then []
   else
     let f = 1. / determinant
-    let p1ToOrigin = ray.origin - p.p1
+    let p1ToOrigin = ray.origin - t.p1
     let u = f * dot p1ToOrigin dirCrossE2
     if (u < 0. || u > 1.) then []
     else
-      let originCrossE1 = cross p1ToOrigin p.e1
+      let originCrossE1 = cross p1ToOrigin t.e1
       let v = f * dot ray.direction originCrossE1
       if (v < 0. || u + v > 1.) then []
-      else [f * dot p.e2 originCrossE1]
+      else [f * dot t.e2 originCrossE1]

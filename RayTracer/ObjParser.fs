@@ -72,7 +72,7 @@ let getFaces vertices =
 let polys vs face =
   match face with
   | [one; two; three] -> 
-    [defaultPoly vs.[one] vs.[two] vs.[three]]
+    [defaultTriangle vs.[one] vs.[two] vs.[three]]
   | [] -> []
   | _ ->
     face
@@ -86,7 +86,7 @@ let fanTriangulation = function
   | start :: rest ->
     List.pairwise rest
     |> List.map (fun (second, third) ->
-      defaultPoly start second third
+      defaultTriangle start second third
     )
 
 let comment = spaces >>. pchar '#' >>. restOfLine false

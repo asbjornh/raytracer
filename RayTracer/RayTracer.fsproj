@@ -22,7 +22,7 @@
     <Compile Include="Shapes/Cylinder.fs" />
     <Compile Include="Shapes/Plane.fs" />
     <Compile Include="Shapes/Sphere.fs" />
-    <Compile Include="Shapes/Poly.fs" />
+    <Compile Include="Shapes/Triangle.fs" />
     <Compile Include="Shape.fs" />
     <Compile Include="ObjParser.fs" />
     <Compile Include="Intersection.fs" />
