@@ -47,9 +47,12 @@ let localIntersect ray (s: Shape) =
     match Cube.intersectBox boundsX boundsY boundsZ ray s with
     | [] -> []
     | _ ->
-      s.children
-      |> List.tryPick (shapeIntersect ray >> listToOption)
-      |> optionToList
+      match s.material with
+      | Transparent _ -> List.collect (shapeIntersect ray) s.children
+      | _ ->
+        s.children
+        |> List.tryPick (shapeIntersect ray >> listToOption)
+        |> optionToList
 
 let shapeIntersect ray (shape: Shape) =
   localIntersect
