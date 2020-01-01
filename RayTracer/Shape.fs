@@ -143,6 +143,14 @@ let boundingBox (objects: Shape list) =
       (List.min ys, List.max ys),
       (List.min zs, List.max zs) )
 
+let updateParent parent shape =
+  let newS = { shape with parent = Some parent }
+  newS.children |> List.iter (fun s ->
+    s.parent <- Some newS
+  )
+  newS
+
+
 let shape s t m = {
   transform = t
   material = m
@@ -150,6 +158,13 @@ let shape s t m = {
   parent = None
   children = []
 }
+let namedGroup n c t m =
+  let g = Group { name = n; bounds = boundingBox c }
+  let s = shape g t m
+  s.children <- c |> List.map (updateParent s)
+  s
+
+let group c t m = namedGroup "N/A" c t m
 let shapeM s m = shape s (identity ()) m
 let shapeT s t = shape s t <| defaultMaterial ()
 let defaultShape s = shape s <| identity () <| defaultMaterial ()
@@ -163,21 +178,6 @@ let openCylinder t = shape OpenCylinder t
 let triangle p1 p2 p3 t =
   let p = Triangle.make p1 p2 p3
   shape (Triangle p) t
-
-let updateParent parent shape =
-  let newS = { shape with parent = Some parent }
-  newS.children |> List.iter (fun s ->
-    s.parent <- Some newS
-  )
-  newS
-
-let namedGroup n c t m =
-  let g = Group { name = n; bounds = boundingBox c }
-  let s = shape g t m
-  s.children <- c |> List.map (updateParent s)
-  s
-
-let group c t m = namedGroup "N/A" c t m
 
 let unitSphere () = defaultShape Sphere
 let sphereT t = shapeT Sphere t
