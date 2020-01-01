@@ -40,6 +40,10 @@ let get arr index =
   Array.indexed arr |> Array.tryFind (isIndex index)
 let replace index (newEl: 'a) (list: 'a [])=
   list.[index] <- newEl; list
+let listToOption = function
+  | [] -> None | l -> Some l
+let optionToList = function
+  | None -> [] | Some l -> l
 
 let containsRef v l =
   l |> List.tryFind (fun el -> refEq el v)

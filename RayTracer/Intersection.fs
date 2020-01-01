@@ -20,10 +20,9 @@ let intersections (l: Intersection list) =
 
 let visible i = i.t >= 0.
 let hit (l: Intersection list) =
-  let visibleEls = List.filter visible l
-  match visibleEls with
+  match List.filter visible l with
   | [] -> None
-  | _ -> Some (List.minBy getT visibleEls)
+  | visibleShapes -> Some (List.minBy getT visibleShapes)
 
 type Computation<'a> = {
   t: float

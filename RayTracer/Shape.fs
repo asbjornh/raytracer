@@ -44,10 +44,12 @@ let localIntersect ray (s: Shape) =
   | Poly p -> Poly.intersect p ray |> List.map (fun t -> (t, s))
   | Group g ->
     let (boundsX, boundsY, boundsZ) = g.bounds
-    let i = Cube.intersectBox boundsX boundsY boundsZ ray s
-    if List.isEmpty i then []
-    else
-      List.collect (shapeIntersect ray) s.children
+    match Cube.intersectBox boundsX boundsY boundsZ ray s with
+    | [] -> []
+    | _ ->
+      s.children
+      |> List.tryPick (shapeIntersect ray >> listToOption)
+      |> optionToList
 
 let shapeIntersect ray (shape: Shape) =
   localIntersect
