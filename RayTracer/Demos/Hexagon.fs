@@ -14,15 +14,15 @@ open Util
 open World
 
 let corner =
-  sphereT <| chain [translate -0.5 0. -0.9; uniformScale 0.25]
+  sphereT <| chain [translate -0.5f 0.f -0.9f; uniformScale 0.25f]
 
 let edge =
   cylinder
   <| chain [
-    translateZ -0.9
-    rotateZ (-Math.PI / 2.)
-    rotateY (-Math.PI / 6.)
-    scale 0.25 0.5 0.25
+    translateZ -0.9f
+    rotateZ (-MathF.PI / 2.f)
+    rotateY (-MathF.PI / 6.f)
+    scale 0.25f 0.5f 0.25f
   ]
   <| defaultMaterial ()
 
@@ -31,12 +31,12 @@ let side t =
 
 let hexagon =
   List.init 6 (fun i ->
-    side <| rotateY (float i * Math.PI / 3.)
+    side <| rotateY (float32 i * MathF.PI / 3.f)
   )
   |> group <| identity () <| defaultMaterial ()
 
 let pLight = pointLight (point -10. 10. -10.) white
-let cam = camera 100 100 (Math.PI / 3.)
+let cam = camera 100 100 (MathF.PI / 3.f)
 let cTransform = viewTransform (point 1. 2. -2.) (point 0. 0. 0.) (vector 0. 1. 0.)
 cam.transform <- cTransform
 

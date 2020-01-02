@@ -60,27 +60,6 @@ let tests =
       ]
       Expect.equal (a * b) expected ""
 
-    testCase "Get column from matrix" <| fun _ ->
-      let m = matrix [
-        [ 1. ; 2. ; 3. ; 4. ]
-        [ 2. ; 4. ; 4. ; 2. ]
-        [ 8. ; 6. ; 4. ; 1. ]
-        [ 0. ; 0. ; 0. ; 1. ]
-      ]
-      let col = [| 2.; 4.; 6.; 0. |]
-      Expect.equal (getColumn 1 m) col ""
-
-    testCase "A matrix multiplied by a tuple" <| fun _ ->
-      let m = matrix [
-        [ 1. ; 2. ; 3. ; 4. ]
-        [ 2. ; 4. ; 4. ; 2. ]
-        [ 8. ; 6. ; 4. ; 1. ]
-        [ 0. ; 0. ; 0. ; 1. ]
-      ]
-      let t = Tuple.point 1. 2. 3.
-      let expected = Tuple.point 18. 24. 33.
-      Expect.equal (multiplyT m t) expected ""
-
     testCase "Identity matrix" <| fun _ ->
       let expected = matrix [
         [ 1. ; 0. ; 0. ; 0. ]
@@ -100,7 +79,7 @@ let tests =
       Expect.equal (m * (identity ())) m ""
 
     testCase "Multiplying the identity matrix by a tuple" <| fun _ ->
-      let t = Tuple.Tuple (1., 2., 3., 4.)
+      let t = Tuple.Tuple (1.f, 2.f, 3.f, 4.f)
       Expect.equal (multiplyT (identity ()) t) t ""
 
     testCase "Transposing a matrix" <| fun _ ->
@@ -121,71 +100,6 @@ let tests =
     testCase "Transposing the identity" <| fun _ ->
       Expect.equal (transpose (identity ())) (identity ()) ""
 
-    testCase "Calculating the determinant of a 2x2 matrix" <| fun _ ->
-      let m = matrix [
-        [  1. ; 5. ]
-        [ -3. ; 2. ]
-      ]
-      Expect.equal (determinant m) 17. ""
-
-    testCase "A submatrix of a 3x3 matrix is a 2x2 matrix" <| fun _ ->
-      let m = matrix [
-        [  1. ; 5. ;  0. ]
-        [ -3. ; 2. ;  7. ]
-        [  0. ; 6. ; -3. ]
-      ]
-      let expected = matrix [
-        [ -3. ; 2. ]
-        [  0. ; 6. ]
-      ]
-      Expect.equal (submatrix 0 2 m) expected ""
-
-    testCase "A submatrix of a 4x4 matrix is a 3x3 matrix" <| fun _ ->
-      let m = matrix [
-        [ -6. ;  1. ;  1. ;  6. ]
-        [ -8. ;  5. ;  8. ;  6. ]
-        [ -1. ;  0. ;  8. ;  2. ]
-        [ -7. ;  1. ; -1. ;  1. ]
-      ]
-      let expected = matrix [
-        [ -6. ;  1. ; 6. ]
-        [ -8. ;  8. ; 6. ]
-        [ -7. ; -1. ; 1. ]
-      ]
-      Expect.equal (submatrix 2 1 m) expected ""
-
-    testCase "Calculating a minor of a 3x3 matrix" <| fun _ ->
-      let m = matrix [
-        [  3. ;  5. ;  0. ]
-        [  2. ; -1. ; -7. ]
-        [  6. ; -1. ;  5. ]
-      ]
-      let b = submatrix 1 0 m
-      Expect.equal (determinant b) 25. ""
-      Expect.equal (minor 1 0 m) 25. ""
-
-    testCase "Calculating a cofactor of a 3x3 matrix" <| fun _ ->
-      let m = matrix [
-        [  3. ;  5. ;  0. ]
-        [  2. ; -1. ; -7. ]
-        [  6. ; -1. ;  5. ]
-      ]
-      Expect.equal (minor 0 0 m) -12. ""
-      Expect.equal (cofactor 0 0 m) -12. ""
-      Expect.equal (minor 1 0 m) 25. ""
-      Expect.equal (cofactor 1 0 m) -25. ""
-
-    testCase "Calculating the determinant of a 3x3 matrix" <| fun _ ->
-      let m = matrix [
-        [  1. ;  2. ;  6. ]
-        [ -5. ;  8. ; -4. ]
-        [  2. ;  6. ;  4. ]
-      ]
-      Expect.equal (cofactor 0 0 m) 56. ""
-      Expect.equal (cofactor 0 1 m) 12. ""
-      Expect.equal (cofactor 0 2 m) -46. ""
-      Expect.equal (determinant m) -196. ""
-
     testCase "Calculating the determinant of a 4x4 matrix" <| fun _ ->
       let m = matrix [
         [ -2. ; -8. ;  3. ;  5. ]
@@ -193,11 +107,7 @@ let tests =
         [  1. ;  2. ; -9. ;  6. ]
         [ -6. ;  7. ;  7. ; -9. ]
       ]
-      Expect.equal (cofactor 0 0 m) 690. ""
-      Expect.equal (cofactor 0 1 m) 447. ""
-      Expect.equal (cofactor 0 2 m) 210. ""
-      Expect.equal (cofactor 0 3 m) 51. ""
-      Expect.equal (determinant m) -4071. ""
+      Expect.equal (determinant m) -4071.f ""
 
     testCase "Testing an invertible matrix for invertibility" <| fun _ ->
       let m = matrix [
@@ -206,7 +116,7 @@ let tests =
         [  4. ; -9. ;  3. ; -7. ]
         [  9. ;  1. ;  7. ; -6. ]
       ]
-      Expect.equal (determinant m) -2120. ""
+      Expect.equal (determinant m) -2120.f ""
       Expect.isTrue (invertible m) ""
 
     testCase "Testing a noninvertible matrix for invertibility" <| fun _ ->
@@ -216,7 +126,7 @@ let tests =
         [  0. ; -5. ;  1. ; -5. ]
         [  0. ;  0. ;  0. ;  0. ]
       ]
-      Expect.equal (determinant m) 0. ""
+      Expect.equal (determinant m) 0.f ""
       Expect.isFalse (invertible m) ""
 
     testCase "Calculating the inverse of a matrix" <| fun _ ->
@@ -233,12 +143,8 @@ let tests =
         [ -0.07895 ; -0.22368 ; -0.05263 ;  0.19737 ]
         [ -0.52256 ; -0.81391 ; -0.30075 ;  0.30639 ]
       ]
-      Expect.equal (determinant a) 532. ""
-      Expect.equal (cofactor 2 3 a) -160. ""
-      Expect.equal (get 3 2 b) (-160. / 532.) ""
-      Expect.equal (cofactor 3 2 a) 105. ""
-      Expect.equal (get 2 3 b) (105. / 532.) ""
-      Expect.isTrue (b = expected) (diff b expected)
+      Expect.equal (determinant a) 532.f ""
+      Expect.isTrue (equals b expected) (diff b expected)
 
     testCase "Calculating the inverse of another matrix" <| fun _ ->
       let a = matrix [
@@ -254,7 +160,7 @@ let tests =
         [  0.35897 ;  0.35897 ;  0.43590 ;  0.92308 ]
         [ -0.69231 ; -0.69231 ; -0.76923 ; -1.92308 ]
       ]
-      Expect.isTrue (b = expected) (diff b expected)
+      Expect.isTrue (equals b expected) (diff b expected)
 
     testCase "Calculating the inverse of a third matrix" <| fun _ ->
       let a = matrix [
@@ -270,7 +176,7 @@ let tests =
         [ -0.02901 ; -0.14630 ; -0.10926 ;  0.12963 ]
         [  0.17778 ;  0.06667 ; -0.26667 ;  0.33333 ]
       ]
-      Expect.isTrue (b = expected) (diff b expected)
+      Expect.isTrue (equals b expected) (diff b expected)
 
     testCase "Multiplying a product by its inverse" <| fun _ ->
       let a = matrix [
@@ -287,5 +193,5 @@ let tests =
       ]
       let c = a * b
       let reversed = c * (inverse b)
-      Expect.isTrue (reversed = a) (diff reversed a)
+      Expect.isTrue (equals reversed a) (diff reversed a)
   ]

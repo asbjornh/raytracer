@@ -27,11 +27,11 @@ let constantLight intensity additive =
 let ringLight (position: Tuple) direction intensity count spread =
   let up = vector 0. 0. 1.
   List.init count (fun i ->
-    let degrees = 360. / (float count) * (float i)
+    let degrees = 360.f / (float32 count) * (float32 i)
     let transform = chain [
       translate position.X position.Y position.Z
       rotateAlign up direction
-      rotateZ (rad degrees)
+      rotateZ (rad32 degrees)
       translateY spread
     ]
     let p = multiplyT transform (point 0. 0. 0.)
@@ -43,11 +43,11 @@ let squareOfPoints (position: Tuple) direction resolution size =
   let up = vector 0. 0. 1.
   List.init resolution (fun y ->
     List.init resolution (fun x ->
-      let delta = size / (float resolution)
-      let offset = size / 4.
+      let delta = size / (float32 resolution)
+      let offset = size / 4.f
       let transform = chain [
         translate position.X position.Y position.Z
-        translate (float x * delta - offset) (float y * delta - offset) 0.
+        translate (float32 x * delta - offset) (float32 y * delta - offset) 0.f
         rotateAlign up direction
       ]
       multiplyT transform (point 0. 0. 0.)

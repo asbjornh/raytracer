@@ -1,5 +1,7 @@
 module rec World
 
+open System.Numerics
+
 open Color
 open Intersection
 open Light
@@ -34,7 +36,7 @@ let defaultWorld () =
     lights = [pointLight (point -10. 10. -10.) (color 1. 1. 1.)]
     objects = [
       sphereM (material (color 0.8 1. 0.6) 0.1 0.7 0.2)
-      sphereT (scale 0.5 0.5 0.5)
+      sphereT (uniformScale 0.5f)
     ]
   }
 
@@ -44,9 +46,9 @@ let intersectObjects ray (objects: Shape list) =
 let intersect (ray: Ray) (w: World) =
   w.objects |> intersectObjects ray
 
-let isInShadow pos objects lightPos =
+let isInShadow (pos: Tuple) objects (lightPos: Tuple) =
   let v = lightPos - pos
-  let distance = magnitude v
+  let distance = Vector4.Distance (lightPos.Vec, pos.Vec)
   let direction = normalize v
   let r = ray pos direction
   let intersections = intersectObjects r objects
@@ -137,9 +139,8 @@ let shadeHitSingleLight light world comps remaining =
     gradientAt a b mat.sharpness p
 
   | TestPattern ->
-    let p = patternPoint objectT (identity ()) comps.overPoint
-    let (x, y, z, _) = p.Return
-    color x y z
+    let (x, y, z) = patternPoint objectT (identity ()) comps.overPoint |> toXYZ
+    color (float x) (float y) (float z)
 
 let shadeHit world comps remaining =
   world.lights
@@ -181,12 +182,12 @@ let occlusionAt pos normalV (samples: (Tuple * Tuple)[]) =
 
   samples
   |> Array.sumBy (fun (pointB, normalB) ->
-    if (pointB = pos) then 0.
-    else if (pointB = pointInf || pos = pointInf) then 0.
+    if (pointB = pos) then 0.f
+    else if (pointB = pointInf || pos = pointInf) then 0.f
     else
-      let d = magnitude (pointB - pos) * 800. * ((abs pos.Z) + 1.)
+      let d = magnitude (pointB - pos) * 800.f * ((abs pos.Z) + 1.f)
       let v = pointB - pos |> normalize
-      (max 0. (dot normalV v)) * (1. / (1. + d))
+      (max 0.f (dot normalV v)) * (1.f / (1.f + d))
   )
 
 let reflectedColor world comps remaining =
@@ -200,10 +201,10 @@ let refractedColor world comps remaining =
   else
     let nRatio = comps.n1 / comps.n2
     let cosI = dot comps.eyeV comps.normalV
-    let sin2t = nRatio ** 2. * (1. - cosI ** 2.)
-    if (sin2t > 1.) then black
+    let sin2t = nRatio ** 2.f * (1.f - cosI ** 2.f)
+    if (sin2t > 1.f) then black
     else
-      let cosT = sqrt (1. - sin2t)
+      let cosT = sqrt (1.f - sin2t)
       let direction = ((nRatio * cosI - cosT) * comps.normalV) - (nRatio * comps.eyeV)
       let r = ray comps.underPoint direction
       colorAt world r (remaining - 1)

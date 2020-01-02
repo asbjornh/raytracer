@@ -16,11 +16,11 @@ open Util
 
 let run () =
   let bg = color 0.2 0.2 0.4
-  let t = chain [translate 100. 100. 0.; uniformScale 80.]
+  let t = chain [translate 100.f 100.f 0.f; uniformScale 80.f]
   let mat = material (color 1. 0.4 1.) 0. 0.9 0.9
   let s = sphere t mat
 
-  let t2 = chain [translate 140. 140. 40.; uniformScale 40.]
+  let t2 = chain [translate 140.f 140.f 40.f; uniformScale 40.f]
   let mat2 = materialC (color 0.9 0.6 0.2)
   let s2 = sphere t2 mat2
 

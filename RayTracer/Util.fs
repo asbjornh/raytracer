@@ -11,13 +11,17 @@ let trace label v = printfn label v; v
 
 // Numbers
 let epsilon = 0.00001
+let epsilon32 = 0.00001f 
 let looseEq a b = abs (a - b) < epsilon
+let looseEq32 a b = abs (a - b) < epsilon32
+
 let pow exponent num = num ** exponent
 let clamp lower upper n = n |> (min upper) |> (max lower)
 let rangeMap (inMin: float, inMax) (outMin, outMax) x
   = (x - inMin) / (inMax - inMin) * (outMax - outMin) + outMin
 let isEven a = (a % 2) = 0
 let rad deg = (deg / 180.) * Math.PI
+let rad32 deg = (deg / 180.f) * MathF.PI
 
 let cubicBezier p1 p2 (t: float) =
   let p0 = 0.

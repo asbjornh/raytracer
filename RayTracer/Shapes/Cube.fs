@@ -6,9 +6,9 @@ open Tuple
 let normal p =
   let (x, y, z, _) = Tuple.Map abs p
   let maxC = List.max [x; y; z]
-  if maxC = x then vector p.X 0. 0.
-  else if maxC = y then vector 0. p.Y 0.
-  else vector 0. 0. p.Z
+  if maxC = x then vector32 p.X 0.f 0.f
+  else if maxC = y then vector32 0.f p.Y 0.f
+  else vector32 0.f 0.f p.Z
 
 
 let intersectBox (xMin, xMax) (yMin, yMax) (zMin, zMax) ray s =
@@ -23,7 +23,7 @@ let intersectBox (xMin, xMax) (yMin, yMax) (zMin, zMax) ray s =
   else [(tmin, s); (tmax, s)]
 
 let intersect ray =
-  intersectBox (-1., 1.) (-1., 1.) (-1., 1.) ray
+  intersectBox (-1.f, 1.f) (-1.f, 1.f) (-1.f, 1.f) ray
 
 let checkAxis minimum maximum origin direction =
   let tmin = (minimum - origin) / direction

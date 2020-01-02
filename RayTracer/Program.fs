@@ -3,5 +3,5 @@
 
 [<EntryPoint>]
 let main argv =
-  Teapot.run ()
+  SphereRing.run ()
   0

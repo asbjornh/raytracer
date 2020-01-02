@@ -1,5 +1,6 @@
 module rec Shape
 
+open System.Numerics
 open Matrix
 open Material
 open Triangle
@@ -19,7 +20,7 @@ type ShapeType =
   | Triangle of Triangle
 
 type Shape = {
-  mutable transform: Matrix
+  mutable transform: Matrix4x4
   mutable material: Material
   shape: ShapeType
   mutable parent: Shape option
@@ -28,7 +29,7 @@ type Shape = {
 
 type Group = {
   name: string
-  bounds: (float * float) * (float * float) * (float * float)
+  bounds: (float32 * float32) * (float32 * float32) * (float32 * float32)
 }
 
 let localIntersect ray (s: Shape) =
@@ -38,9 +39,9 @@ let localIntersect ray (s: Shape) =
   | Cylinder -> Cylinder.intersect ray s
   | OpenCylinder -> Cylinder.intersectOpen ray s
   | Cube -> Cube.intersect ray s
-  | Cone -> Cone.intersect -1. 0. ray s
-  | DoubleCone -> Cone.intersect -1. 1. ray s
-  | TestShape -> [(0., s)]
+  | Cone -> Cone.intersect -1.f 0.f ray s
+  | DoubleCone -> Cone.intersect -1.f 1.f ray s
+  | TestShape -> [(0.f, s)]
   | Triangle p -> Triangle.intersect p ray |> List.map (fun t -> (t, s))
   | Group g ->
     let (boundsX, boundsY, boundsZ) = g.bounds
@@ -57,7 +58,7 @@ let uvAt p s =
   match s.shape with
   | Sphere -> Sphere.uv p
   | Plane -> Plane.uv p
-  | TestShape -> (0., 0.)
+  | TestShape -> (0.f, 0.f)
   | Cylinder -> failwith "Missing UV implementation for Plane"
   | OpenCylinder -> failwith "Missing UV implementation for OpenCylinder"
   | Cone -> failwith "Missing UV implementation for Cone"
@@ -72,9 +73,9 @@ let localNormal (s: Shape) p =
   | Plane -> vector 0. 1. 0.
   | TestShape -> p
   | Cylinder -> Cylinder.normal p
-  | OpenCylinder -> vector p.X 0. p.Z
-  | Cone -> Cone.normal -1. 0. p
-  | DoubleCone -> Cone.normal -1. 1. p
+  | OpenCylinder -> vector32 p.X 0.f p.Z
+  | Cone -> Cone.normal -1.f 0.f p
+  | DoubleCone -> Cone.normal -1.f 1.f p
   | Cube -> Cube.normal p
   | Triangle p -> p.normal
   | Group _ -> failwith "Missing localNormal implementation for Group"
@@ -100,21 +101,21 @@ let normalToWorld (shape: Shape) (v: Tuple) =
 
 let bounds (minX, maxX) (minY, maxY) (minZ, maxZ) =
   [
-    point minX maxY maxZ; point minX maxY minZ;
-    point maxX maxY maxZ; point maxX maxY minZ;
-    point minX minY maxZ; point minX minY minZ;
-    point maxX minY maxZ; point maxX minY minZ;
+    point32 minX maxY maxZ; point32 minX maxY minZ;
+    point32 maxX maxY maxZ; point32 maxX maxY minZ;
+    point32 minX minY maxZ; point32 minX minY minZ;
+    point32 maxX minY maxZ; point32 maxX minY minZ;
   ]
 
 let boundsForShape s =
-  let cube = bounds (-1., 1.) (-1., 1.) (-1., 1.)
+  let cube = bounds (-1.f, 1.f) (-1.f, 1.f) (-1.f, 1.f)
   match s.shape with
   | Sphere -> cube
-  | Plane -> bounds (-1., 1.) (0., 0.) (-1., 1.)
+  | Plane -> bounds (-1.f, 1.f) (0.f, 0.f) (-1.f, 1.f)
   | TestShape -> []
   | Cylinder -> cube
   | OpenCylinder -> cube
-  | Cone -> bounds (-1., 1.) (-1., 0.) (-1., 1.)
+  | Cone -> bounds (-1.f, 1.f) (-1.f, 0.f) (-1.f, 1.f)
   | DoubleCone -> cube
   | Cube -> cube
   | Triangle p ->
@@ -132,7 +133,7 @@ let boundsForShapes (objects: Shape list) =
 
 let boundingBox (objects: Shape list) =
   if List.isEmpty objects
-  then ( (0., 0.), (0., 0.), (0., 0.) )
+  then ( (0.f, 0.f), (0.f, 0.f), (0.f, 0.f) )
   else
     let (xs, ys, zs) =
       objects |> boundsForShapes |> List.map toXYZ |> List.unzip3

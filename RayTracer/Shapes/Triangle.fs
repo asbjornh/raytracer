@@ -29,14 +29,14 @@ let bounds p =
 let intersect t ray =
   let dirCrossE2 = cross ray.direction t.e2
   let determinant = dot dirCrossE2 t.e1
-  if (looseEq determinant 0.) then []
+  if (looseEq32 determinant 0.f) then []
   else
-    let f = 1. / determinant
+    let f = 1.f / determinant
     let p1ToOrigin = ray.origin - t.p1
     let u = f * dot p1ToOrigin dirCrossE2
-    if (u < 0. || u > 1.) then []
+    if (u < 0.f || u > 1.f) then []
     else
       let originCrossE1 = cross p1ToOrigin t.e1
       let v = f * dot ray.direction originCrossE1
-      if (v < 0. || u + v > 1.) then []
+      if (v < 0.f || u + v > 1.f) then []
       else [f * dot t.e2 originCrossE1]

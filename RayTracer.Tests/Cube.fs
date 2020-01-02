@@ -20,25 +20,25 @@ let testCubeIntersect origin direction t1 t2 =
 let tests =
   testList "Tests for Cube" [
     testCase "Cube intersection +x" <| fun _ ->
-      testCubeIntersect (point 5. 0.5 0.) (vector -1. 0. 0.) 4. 6.
+      testCubeIntersect (point 5. 0.5 0.) (vector -1. 0. 0.) 4.f 6.f
 
     testCase "Cube intersection -x" <| fun _ ->
-      testCubeIntersect (point -5. 0.5 0.) (vector 1. 0. 0.) 4. 6.
+      testCubeIntersect (point -5. 0.5 0.) (vector 1. 0. 0.) 4.f 6.f
 
     testCase "Cube intersection +y" <| fun _ ->
-      testCubeIntersect (point 0.5 5. 0.) (vector 0. -1. 0.) 4. 6.
+      testCubeIntersect (point 0.5 5. 0.) (vector 0. -1. 0.) 4.f 6.f
 
     testCase "Cube intersection -y" <| fun _ ->
-      testCubeIntersect (point 0.5 -5. 0.) (vector 0. 1. 0.) 4. 6.
+      testCubeIntersect (point 0.5 -5. 0.) (vector 0. 1. 0.) 4.f 6.f
 
     testCase "Cube intersection +z" <| fun _ ->
-      testCubeIntersect (point 0.5 0. 5.) (vector 0. 0. -1.) 4. 6.
+      testCubeIntersect (point 0.5 0. 5.) (vector 0. 0. -1.) 4.f 6.f
 
     testCase "Cube intersection -z" <| fun _ ->
-      testCubeIntersect (point 0.5 0. -5.) (vector 0. 0. 1.) 4. 6.
+      testCubeIntersect (point 0.5 0. -5.) (vector 0. 0. 1.) 4.f 6.f
 
     testCase "Cube intersection inside" <| fun _ ->
-      testCubeIntersect (point 0. 0.5 0.) (vector 0. 0. 1.) -1. 1.
+      testCubeIntersect (point 0. 0.5 0.) (vector 0. 0. 1.) -1.f 1.f
 
     testCase "Cube ray not intersecting" <| fun _ ->
       let testCubeMiss origin direction txt =

@@ -1,6 +1,7 @@
 module rec Material
 
 open System
+open System.Numerics
 
 open Color
 open Light
@@ -46,7 +47,7 @@ type Textured = {
   uOffset: float
   vScale: float
   vOffset: float
-  transform: Matrix.Matrix
+  transform: Matrix4x4
 }
 
 type NormalMap = {
@@ -59,7 +60,7 @@ type Reflective = {
 }
 
 type Transparent = {
-  index: float
+  index: float32
   blend: BlendingMode
 }
 
@@ -67,13 +68,13 @@ type Gradient = {
   a: Material
   b: Material
   sharpness: float
-  transform: Matrix.Matrix
+  transform: Matrix4x4
 }
 
 type Pattern = {
   a: Material
   b: Material
-  transform: Matrix.Matrix
+  transform: Matrix4x4
   pattern: PatternType
 }
 
@@ -95,24 +96,24 @@ let phongLighting
     let effectiveColor = multiply mat.color light.intensity
     let ambient = scale mat.ambient effectiveColor
 
-    if (shadowAmount = 1.)
+    if (looseEq shadowAmount 1.)
     then ambient
     else
       let lightV = normalize (light.position - pos)
       let lightDotNormal = dot lightV normalV
 
       let (diffuse, specular) =
-        if (lightDotNormal < 0.)
+        if (lightDotNormal < 0.f)
         then (black, black)
         else
-          let diffuse = effectiveColor |> scale mat.diffuse |> scale lightDotNormal
+          let diffuse = effectiveColor |> scale mat.diffuse |> scale (float lightDotNormal)
           let reflectV = reflect normalV (negate lightV)
           let reflectDotEye = dot eyeV reflectV
 
-          if (reflectDotEye <= 0.)
+          if (reflectDotEye <= 0.f)
           then (diffuse, black)
           else
-            let factor = pow mat.shininess reflectDotEye
+            let factor = pow mat.shininess (float reflectDotEye)
             let specular = light.intensity |> scale factor |> scale mat.specular
             (diffuse, specular)
 
@@ -135,7 +136,7 @@ let lighting light =
   | SoftLight l -> softLighting l
 
 let fresnelShade a b normalV eyeV =
-  let ang = angle (normalize normalV) (normalize eyeV)
+  let ang = angle (normalize normalV) (normalize eyeV) |> float
   let mapping = pow 3.
   let max = mapping (Math.PI / 2.)
   let amount = ang |> mapping |> rangeMap (0., max) (0., 1.)

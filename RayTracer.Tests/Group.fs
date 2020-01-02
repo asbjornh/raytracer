@@ -25,8 +25,8 @@ let tests =
 
     testCase "Intersecting a ray with a nonempty group" <| fun _ ->
       let s1 = unitSphere ()
-      let s2 = sphereT (translate 0. 0. -3.)
-      let s3 = sphereT (translate 5. 0. 0.)
+      let s2 = sphereT (translate 0.f 0.f -3.f)
+      let s3 = sphereT (translate 5.f 0.f 0.f)
       let g = groupT [s1; s2; s3] <| identity ()
       let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
       let xs = localIntersect r g
@@ -39,16 +39,16 @@ let tests =
       Expect.equal { objects.[3] with parent = None } s2 ""
 
     testCase "Intersecting a transformed group" <| fun _ ->
-      let s = sphereT <| translate 5. 0. 0.
-      let g = groupT [s] <| scale 2. 2. 2.
+      let s = sphereT <| translate 5.f 0.f 0.f
+      let g = groupT [s] <| scale 2.f 2.f 2.f
       let r = ray (point 10. 0. -10.) (vector 0. 0. 1.)
       let xs = shapeIntersect r g
       Expect.equal (List.length xs) 2 ""
 
     testCase "Converting a point from world to object space" <| fun _ ->
-      let s = sphereT <| translate 5. 0. 0.
-      let g2 = groupT [s] <| scale 2. 2. 2.
-      let g1 = groupT [g2] (rotateY <| Math.PI / 2.)
+      let s = sphereT <| translate 5.f 0.f 0.f
+      let g2 = groupT [s] <| scale 2.f 2.f 2.F
+      let g1 = groupT [g2] (rotateY <| MathF.PI / 2.f)
 
       // NOTE: Reassign s to its corresponding element in the group to get the sphere with references to the parent groups
       let s = g1.children.[0].children.[0]
@@ -56,9 +56,9 @@ let tests =
       Expect.equal p (point 0. 0. -1.) ""
 
     testCase "Converting a normal from object to world space" <| fun _ ->
-      let s = sphereT <| translate 5. 0. 0.
-      let g2 = groupT [s] <| scale 1. 2. 3.
-      let g1 = groupT [g2] <| rotateY (Math.PI / 2.)
+      let s = sphereT <| translate 5.f 0.f 0.f
+      let g2 = groupT [s] <| scale 1.f 2.f 3.f
+      let g1 = groupT [g2] <| rotateY (MathF.PI / 2.f)
       let a = (sqrt 3.) / 3.
 
       // NOTE: Reassign s to its corresponding element in the group to get the sphere with references to the parent groups
@@ -67,9 +67,9 @@ let tests =
       Expect.equal n (vector 0.28571 0.42857 -0.85714) ""
 
     testCase "Finding the normal on a child object" <| fun _ ->
-      let s = sphereT <| translate 5. 0. 0.
-      let g2 = groupT [s] <| scale 1. 2. 3.
-      let g1 = groupT [g2] <| rotateY (Math.PI / 2.)
+      let s = sphereT <| translate 5.f 0.f 0.f
+      let g2 = groupT [s] <| scale 1.f 2.f 3.f
+      let g1 = groupT [g2] <| rotateY (MathF.PI / 2.f)
 
       // NOTE: Reassign s to its corresponding element in the group to get the sphere with references to the parent groups
       let s = g1.children.[0].children.[0]

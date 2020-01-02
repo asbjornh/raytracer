@@ -49,5 +49,5 @@ let tests =
       let r = ray <| point 0. 0.5 -2. <| vector 0. 0. 1.
       let xs = localIntersect r p
       Expect.equal (List.length xs) 1 ""
-      Expect.equal (fst xs.[0]) 2. ""
+      Expect.equal (fst xs.[0]) 2.f ""
   ]

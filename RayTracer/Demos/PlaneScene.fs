@@ -15,27 +15,27 @@ open World
 
 let mat = materialC (color 0.5 0.1 0.6)
 
-let floor = plane (scale 10000. 1. 10000.) mat
+let floor = plane (scale 10000.f 1.f 10000.f) mat
 
 let middle =
   sphere
-  <| (translate -0.5 1. 0.5)
+  <| (translate -0.5f 1.f 0.5f)
   <| defaultMaterial ()
 
 let right =
   sphere
-  <| (chain [ translate 1.5 0.5 -0.5; uniformScale 0.5 ])
+  <| (chain [ translate 1.5f 0.5f -0.5f; uniformScale 0.5f ])
   <| defaultMaterial ()
 
 let left =
   sphere
-  <| (chain [ translate -1.5 0.33 -0.75; uniformScale 0.33 ])
+  <| (chain [ translate -1.5f 0.33f -0.75f; uniformScale 0.33f ])
   <| defaultMaterial ()
 
 let darkBlue = color 0. 0.1 0.2
 let pLight = pointLight (point -10. 10. -10.) (color 1. 0.9 0.7)
 let cLight = constantLight darkBlue true
-let cam = camera 400 200 (Math.PI / 3.)
+let cam = camera 400 200 (MathF.PI / 3.f)
 let cTransform = viewTransform (point 0. 1.5 -5.) (point 0. 1. 0.) (vector 0. 1. 0.)
 cam.transform <- cTransform
 

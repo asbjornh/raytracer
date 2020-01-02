@@ -1,115 +1,45 @@
 module Matrix
 
+open System.Numerics
+
 open Util
 
-let stringRow = Array.map string >> Array.toList >> join " | "
-
-type Matrix (a: _[][]) =
-  member x.Return = a
-
-  static member Flatten (m: Matrix) =
-    Array.reduce concat m.Return
-
-  static member Map fn (m: Matrix) = 
-    Array.map (Array.map fn) m.Return |> Matrix
-
-  static member Mapi fn (m: Matrix) =
-    m.Return |> Array.mapi (fun rowI row ->
-      row |> Array.mapi (fun colI col -> fn rowI colI)
-    ) |> Matrix
-
-  static member (*) (mA: Matrix, mB: Matrix) =
-    let a = mA.Return
-    let b = mB.Return
-    let widthA = Array.length a.[0]
-    let widthB = Array.length b.[0]
-
-    let mapper row col =
-      let colB = min col (widthB - 1)
-      [0..widthA-1]
-      |> List.fold (fun acc i -> acc + a.[row].[i] * b.[i].[colB]) 0.0
-
-    Array.create widthA (Array.create widthB 0.0) |> Matrix
-    |> Matrix.Mapi mapper
-
-  override x.ToString () =
-    x.Return
-    |> Array.fold (fun acc row ->
-      acc + (stringRow row) + "\n"
-    ) ""
-
-  override x.GetHashCode () = x.Return.GetHashCode ()
-  override x.Equals (b: obj) =
-    match b with
-    | :? Matrix as m ->
-      Array.indexed (Matrix.Flatten x)
-      |> Array.forall (fun (i, el) -> looseEq el (Matrix.Flatten m).[i])
-    | _ -> false
-
 let matrix (a: float list list) =
-  a |> List.toArray |> Array.map List.toArray |> Matrix
+  match List.map (List.map float32) a with
+  | [ [ m11; m12; m13; m14 ]
+      [ m21; m22; m23; m24 ]
+      [ m31; m32; m33; m34 ]
+      [ m41; m42; m43; m44 ]
+    ] ->
+      Matrix4x4 (m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44)
+  | _ -> failwith "list must be 4x4"
 
-let create w h init =
-  Array.create h (Array.create w init) |> Matrix
+let values (m: Matrix4x4) =
+  [ m.M11; m.M12; m.M13; m.M14
+    m.M21; m.M22; m.M23; m.M24
+    m.M31; m.M32; m.M33; m.M34
+    m.M41; m.M42; m.M43; m.M44
+  ]
 
-let set row col v (m: Matrix) =
-  m.Return.[row].[col] <- v; m
+let equals a b =
+  List.fold2 (fun acc a b -> acc && looseEq32 a b) true (values a) (values b)
 
-let get row col (m: Matrix) =
-  m.Return.[row].[col]
+let identity () = Matrix4x4.Identity
 
-let identity () =
-  create 4 4 0.0
-  |> Matrix.Mapi (fun row col -> if (row = col) then 1.0 else 0.0)
+let multiply (a: Matrix4x4) = flip (*) a
 
-let getColumn i (m: Matrix) =
-  let folder acc (row: 'a[]) = appendTo acc row.[i]
-  let res = Array.fold folder Array.empty m.Return
-  res
+let multiplyT (t: Matrix4x4) (a: Tuple.Tuple) =
+  Vector4.Transform (a.Vec, t) |> Tuple.fromVec
 
-let toTuple a =
-  match (getColumn 0 a) with
-  | [| x; y; z; w |] -> Tuple.Tuple (x, y, z, w)
-  | _ -> failwith "Matrix must be 4D"
+let transpose (a: Matrix4x4) =
+  Matrix4x4.Transpose a
 
-let multiply (a: Matrix) = (*) a
+let determinant (m: Matrix4x4) =
+  m.GetDeterminant ()
 
-let multiplyT a t =
-  Tuple.toArray t |> Matrix |> (*) a |> toTuple
+let invertible (m: Matrix4x4) = (determinant m) <> 0.f
 
-let transpose (a: Matrix) =
-  let l = (Array.length a.Return) - 1
-  [|0..l|]
-  |> Array.map (flip getColumn a) |> Matrix
-
-
-let submatrix row col (m: Matrix) =
-  filteri ((<>) row)
-  >> Array.map (filteri ((<>) col)) <| m.Return
-  |> Matrix
-
-let rec determinant (m: Matrix) =
-  let ma = m.Return
-  if (Array.length ma <= 2)
-  then
-    match (ma.[0], ma.[1]) with
-    | ([| a; b; |], [| c; d; |]) -> (a * d) - (b * c)
-    | _ -> failwith "Must be a matrix of at least 2x2"
-  else
-    ma.[0]
-    |> foldi (fun acc i _ ->
-      acc + ma.[0].[i] * cofactor 0 i m
-    ) 0.
-
-and cofactor row col=
-  let factor = if (isEven (row + col)) then 1.0 else -1.0
-  submatrix row col >> determinant >> (*) factor
-
-let minor row col = submatrix row col >> determinant
-
-let invertible (m: Matrix) = (determinant m) <> 0.
-
-let inverse (m: Matrix) =
-  Matrix.Mapi (fun row col -> cofactor row col m) m
-  |> transpose
-  |> Matrix.Map (flip (/) (determinant m))
+let inverse (m: Matrix4x4) =
+  match Matrix4x4.Invert m with
+  | (true, m) -> m
+  | (false, _) -> failwith <| sprintf "Matrix inversion failed for %A" m

@@ -15,13 +15,13 @@ open Tuple
 open Util
 
 let frame (bar: ProgressBar) l fileName =
-  let size = 100.
+  let size = 100.f
   let bg = color 0.2 0.2 0.4
-  let t = chain [translate size size 0.; uniformScale (0.8 * size)]
+  let t = chain [translate size size 0.f; uniformScale (0.8f * size)]
   let mat = material (color 1. 0.4 1.) 0. 0.9 0.9
   let s = sphere t mat
 
-  let t2 = chain [translate (1.4 * size) (1.4 * size) (0.4 * size); uniformScale (0.4 * size)]
+  let t2 = chain [translate (1.4f * size) (1.4f * size) (0.4f * size); uniformScale (0.4f * size)]
   let mat2 = materialC (color 0.9 0.6 0.2)
   let s2 = sphere t2 mat2
 

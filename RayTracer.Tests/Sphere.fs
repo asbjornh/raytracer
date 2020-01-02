@@ -19,16 +19,16 @@ let tests =
       let s = unitSphere ()
       let xs = intersect r s
       Expect.equal (List.length xs) 2 ""
-      Expect.equal xs.[0].t 4. ""
-      Expect.equal xs.[1].t 6. ""
+      Expect.equal xs.[0].t 4.f ""
+      Expect.equal xs.[1].t 6.f ""
 
     testCase "A ray intersects a sphere at a tangent" <| fun _ ->
       let r = ray (point 0. 1. -5.) (vector 0. 0. 1.)
       let s = unitSphere ()
       let xs = intersect r s
       Expect.equal (List.length xs) 2 ""
-      Expect.equal xs.[0].t 5. ""
-      Expect.equal xs.[1].t 5. ""
+      Expect.equal xs.[0].t 5.f ""
+      Expect.equal xs.[1].t 5.f ""
 
     testCase "A ray misses a sphere" <| fun _ ->
       let r = ray (point 0. 2. -5.) (vector 0. 0. 1.)
@@ -41,16 +41,16 @@ let tests =
       let s = unitSphere ()
       let xs = intersect r s
       Expect.equal (List.length xs) 2 ""
-      Expect.equal xs.[0].t -1. ""
-      Expect.equal xs.[1].t 1. ""
+      Expect.equal xs.[0].t -1.f ""
+      Expect.equal xs.[1].t 1.f ""
 
     testCase "A sphere is behind a ray" <| fun _ ->
       let r = ray (point 0. 0. 5.) (vector 0. 0. 1.)
       let s = unitSphere ()
       let xs = intersect r s
       Expect.equal (List.length xs) 2 ""
-      Expect.equal xs.[0].t -6. ""
-      Expect.equal xs.[1].t -4. ""
+      Expect.equal xs.[0].t -6.f ""
+      Expect.equal xs.[1].t -4.f ""
 
     testCase "Intersect sets the object on the intersection" <| fun _ ->
       let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
@@ -65,21 +65,21 @@ let tests =
       Expect.equal s.transform (identity ()) ""
 
     testCase "Changing a sphere's transformation" <| fun _ ->
-      let t = translate 2. 3. 4.
+      let t = translate 2.f 3.f 4.f
       let s = sphere t (defaultMaterial ())
       Expect.equal s.transform t ""
 
     testCase "Intersecting a scaled sphere with a ray" <| fun _ ->
       let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
-      let s = sphere (scale 2. 2. 2.) (defaultMaterial ())
+      let s = sphere (scale 2.f 2.f 2.f) (defaultMaterial ())
       let xs = intersect r s
       Expect.equal (List.length xs) 2 ""
-      Expect.equal xs.[0].t 3. ""
-      Expect.equal xs.[1].t 7. ""
+      Expect.equal xs.[0].t 3.f ""
+      Expect.equal xs.[1].t 7.f ""
 
     testCase "Intersecting a translated sphere with a ray" <| fun _ ->
       let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
-      let s = sphere (translate 5. 0. 0.) (defaultMaterial ())
+      let s = sphere (translate 5.f 0.f 0.f) (defaultMaterial ())
       let xs = intersect r s
       Expect.equal (List.length xs) 0 ""
 
@@ -111,12 +111,12 @@ let tests =
       Expect.equal n (normalize n) ""
 
     testCase "Computing the normal on a translated sphere" <| fun _ ->
-      let s = sphere (translate 0. 1. 0.) (defaultMaterial ())
+      let s = sphere (translate 0.f 1.f 0.f) (defaultMaterial ())
       let n = normalAt s (point 0. 1.70711 -0.70711)
       Expect.equal n (vector 0. 0.70711 -0.70711) ""
 
     testCase "Computing the normal on a transformed sphere" <| fun _ ->
-      let m = (scale 1. 0.5 1.) * (rotateZ (Math.PI / 5.))
+      let m =  (rotateZ (MathF.PI / 5.f)) * (scale 1.f 0.5f 1.f)
       let s = sphere m (defaultMaterial ())
       let a = (sqrt 2.) / 2.
       let n = normalAt s (point 0. a -a)

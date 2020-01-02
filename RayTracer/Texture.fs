@@ -1,6 +1,7 @@
 module Texture
 
 open System
+open System.Numerics
 open System.Drawing
 
 open Color
@@ -30,9 +31,9 @@ let rec wrapAround max n =
   else ((n - max) % max) + max
 
 
-let colorAt u v uScale vScale uOffset vOffset (cs: Color list list) =
-  let u2 = u / uScale + uOffset
-  let v2 = v / vScale + vOffset
+let colorAt (u: float32) (v: float32) uScale vScale uOffset vOffset (cs: Color list list) =
+  let u2 = float u / uScale + uOffset
+  let v2 = float v / vScale + vOffset
   let w = List.length cs.[0]
   let h = List.length cs
   let x = Math.Floor (u2 * float w) |> int |> wrapAround (w - 1)
@@ -44,11 +45,12 @@ let mappedNormalAt (normalV: Tuple) (color: Color) =
   let t = multiplyT rotation (vector 0. 0. 1.)
   let b = multiplyT rotation (vector -1. 0. 0.)
   let n = normalV
-  let transform = matrix [
-    [ t.X ; b.X ; n.X ; 0. ]
-    [ -t.Y; -b.Y; n.Y ; 0. ]
-    [ t.Z ; b.Z ; n.Z ; 0. ]
-    [ 0.  ; 0.  ; 0.  ; 1. ]
-  ]
+  let transform =
+    Matrix4x4 ( 
+      t.X, b.X, n.X, 0.f,
+      -t.Y, -b.Y, n.Y, 0.f,
+      t.Z, b.Z, n.Z, 0.f,
+      0.f, 0.f, 0.f, 1.f
+    )
   let (r, g, b) = color.Return
   multiplyT transform <| vector r g b

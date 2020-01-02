@@ -10,12 +10,12 @@ let run () =
   let points =
     [0..11]
     |> List.map (fun i -> 
-      let degrees = 360. / 12. * (float i)
+      let degrees = 360.f / 12.f * (float32 i)
       let p = point 0. 0. 0.
       let transform = chain [
-        translate 100. 50. 0.
-        rotateZ (rad degrees)
-        translateY 30.
+        translate 100.f 50.f 0.f
+        rotateZ (rad32 degrees)
+        translateY 30.f
       ]
       multiplyT transform p |> Tuple.toPixel
     )

@@ -36,7 +36,7 @@ let tests =
       let xs = localIntersect r p
       Expect.equal (List.length xs) 1 ""
       let (t, object) = xs.[0]
-      Expect.equal t 1. ""
+      Expect.equal t 1.f ""
       Expect.equal object p ""
 
     testCase "A ray intersecting a plane from below" <| fun _ ->
@@ -45,6 +45,6 @@ let tests =
       let xs = localIntersect r p
       Expect.equal (List.length xs) 1 ""
       let (t, object) = xs.[0]
-      Expect.equal t 1. ""
+      Expect.equal t 1.f ""
       Expect.equal object p ""
   ]

@@ -14,11 +14,11 @@ open Tuple
 open Util
 
 let colorFromIntersect (i: Intersection) =
-  let c = i.t |> rangeMap (10., 100.) (0., 1.)
+  let c = i.t |> float |> rangeMap (10., 100.) (0., 1.)
   color c c c
 
 let run () =
-  let t = chain [translate 100. 100. 0.; uniformScale 80.]
+  let t = chain [translate 100.f 100.f 0.f; uniformScale 80.f]
   let s = sphereT t
   let c = canvas 200 200
 

@@ -1,6 +1,7 @@
 module Camera
 
 open System
+open System.Numerics
 open ShellProgressBar
 
 open Canvas
@@ -14,20 +15,20 @@ open World
 type Camera = {
   hSize: int
   vSize: int
-  fov: float
-  halfWidth: float
-  halfHeight: float
-  mutable transform: Matrix
-  pixelSize: float
+  fov: float32
+  halfWidth: float32
+  halfHeight: float32
+  mutable transform: Matrix4x4
+  pixelSize: float32
 }
 let camera hSize vSize fov =
-  let halfView = fov / 2. |> Math.Tan
-  let aspect = (float hSize) / (float vSize)
+  let halfView = fov / 2.f |> MathF.Tan
+  let aspect = (float32 hSize) / (float32 vSize)
   let (halfW, halfH) =
-    if (aspect >= 1.) then
+    if (aspect >= 1.f) then
       (halfView, halfView / aspect)
     else (halfView * aspect, halfView)
-  let pixelSize = (2. * halfW) / (float hSize)
+  let pixelSize = (2.f * halfW) / (float32 hSize)
   {
     hSize = hSize
     vSize = vSize
@@ -39,12 +40,12 @@ let camera hSize vSize fov =
   }
 
 let rayForPixel x y c =
-  let xOffset = (float x + 0.5) * c.pixelSize
-  let yOffset = (float y + 0.5) * c.pixelSize
+  let xOffset = (float32 x + 0.5f) * c.pixelSize
+  let yOffset = (float32 y + 0.5f) * c.pixelSize
   let worldX = c.halfWidth - xOffset
   let worldY = c.halfHeight - yOffset
-  let pixel = multiplyT (inverse c.transform) (point worldX worldY -1.)
-  let origin = multiplyT (inverse c.transform) (point 0. 0. 0.)
+  let pixel = multiplyT (inverse c.transform) (point32 worldX worldY -1.f)
+  let origin = multiplyT (inverse c.transform) (point32 0.f 0.f 0.f)
   let direction = pixel - origin |> normalize
   ray origin direction
 
@@ -76,7 +77,7 @@ let renderOcclusion c w =
     |> mapi2d (fun x y (point, normalV) ->
       occlusionBar.Tick (sprintf "Processing %i pixels" len)
       let samples = depths |> subGrid x y 5 |> Array.concat
-      let o = occlusionAt point normalV samples |> (*) 0.5
+      let o = occlusionAt point normalV samples |> float |> (*) 0.5
       add black (scale o white)
     )
 
