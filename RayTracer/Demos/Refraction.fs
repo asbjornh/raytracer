@@ -27,17 +27,34 @@ let ball = sphere (identity ()) ballMat
 
 let wallMat = material white 1. 0. 0.
 
-let roof = plane <| translateY 30.f <| wallMat
-let floor = plane <| translateY -30.f <| wallMat
-let wallL = plane <| chain [rotateZ (rad32 -90.f); translateY -30.f] <| wallMat
-let wallR = plane <| chain [rotateZ (rad32 -90.f); translateY 30.f] <| wallMat
-let backdropMat = Pattern {
-  a = materialC black
-  b = materialC white
-  pattern = Checkers
-  transform = chain [uniformScale 4.f]
+let roof =
+  plane
+  <| chain [ translateY 30.f; scale 29.5f 29.5f 1000.f ]
+  <| wallMat
+let floor =
+  plane
+  <| chain [ translateY -30.f; scale 29.5f 29.5f 1000.f ]
+  <| wallMat
+let wallL =
+  plane
+  <| chain [ translateX -30.f; scale 29.5f 29.5f 1000.f; rotateZ (rad32 -90.f) ]
+  <| wallMat
+let wallR =
+  plane
+  <| chain [ translateX 30.f; scale 29.5f 29.5f 1000.f; rotateZ (rad32 -90.f); ]
+  <| wallMat
+let backdropMat = Blend {
+  a = materialC white
+  b = texture "../tex/checkers.png" (0.15, 0.15) (0., -0.5) <| identity ()
+  mode = Multiply
 }
-let backdrop = plane <| chain [rotateX (rad32 90.f); translateY 80.f] <| backdropMat
+  
+
+let backdrop =
+  plane
+  <| chain [ translateZ 80.f; uniformScale 42.f; rotateX (rad32 90.f) ]
+  // <| chain [ translateY 80.f; uniformScale 100.f; rotateX (rad32 90.f) ]
+  <| backdropMat
 
 let light = pointLight (point -10. 10. -10.) white
 let objects = [backdrop; ball; floor; roof; wallL; wallR]
