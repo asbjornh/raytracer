@@ -56,7 +56,7 @@ let cam = camera 400 200 (MathF.PI / 3.f)
 let cTransform = viewTransform (point32 0.f 1.5f -5.f) (point32 0.f 1.f 0.f) (vector32 0.f 1.f 0.f)
 cam.transform <- cTransform
 
-let spheresT = chain [translateY 1.f; uniformScale 0.1f]
+let spheresT = chain [translateY 1.f; uniformScale 0.2f]
 let spheres =
   sphereRing (vector32 0.f 0.f 1.f) spheresT 8 3.f
 let objects =
