@@ -11,7 +11,7 @@ let trace label v = printfn label v; v
 
 // Numbers
 let epsilon = 0.00001
-let epsilon32 = 0.00001f 
+let epsilon32 = 0.0001f 
 let looseEq a b = abs (a - b) < epsilon
 let looseEq32 a b = abs (a - b) < epsilon32
 

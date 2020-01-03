@@ -26,7 +26,7 @@ let hit (l: Intersection list) =
   | [] -> None
   | visibleShapes -> Some (List.minBy getT visibleShapes)
 
-type Computation<'a> = {
+type Computation = {
   t: float32
   object: Shape
   point: Tuple
@@ -89,6 +89,8 @@ let prepareComputations (is: Intersection list) (hit: Intersection) r =
     (if inside then negate else id) normalV
   let reflectV = reflect normalV r.direction
   let (n1, n2) = refractiveIndexes is hit
+  // NOTE: Scaling epsilon by the distance to origin fixes some shadow acne
+  let d = Vector4.Distance (r.origin.Vec, point.Vec)
   {
     t = hit.t
     object = hit.object
@@ -97,8 +99,8 @@ let prepareComputations (is: Intersection list) (hit: Intersection) r =
     normalV = normalV
     reflectV = reflectV
     inside = inside
-    overPoint = point + (epsilon32 * normalV)
-    underPoint = point - (epsilon32 * normalV)
+    overPoint = point + (d * epsilon32 * normalV)
+    underPoint = point - (d * epsilon32 * normalV)
     n1 = n1
     n2 = n2
   }
