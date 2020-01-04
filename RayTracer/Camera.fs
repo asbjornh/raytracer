@@ -40,15 +40,18 @@ let camera hSize vSize fov =
     pixelSize = pixelSize
   }
 
-let rayForPixel x y c =
-  let xOffset = (float32 x + 0.5f) * c.pixelSize
-  let yOffset = (float32 y + 0.5f) * c.pixelSize
+let rayForPixel32 x y c =
+  let xOffset = (x + 0.5f) * c.pixelSize
+  let yOffset = (y + 0.5f) * c.pixelSize
   let worldX = c.halfWidth - xOffset
   let worldY = c.halfHeight - yOffset
   let pixel = multiplyT (inverse c.transform) (point32 worldX worldY -1.f)
   let origin = multiplyT (inverse c.transform) (point32 0.f 0.f 0.f)
   let direction = pixel - origin |> normalize
   ray origin direction
+
+let rayForPixel x y c =
+  rayForPixel32 (float32 x) (float32 y) c
 
 let render c w =
   (canvas c.hSize c.vSize) |> Canvas.render (fun x y ->
@@ -99,11 +102,9 @@ let renderProgress (c: Camera) w =
   printfn "\n" // To avoid CLI glitch after rendering
   result
 
-let aaTransforms =
-  [ translateX (0.0035f)
-    translateX (-0.0035f)
-    translateY (0.0035f)
-    translateY (-0.0035f) ]
+let aaTransforms offset =
+  [ (0.f, offset); (0.f, -offset)
+    (offset, 0.f); (-offset, 0.f) ]
 
 let renderAA (c: Camera) w =
   let canv = canvas c.hSize c.vSize
@@ -113,11 +114,10 @@ let renderAA (c: Camera) w =
 
   let result = canv |> Canvas.render (fun x y ->
     let (rs, gs, bs) =
-      aaTransforms
-      |> List.map (fun t ->
+      aaTransforms 0.35f
+      |> List.map (fun (dx, dy) ->
         bar.Tick (sprintf "Rendering %i pixels" len)
-        rayForPixel x y c
-        |> Ray.transform t
+        rayForPixel32 (float32 x + dx) (float32 y + dy) c
         |> colorAt w <| 4
         |> (fun c -> c.Return) )
       |> List.unzip3
