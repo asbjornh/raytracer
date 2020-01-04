@@ -10,9 +10,7 @@ open Util
 let objFromFile path t =
   let result =
     readFile path |> Array.toList |> parse
-  if List.length result.objects = 1
-  then { List.head result.objects with transform = t }
-  else groupT result.objects t
+  groupT result.objects t
 
 let mapHead fn =
   function
