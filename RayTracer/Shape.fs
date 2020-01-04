@@ -19,13 +19,19 @@ type ShapeType =
   | Group of Group
   | Triangle of Triangle
 
-type Shape = {
-  mutable transform: Matrix4x4
+[<StructuredFormatDisplay("{AsString}")>]
+type Shape =
+  { mutable transform: Matrix4x4
   mutable material: Material
   shape: ShapeType
   mutable parent: Shape option
-  mutable children: Shape list
-}
+    mutable children: Shape list }
+  member this.AsString =
+    match this.shape with
+    | Group g -> sprintf "Group '%s' {%A}" g.name this.children
+    | Triangle t ->
+      sprintf "Triangle %A" <| [t.p1; t.p2; t.p3]
+    | t -> t.ToString ()
 
 type Group = {
   name: string
