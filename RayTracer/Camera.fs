@@ -105,7 +105,7 @@ let renderOcclusion c w =
 
   map22d subtract pixels occlusion
 
-let aaTransforms offset =
+let aaOffsets offset =
   [ (0.f, offset); (0.f, -offset)
     (offset, 0.f); (-offset, 0.f) ]
 
@@ -116,7 +116,7 @@ let renderAA (c: Camera) w =
   withProgress len <| (fun tick ->
     canv |> Canvas.render (fun x y ->
       let (rs, gs, bs) =
-        aaTransforms 0.35f
+        aaOffsets 0.35f
         |> List.map (fun (dx, dy) ->
           tick ()
           rayForPixel32 (float32 x + dx) (float32 y + dy) c
