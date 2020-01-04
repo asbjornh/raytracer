@@ -7,97 +7,111 @@ open Shape
 open Tuple
 open Util
 
-type ParseResult = {
-  ignoredLines: int
-  vertices: Tuple list
-  defaultGroup: Shape
-  groups: Shape list
-}
-
-let objFromFile path =
+let objFromFile path t =
   let result =
     readFile path |> Array.toList |> parse
-  let children =
-    if List.isEmpty result.defaultGroup.children
-    then result.groups
-    else result.defaultGroup :: result.groups
-  groupT children
+  if List.length result.objects = 1
+  then { List.head result.objects with transform = t }
+  else groupT result.objects t
 
+let mapHead fn =
+  function
+  | head :: rest -> (fn head) :: rest
+  | l -> l
+
+let i = identity ()
+
+type ParseResult = {
+  vertices: Tuple list
+  objects: Shape list
+}
 let parse (t: string list) =
-  let txt =
-    t |> List.filter (fun s ->
-      String.length s > 0 &&
-      not <| isComment s
-    )
-    |> List.map (fun s -> s.Trim (' '))
-    |> String.concat "\n"
+  let mutable objects = [("DefaultObject", [])]
+  let mutable groups = [("DefaultGroup", [])]
+  let mutable vertices = []
 
-  let i = identity ()
+  t
+  |> List.collect (fun s ->
+    s.Trim (' ')
+    |> parseLine
+    |> Option.toList
+  )
+  |> List.iter (
+    function
+    | Vertex (x, y, z) ->
+      vertices <- (point x y z) :: vertices
 
-  match run obj txt with
-  | Success (res, _, _) ->
-    let (vs, fs, gs) = res
-    let vertices = getVertices vs
-    let faces =
-      getFaces vertices fs |> groupT <| i
-    let groups =
-      gs |> List.map (fun (name, fs) ->
-        namedGroupT name (getFaces vertices fs) i
+    | Face f ->
+      let g = getFaces (List.rev vertices) f
+      groups <- groups |> mapHead (fun (name, els) ->
+        (name, g :: els)
       )
-    let parsedLines =
-      List.length vs +
-      List.length fs +
-      List.length gs +
-      (List.collect snd gs |> List.length)
 
-    {
-      ignoredLines = List.length t - parsedLines
-      vertices = vertices
-      defaultGroup = faces
-      groups = groups
-    }
-  | Failure (e, _, _) -> failwith e
+    | Group name ->
+      groups <- (name, []) :: groups
 
-let getVertices =
-  List.collect (fun l ->
-    match l with
-    | [x; y; z] -> [point x y z]
-    | _ -> []
+    | Object name ->
+      objects <- objects |> mapHead (fun (name, els) ->
+        (name, groups @ els) // Add entire group stack to current object
+      )
+      objects <- (name, []) :: objects // Add the new object
+      groups <- [("DefaultGroup", [])] // Empty group stack
   )
 
-let getFaces vertices =
-  List.collect
-    (List.map (List.head >> int >> flip (-) 1) >> polys vertices)
-
-let polys vs face =
-  match face with
-  | [one; two; three] -> 
-    [defaultTriangle vs.[one] vs.[two] vs.[three]]
-  | [] -> []
-  | _ ->
-    face
-    |> List.map (fun i -> vs.[i])
-    |> fanTriangulation
-    |> defaultGroup |> always
-    |> List.init 1
-
-let fanTriangulation = function
-  | [] -> []
-  | start :: rest ->
-    List.pairwise rest
-    |> List.map (fun (second, third) ->
-      defaultTriangle start second third
+  // If there are any unused groups remaining, add to last object
+  groups
+  |> List.filter (snd >> List.isEmpty >> (not))
+  |> List.iter (fun g ->
+    objects <- objects |> mapHead (fun (name, els) ->
+      (name, g :: els)
     )
+  )
 
-let comment = spaces >>. pchar '#' >>. restOfLine false
-let isComment s = match run comment s with | Success _ -> true | Failure _ -> false
+  parseResult vertices objects
+
+let parseResult vertices objects =
+  let os =
+    objects
+    |> List.map (fun (n, els) ->
+      els
+      |> List.filter (snd >> List.isEmpty >> (not))
+      |> List.map (fun (n, els) -> namedGroupT n (List.rev els) i)
+      |> namedGroupT n <| i
+    )
+    |> List.filter (fun s -> not (List.isEmpty s.children))
+    |> List.rev
+
+  {
+    vertices = List.rev vertices
+    objects = os
+  }
+
+let getFaces vertices =
+  List.map (List.head >> int >> flip (-) 1) >> polys vertices
+
+type LineResult =
+  | Vertex of (float * float * float)
+  | Face of int64 list list
+  | Group of string
+  | Object of string
+
+let parseOne parser typ str =
+  match run parser str with
+  | Success (res, _, _) -> Some <| typ res
+  | Failure _ -> None
+
+let parseLine str =
+  [ parseOne vertex Vertex
+    parseOne face Face
+    parseOne group Group
+    parseOne obj Object ]
+  |> List.tryPick (fun parser -> parser str)
+
 let str = pstring
-let vertexCoords = sepBy pfloat (str " ")
+let coord = pfloat .>> (opt <| str " ")
+let vertexCoords = tuple3 coord coord coord
 let vertex = pchar 'v' >>. spaces >>. vertexCoords
-let vertices = sepEndBy vertex newline
-let faceCoords = sepBy (sepBy1 pint16 <| str "/") (str " ")
+let faceCoords = sepBy (sepBy1 pint64 <| str "/") (str " ")
 let face = pchar 'f' >>. spaces >>. faceCoords
-let faces = sepEndBy face newline
-let groupStart = pchar 'g' >>. spaces >>. restOfLine false
-let group = groupStart .>>. (newline >>. faces)
-let obj = tuple3 vertices faces (many group)
+let group = pchar 'g' >>. spaces >>. restOfLine false
+let obj = pchar 'o' >>. spaces >>. restOfLine false

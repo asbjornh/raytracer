@@ -22,9 +22,9 @@ type ShapeType =
 [<StructuredFormatDisplay("{AsString}")>]
 type Shape =
   { mutable transform: Matrix4x4
-  mutable material: Material
-  shape: ShapeType
-  mutable parent: Shape option
+    mutable material: Material
+    shape: ShapeType
+    mutable parent: Shape option
     mutable children: Shape list }
   member this.AsString =
     match this.shape with
@@ -197,3 +197,22 @@ let defaultTriangle p1 p2 p3 = defaultShape (Triangle <| Triangle.make p1 p2 p3)
 let groupT c t = group c t <| defaultMaterial ()
 let namedGroupT n c t = namedGroup n c t  <| defaultMaterial ()
 let defaultGroup c = groupT c <| identity ()
+
+
+let fanTriangulation = function
+  | [] -> []
+  | start :: rest ->
+    List.pairwise rest
+    |> List.map (fun (second, third) ->
+      defaultTriangle start second third
+    )
+
+let polys (vs: Tuple list) face =
+  match face with
+  | [one; two; three] -> 
+    defaultTriangle vs.[one] vs.[two] vs.[three]
+  | _ ->
+    face
+    |> List.map (fun i -> vs.[i])
+    |> fanTriangulation
+    |> namedGroupT "Poly" <| identity ()

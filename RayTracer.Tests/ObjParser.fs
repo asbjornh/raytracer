@@ -18,17 +18,6 @@ let getGroup s =
 [<Tests>]
 let tests =
   testList "Tests for ObjParser" [
-    testCase "Ignoring unrecognized lines" <| fun _ ->
-      let gibberish = [
-        "There was a young lady named Bright​"
-        "who traveled much faster than light.​"
-        "She set out one day​"
-        "in a relative way,​"
-        "and came back the previous night.​"
-      ]
-      let r = parse gibberish
-      Expect.equal r.ignoredLines 5 ""
-
     testCase "Vertex records" <| fun _ ->
       let file = [
         "v -1 1 0"
@@ -54,7 +43,7 @@ let tests =
         "f 1 3 4"
       ]
       let r = parse file
-      let g = r.defaultGroup
+      let g = r.objects.[0].children.[0]
       Expect.equal (List.length g.children) 2 ""
       let t1 = getTriangle g.children.[0]
       let t2 = getTriangle g.children.[1]
@@ -80,12 +69,12 @@ let tests =
         "f 1/1 3/1 4/1 "
       ]
       let r = parse file
-      let g = r.defaultGroup
+      let g = r.objects.[0].children.[0]
       Expect.equal (List.length g.children) 2 ""
       let t1 = getTriangle g.children.[0]
       let t2 = getTriangle g.children.[1]
       Expect.equal (List.length r.vertices) 4 ""
-      Expect.equal (List.length r.groups) 1 ""
+      Expect.equal (List.length r.objects) 1 ""
       Expect.equal t1.p1 r.vertices.[0] ""
       Expect.equal t1.p2 r.vertices.[1] ""
       Expect.equal t1.p3 r.vertices.[2] ""
@@ -104,12 +93,12 @@ let tests =
         "f 1 2 3 4 5"
       ]
       let r = parse file
-      let g = r.defaultGroup.children.[0]
+      let poly = r.objects.[0].children.[0].children.[0]
 
-      Expect.equal (List.length g.children) 3 ""
-      let t1 = getTriangle g.children.[0]
-      let t2 = getTriangle g.children.[1]
-      let t3 = getTriangle g.children.[2]
+      Expect.equal (List.length poly.children) 3 ""
+      let t1 = getTriangle poly.children.[0]
+      let t2 = getTriangle poly.children.[1]
+      let t3 = getTriangle poly.children.[2]
 
       Expect.equal (List.length r.vertices) 5 ""
       Expect.equal t1.p1 r.vertices.[0] ""
@@ -135,13 +124,14 @@ let tests =
         "f 1 3 4"
       ]
       let r = parse file
+      let groups = r.objects.[0].children
 
-      Expect.equal (List.length r.groups) 2 ""
+      Expect.equal (List.length groups) 2 ""
       let g1 =
-        r.groups
+        groups
         |> List.find (fun s -> (getGroup s).name = "FirstGroup")
       let g2 =
-        r.groups
+        groups
         |> List.find (fun s -> (getGroup s).name = "SecondGroup")
       let t1 = g1.children.[0] |> getTriangle
       let t2 = g2.children.[0] |> getTriangle
