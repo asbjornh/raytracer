@@ -26,6 +26,7 @@ cam.transform <- cTransform
 let teapot =
   objFromFile "../models/teapot-grouped.obj"
   <| chain [rotateY (rad32 35.f)]
+  <| defaultMaterial ()
 
 let objects =
   [teapot]
