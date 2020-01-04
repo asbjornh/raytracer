@@ -53,54 +53,53 @@ let rayForPixel32 x y c =
 let rayForPixel x y c =
   rayForPixel32 (float32 x) (float32 y) c
 
-let render c w =
+
+let renderCb c w fn =
   (canvas c.hSize c.vSize) |> Canvas.render (fun x y ->
+    fn ()
     rayForPixel x y c |> colorAt w <| 4
   )
+let render c w = renderCb c w ignore
+
+let withProgressTxt len txt fn =
+  let bar = new ProgressBar (len, txt len, ConsoleColor.Yellow)
+  let result = fn (fun _ -> bar.Tick ())
+  printfn "\n" // To avoid CLI glitch after rendering
+  result
+
+let withProgress len fn =
+  let txt = sprintf "Rendering %i pixels"
+  withProgressTxt len txt fn
+
+let renderProgress (c: Camera) w =
+  withProgress <| c.hSize * c.vSize <| renderCb c w
 
 let renderOcclusion c w =
   let canv = canvas c.hSize c.vSize
   let len = Canvas.length canv
-  let bar = new ProgressBar (2, "Rendering", ConsoleColor.Yellow)
 
-  bar.Tick ()
-  let renderBar = bar.Spawn (len, "Raytracing")
-
-  let result = canv |> Canvas.map (fun x y ->
-    renderBar.Tick (sprintf "Raytracing %i pixels" len)
-    rayForPixel x y c |> colorAndDepthAt w <| 4
+  let result = withProgress len <| (fun tick ->
+    canv |> Canvas.map (fun x y ->
+      tick ()
+      rayForPixel x y c |> colorAndDepthAt w <| 4
+    )
   )
 
-  bar.Tick ()
-  let occlusionBar = bar.Spawn(len, "Processing")
   let pixels = map2d (fun (_, _, c) -> c) result
-  let depths =
-    result |> map2d (fun (p, n, _) -> (p, n))
+  let depths = result |> map2d (fun (p, n, _) -> (p, n))
   let occlusion =
-    depths
-    |> mapi2d (fun x y (point, normalV) ->
-      occlusionBar.Tick (sprintf "Processing %i pixels" len)
-      let samples = depths |> subGrid x y 5 |> Array.concat
-      let o = occlusionAt point normalV samples |> float |> (*) 0.5
-      add black (Color.scale o white)
+    withProgressTxt len <| sprintf "Processing %i pixels"
+    <| (fun tick ->
+      depths
+      |> mapi2d (fun x y (point, normalV) ->
+        tick ()
+        let samples = depths |> subGrid x y 5 |> Array.concat
+        let o = occlusionAt point normalV samples |> float |> (*) 0.5
+        add black (Color.scale o white)
+      )
     )
 
-  printfn "\n" // To avoid CLI glitch after rendering
   map22d subtract pixels occlusion
-
-let renderProgress (c: Camera) w =
-  let canv = canvas c.hSize c.vSize
-  let len = Canvas.length canv
-
-  let bar = new ProgressBar (len, "Rendering", ConsoleColor.Yellow)
-
-  let result = canv |> Canvas.render (fun x y ->
-    bar.Tick (sprintf "Rendering %i pixels" len)
-    rayForPixel x y c |> colorAt w <| 4
-  )
-
-  printfn "\n" // To avoid CLI glitch after rendering
-  result
 
 let aaTransforms offset =
   [ (0.f, offset); (0.f, -offset)
@@ -110,19 +109,17 @@ let renderAA (c: Camera) w =
   let canv = canvas c.hSize c.vSize
   let len = 4 * Canvas.length canv
 
-  let bar = new ProgressBar (len, "Rendering", ConsoleColor.Yellow)
-
-  let result = canv |> Canvas.render (fun x y ->
-    let (rs, gs, bs) =
-      aaTransforms 0.35f
-      |> List.map (fun (dx, dy) ->
-        bar.Tick (sprintf "Rendering %i pixels" len)
-        rayForPixel32 (float32 x + dx) (float32 y + dy) c
-        |> colorAt w <| 4
-        |> (fun c -> c.Return) )
-      |> List.unzip3
-    color <| List.average rs <| List.average gs <| List.average bs
+  withProgress len <| (fun tick ->
+    canv |> Canvas.render (fun x y ->
+      let (rs, gs, bs) =
+        aaTransforms 0.35f
+        |> List.map (fun (dx, dy) ->
+          tick ()
+          rayForPixel32 (float32 x + dx) (float32 y + dy) c
+          |> colorAt w <| 4
+          |> (fun c -> c.Return) )
+        |> List.unzip3
+      color <| List.average rs <| List.average gs <| List.average bs
+    )
   )
 
-  printfn "\n" // To avoid CLI glitch after rendering
-  result
