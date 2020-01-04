@@ -1,7 +1,6 @@
 ﻿module Main
 
-
 [<EntryPoint>]
 let main argv =
-  Textures.run ()
+  Deer.run ()
   0
