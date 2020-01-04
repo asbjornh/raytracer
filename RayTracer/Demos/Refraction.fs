@@ -20,6 +20,7 @@ let baseMat = Mix {
 let ballMat = Fresnel {
   a = baseMat
   b = Reflective { blend = Add }
+  power = 3.
   mix = 1.
 }
 

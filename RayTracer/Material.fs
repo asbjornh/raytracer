@@ -26,6 +26,7 @@ type Material =
 type Fresnel = {
   a: Material
   b: Material
+  power: float
   mix: float
 }
 
@@ -135,9 +136,9 @@ let lighting light =
   | PointLight l -> phongLighting l
   | SoftLight l -> softLighting l
 
-let fresnelShade a b normalV eyeV =
+let fresnelShade a b power normalV eyeV =
   let ang = angle (normalize normalV) (normalize eyeV) |> float
-  let mapping = pow 3.
+  let mapping = pow power
   let max = mapping (Math.PI / 2.)
   let amount = ang |> mapping |> rangeMap (0., max) (0., 1.)
   mix a b amount
