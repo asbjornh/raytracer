@@ -3,5 +3,5 @@
 
 [<EntryPoint>]
 let main argv =
-  SphereRing.run ()
+  Textures.run ()
   0

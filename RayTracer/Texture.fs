@@ -42,14 +42,14 @@ let colorAt (u: float32) (v: float32) uScale vScale uOffset vOffset (cs: Color l
 
 let mappedNormalAt (normalV: Tuple) (color: Color) =
   let rotation = rotateAlign (vector 0. 1. 0.) normalV
-  let t = multiplyT rotation (vector 0. 0. 1.)
+  let t = multiplyT rotation (vector 0. 0. -1.)
   let b = multiplyT rotation (vector -1. 0. 0.)
   let n = normalV
   let transform =
     Matrix4x4 ( 
-      t.X, b.X, n.X, 0.f,
-      -t.Y, -b.Y, n.Y, 0.f,
-      t.Z, b.Z, n.Z, 0.f,
+      t.X, -t.Y, -t.Z, 0.f,
+      b.X, -b.Y, b.Z, 0.f,
+      n.X,  n.Y, n.Z, 0.f,
       0.f, 0.f, 0.f, 1.f
     )
   let (r, g, b) = color.Return
