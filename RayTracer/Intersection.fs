@@ -93,6 +93,11 @@ let bias (origin: Tuple) (point: Tuple) objectT normal =
   let newNormal = multiplyT t normal
   d * epsilon32 * newNormal
 
+let rec resolveMaterial s =
+  match s.parent with
+  | Some p -> resolveMaterial p
+  | None -> s.material
+
 let prepareComputations (is: Intersection list) (hit: Intersection) r =
   let point = position hit.t r
   let normalV = normalAt hit.object point
@@ -105,7 +110,7 @@ let prepareComputations (is: Intersection list) (hit: Intersection) r =
   let b = bias r.origin point hit.object.transform normalV
   {
     t = hit.t
-    object = hit.object
+    object = { hit.object with material = resolveMaterial hit.object }
     point = point
     eyeV = eyeV
     normalV = normalV
