@@ -33,7 +33,7 @@ let hexagon =
   List.init 6 (fun i ->
     side <| rotateY (float32 i * MathF.PI / 3.f)
   )
-  |> group <| identity () <| defaultMaterial ()
+  |> group <| identity <| defaultMaterial ()
 
 let pLight = pointLight (point -10. 10. -10.) white
 let cam = camera 100 100 (MathF.PI / 3.f)

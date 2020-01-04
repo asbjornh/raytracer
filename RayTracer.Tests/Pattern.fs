@@ -10,7 +10,7 @@ open Shape
 open Transform
 open Tuple
 
-let i = identity ()
+let i = identity
 
 [<Tests>]
 let tests =
@@ -40,7 +40,7 @@ let tests =
       let t = uniformScale 2.f
       let object = sphereT t
       let p = point 1.5 0. 0.
-      let patternP = patternPoint object.transform (identity ()) p
+      let patternP = patternPoint object.transform identity p
       let c = patternAt white black Stripes patternP
       Expect.equal c white ""
 

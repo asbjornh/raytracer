@@ -36,7 +36,7 @@ let camera hSize vSize fov =
     fov = fov
     halfWidth = halfW
     halfHeight = halfH
-    transform = (identity ())
+    transform = identity
     pixelSize = pixelSize
   }
 

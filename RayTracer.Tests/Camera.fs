@@ -27,7 +27,7 @@ let tests =
       Expect.equal c.hSize 160 ""
       Expect.equal c.vSize 120 ""
       Expect.equal c.fov (MathF.PI / 2.f) ""
-      Expect.equal c.transform (identity ()) ""
+      Expect.equal c.transform identity ""
 
     testCase "The pixel size for a horizontal canvas" <| fun _ ->
       let c = camera 200 125 (MathF.PI / 2.f)

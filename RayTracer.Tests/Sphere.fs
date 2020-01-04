@@ -62,7 +62,7 @@ let tests =
 
     testCase "A Sphere's default transformation" <| fun _ ->
       let s = unitSphere ()
-      Expect.equal s.transform (identity ()) ""
+      Expect.equal s.transform identity ""
 
     testCase "Changing a sphere's transformation" <| fun _ ->
       let t = translate 2.f 3.f 4.f

@@ -139,7 +139,7 @@ let shadeHitSingleLight light world comps remaining =
     gradientAt a b mat.sharpness p
 
   | TestPattern ->
-    let (x, y, z) = patternPoint objectT (identity ()) comps.overPoint |> toXYZ
+    let (x, y, z) = patternPoint objectT identity comps.overPoint |> toXYZ
     color (float x) (float y) (float z)
 
 let shadeHit world comps remaining =

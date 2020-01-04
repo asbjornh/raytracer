@@ -24,7 +24,7 @@ let ballMat = Fresnel {
   mix = 1.
 }
 
-let ball = sphere (identity ()) ballMat
+let ball = sphere identity ballMat
 
 let wallMat = material white 1. 0. 0.
 
@@ -46,7 +46,7 @@ let wallR =
   <| wallMat
 let backdropMat = Blend {
   a = materialC white
-  b = texture "../tex/checkers.png" (0.15, 0.15) (0., -0.5) <| identity ()
+  b = texture "../tex/checkers.png" (0.15, 0.15) (0., -0.5) identity
   mode = Multiply
 }
   

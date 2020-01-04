@@ -17,7 +17,7 @@ let mapHead fn =
   | head :: rest -> (fn head) :: rest
   | l -> l
 
-let i = identity ()
+let i = identity
 
 type ParseResult = {
   vertices: Tuple list

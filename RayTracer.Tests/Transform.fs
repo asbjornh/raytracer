@@ -131,7 +131,7 @@ let tests =
       let To = point 0. 0. -1.
       let up = vector 0. 1. 0.
       let t = viewTransform from To up
-      Expect.equal t (identity ()) ""
+      Expect.equal t identity ""
 
     testCase "A view transformation matrix looking in positive z direction" <| fun _ ->
       let from = point 0. 0. 0.

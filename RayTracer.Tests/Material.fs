@@ -82,7 +82,7 @@ let tests =
         a = materialC white
         b = materialC black
         pattern = Stripes
-        transform = identity ()
+        transform = identity
       }
       let m1 =
         match m with

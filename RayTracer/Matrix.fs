@@ -24,7 +24,7 @@ let values (m: Matrix4x4) =
 let equals a b =
   List.fold2 (fun acc a b -> acc && looseEq32 a b) true (values a) (values b)
 
-let identity () = Matrix4x4.Identity
+let identity = Matrix4x4.Identity
 
 let multiply (a: Matrix4x4) = flip (*) a
 

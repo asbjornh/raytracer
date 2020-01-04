@@ -169,9 +169,9 @@ let namedGroup n c t m =
   s
 
 let group c t m = namedGroup "N/A" c t m
-let shapeM s m = shape s (identity ()) m
+let shapeM s m = shape s identity m
 let shapeT s t = shape s t <| defaultMaterial ()
-let defaultShape s = shape s <| identity () <| defaultMaterial ()
+let defaultShape s = shape s identity <| defaultMaterial ()
 let sphere t = shape Sphere t
 let plane t = shape Plane t
 let cube t = shape Cube t
@@ -196,7 +196,7 @@ let triangleT p1 p2 p3 t = shapeT (Triangle <| Triangle.make p1 p2 p3) t
 let defaultTriangle p1 p2 p3 = defaultShape (Triangle <| Triangle.make p1 p2 p3)
 let groupT c t = group c t <| defaultMaterial ()
 let namedGroupT n c t = namedGroup n c t  <| defaultMaterial ()
-let defaultGroup c = groupT c <| identity ()
+let defaultGroup c = groupT c identity
 
 
 let fanTriangulation = function
@@ -215,4 +215,4 @@ let polys (vs: Tuple list) face =
     face
     |> List.map (fun i -> vs.[i])
     |> fanTriangulation
-    |> namedGroupT "Poly" <| identity ()
+    |> namedGroupT "Poly" <| identity

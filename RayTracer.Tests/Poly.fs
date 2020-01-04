@@ -12,7 +12,7 @@ let tests =
   testList "Tests for Poly" [
     testCase "Finding the normal on a triangle" <| fun _ ->
       let p = Triangle.make <| point 0. 1. 0. <| point -1. 0. 0. <| point 1. 0. 0.
-      let t = shapeT (Triangle p) <| identity ()
+      let t = shapeT (Triangle p) identity
       let n1 = localNormal t <| point 0. 0.5 0.
       let n2 = localNormal t <| point -0.5 0.75 0.
       let n3 = localNormal t <| point 0.5 0.25 0.

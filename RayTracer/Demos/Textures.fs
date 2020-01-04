@@ -14,7 +14,7 @@ open Util
 open World
 
 
-let i = identity ()
+let i = identity
 let marble scaleU scaleV = NormalMap {
   mat = Blend {
     a = materialC white

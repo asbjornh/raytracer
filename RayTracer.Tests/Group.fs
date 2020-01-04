@@ -18,7 +18,7 @@ let diff actual expected =
 let tests =
   testList "Tests for Group" [
     testCase "Intersecting a ray with an empty group" <| fun _ ->
-      let g = groupT [] <| identity ()
+      let g = groupT [] <| identity
       let r = ray (point 0. 0. 0.) (vector 0. 0. 1.)
       let xs = localIntersect r g
       Expect.equal (List.length xs) 0 ""
@@ -27,7 +27,7 @@ let tests =
       let s1 = unitSphere ()
       let s2 = sphereT (translate 0.f 0.f -3.f)
       let s3 = sphereT (translate 5.f 0.f 0.f)
-      let g = groupT [s1; s2; s3] <| identity ()
+      let g = groupT [s1; s2; s3] <| identity
       let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
       let xs = localIntersect r g
       let (_, objects) = List.unzip xs

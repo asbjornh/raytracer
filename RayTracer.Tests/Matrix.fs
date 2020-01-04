@@ -67,7 +67,7 @@ let tests =
         [ 0. ; 0. ; 1. ; 0. ]
         [ 0. ; 0. ; 0. ; 1. ]
       ]
-      Expect.equal (identity ()) expected ""
+      Expect.equal identity expected ""
 
     testCase "Multiplying a matrix by the identity matrix" <| fun _ ->
       let m = matrix [
@@ -76,11 +76,11 @@ let tests =
         [ 2. ; 4. ;  8. ; 16. ]
         [ 4. ; 8. ; 16. ; 32. ]
       ]
-      Expect.equal (m * (identity ())) m ""
+      Expect.equal (m * identity) m ""
 
     testCase "Multiplying the identity matrix by a tuple" <| fun _ ->
       let t = Tuple.Tuple (1.f, 2.f, 3.f, 4.f)
-      Expect.equal (multiplyT (identity ()) t) t ""
+      Expect.equal (multiplyT identity t) t ""
 
     testCase "Transposing a matrix" <| fun _ ->
       let m = matrix [
@@ -98,7 +98,7 @@ let tests =
       Expect.equal (transpose m) expected ""
 
     testCase "Transposing the identity" <| fun _ ->
-      Expect.equal (transpose (identity ())) (identity ()) ""
+      Expect.equal (transpose identity) identity ""
 
     testCase "Calculating the determinant of a 4x4 matrix" <| fun _ ->
       let m = matrix [
