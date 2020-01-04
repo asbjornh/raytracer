@@ -19,9 +19,9 @@ let darkBrown = Color.scale 0.25 (color 1. 0.3 0.4)
 let lightPos = point -10. 20. -10.
 let origin = point 0. 0. 0.
 let sLight = softLight lightPos (origin - lightPos) white 5 8.f
-let cam = camera 200 150 (MathF.PI / 3.f)
-let cTransform = viewTransform (point 0. 25. -30.) (point 2.5 5. 0.) (vector 0. 1. 0.)
-cam.transform <- cTransform
+let cam = 
+  camera 200 150 (MathF.PI / 3.f)
+  <| (point 0. 25. -30.) <| (point 2.5 5. 0.)
 
 let teapot =
   objFromFile "../models/teapot-grouped.obj"

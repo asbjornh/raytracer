@@ -19,10 +19,10 @@ type Camera = {
   fov: float32
   halfWidth: float32
   halfHeight: float32
-  mutable transform: Matrix4x4
+  transform: Matrix4x4
   pixelSize: float32
 }
-let camera hSize vSize fov =
+let cameraT hSize vSize fov t =
   let halfView = fov / 2.f |> MathF.Tan
   let aspect = (float32 hSize) / (float32 vSize)
   let (halfW, halfH) =
@@ -36,9 +36,13 @@ let camera hSize vSize fov =
     fov = fov
     halfWidth = halfW
     halfHeight = halfH
-    transform = identity
+    transform = t
     pixelSize = pixelSize
   }
+
+let camera hSize vSize fov position target =
+  viewTransform position target (vector32 0.f 1.f 0.f)
+  |> cameraT hSize vSize fov
 
 let rayForPixel32 x y c =
   let xOffset = (x + 0.5f) * c.pixelSize

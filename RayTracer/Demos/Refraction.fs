@@ -61,9 +61,9 @@ let light = pointLight (point -10. 10. -10.) white
 let objects = [backdrop; ball; floor; roof; wallL; wallR]
 let w = world [light] objects
 
-let cam = camera 200 200 (rad32 30.f)
-let cTransform = viewTransform (point 0. 0. -5.) (point 0. 0. 0.) (vector 0. 1. 0.)
-cam.transform <- cTransform
+let cam =
+  camera 200 200 (rad32 30.f)
+  <| (point 0. 0. -5.) <| (point 0. 0. 0.)
 
 let run () =
   renderProgress cam w

@@ -64,9 +64,9 @@ let sLight = softLight lightPos (origin - lightPos) (color 1. 1. 0.9) 5 8.f
 let cLight = constantLight (color 0. 0.15 0.3) false
 let lights = [sLight; cLight]
 
-let cam = camera 400 200 (MathF.PI / 3.f)
-let cTransform = viewTransform (point 0. 1.5 -5.) (point 0. 1. 0.) (vector 0. 1. 0.)
-cam.transform <- cTransform
+let cam =
+  camera 400 200 (MathF.PI / 3.f)
+  <| (point 0. 1.5 -5.) <| (point 0. 1. 0.)
 
 let objects =
   [middle; right; left; floor; leftWall; rightWall;]

@@ -36,9 +36,9 @@ let hexagon =
   |> group <| identity <| defaultMaterial ()
 
 let pLight = pointLight (point -10. 10. -10.) white
-let cam = camera 100 100 (MathF.PI / 3.f)
-let cTransform = viewTransform (point 1. 2. -2.) (point 0. 0. 0.) (vector 0. 1. 0.)
-cam.transform <- cTransform
+let cam =
+  camera 100 100 (MathF.PI / 3.f)
+  <| (point 1. 2. -2.) <| (point 0. 0. 0.)
 
 let w =  world [pLight] [hexagon]
 

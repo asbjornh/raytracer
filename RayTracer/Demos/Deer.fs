@@ -20,9 +20,9 @@ let lightPos = point 1000. 400. -600.
 let origin = point 0. 0. 0.
 let sLight = softLight lightPos (origin - lightPos) white 5 8.f
 let cLight = constantLight (mix blue cyan 0.1) false
-let cam = camera 400 300 (rad32 30.f)
-let cTransform = viewTransform (point 0. 300. -1300.) (point 40. 100. 0.) (vector 0. 1. 0.)
-cam.transform <- cTransform
+let cam =
+  camera 400 300 (rad32 30.f)
+  <| (point 0. 300. -1300.) <| (point 40. 100. 0.)
 
 let mat = Fresnel {
   a = material pink 0.1 0.9 0.
