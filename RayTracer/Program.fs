@@ -2,5 +2,5 @@
 
 [<EntryPoint>]
 let main argv =
-  Deer.run ()
+  Teapot.run ()
   0

@@ -24,7 +24,7 @@ let cam =
   <| (point 0. 25. -30.) <| (point 2.5 5. 0.)
 
 let teapot =
-  objFromFile "../models/teapot-grouped.obj"
+  objFromFile "../models/teapot-mid.obj"
   <| chain [rotateY (rad32 35.f)]
   <| defaultMaterial ()
 
