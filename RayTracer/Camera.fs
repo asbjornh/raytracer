@@ -8,6 +8,7 @@ open Canvas
 open Color
 open Matrix
 open Ray
+open Transform
 open Tuple
 open Util
 open World
@@ -78,7 +79,7 @@ let renderOcclusion c w =
       occlusionBar.Tick (sprintf "Processing %i pixels" len)
       let samples = depths |> subGrid x y 5 |> Array.concat
       let o = occlusionAt point normalV samples |> float |> (*) 0.5
-      add black (scale o white)
+      add black (Color.scale o white)
     )
 
   printfn "\n" // To avoid CLI glitch after rendering
@@ -93,6 +94,34 @@ let renderProgress (c: Camera) w =
   let result = canv |> Canvas.render (fun x y ->
     bar.Tick (sprintf "Rendering %i pixels" len)
     rayForPixel x y c |> colorAt w <| 4
+  )
+
+  printfn "\n" // To avoid CLI glitch after rendering
+  result
+
+let aaTransforms =
+  [ translateX (0.0035f)
+    translateX (-0.0035f)
+    translateY (0.0035f)
+    translateY (-0.0035f) ]
+
+let renderAA (c: Camera) w =
+  let canv = canvas c.hSize c.vSize
+  let len = 4 * Canvas.length canv
+
+  let bar = new ProgressBar (len, "Rendering", ConsoleColor.Yellow)
+
+  let result = canv |> Canvas.render (fun x y ->
+    let (rs, gs, bs) =
+      aaTransforms
+      |> List.map (fun t ->
+        bar.Tick (sprintf "Rendering %i pixels" len)
+        rayForPixel x y c
+        |> Ray.transform t
+        |> colorAt w <| 4
+        |> (fun c -> c.Return) )
+      |> List.unzip3
+    color <| List.average rs <| List.average gs <| List.average bs
   )
 
   printfn "\n" // To avoid CLI glitch after rendering
