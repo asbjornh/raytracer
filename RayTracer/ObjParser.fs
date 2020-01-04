@@ -10,7 +10,7 @@ open Util
 let objFromFile path t =
   let result =
     readFile path |> Array.toList |> parse
-  groupT result.objects t
+  Shape.group result.objects t
 
 let mapHead fn =
   function

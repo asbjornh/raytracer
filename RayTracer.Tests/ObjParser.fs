@@ -145,7 +145,10 @@ let tests =
       Expect.equal t2.p3 r.vertices.[3] ""
 
     testCase "Converting an OBJ file to a group" <| fun _ ->
-      let g = objFromFile "./fixtures/triangles.obj" <| identity ()
+      let g =
+        objFromFile "./fixtures/triangles.obj"
+        <| identity ()
+        <| Material.defaultMaterial ()
       Expect.equal (List.length g.children) 2 ""
       Expect.equal ((g.children.[0] |> getGroup).name) "FirstGroup" ""
       Expect.equal ((g.children.[1] |> getGroup).name) "SecondGroup" ""
