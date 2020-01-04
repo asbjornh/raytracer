@@ -3,9 +3,11 @@ module Intersection
 open System.Numerics
 
 open Material
+open Matrix
 open Ray
 open Shape
 open Tuple
+open Transform
 open Util
 
 type Intersection = {
@@ -80,6 +82,17 @@ let refractiveIndexes (is: Intersection list) (hit: Intersection) =
   |> (fun (_, n1, n2) -> (n1, n2))
 
 
+// Bias for fixing shadow and pattern acne
+let bias (origin: Tuple) (point: Tuple) objectT normal =
+  // NOTE: Scaling epsilon by the distance to origin fixes some shadow acne
+  let d = Vector4.Distance (origin.Vec, point.Vec)
+  let (_, scale, _, _) = Matrix4x4.Decompose objectT
+  let minScale = List.min [scale.X; scale.Y; scale.Z]
+  let t = uniformScale (1.f / min 1.f minScale)
+  // NOTE: Scaling the normal by the inverse of the
+  let newNormal = multiplyT t normal
+  d * epsilon32 * newNormal
+
 let prepareComputations (is: Intersection list) (hit: Intersection) r =
   let point = position hit.t r
   let normalV = normalAt hit.object point
@@ -89,8 +102,7 @@ let prepareComputations (is: Intersection list) (hit: Intersection) r =
     (if inside then negate else id) normalV
   let reflectV = reflect normalV r.direction
   let (n1, n2) = refractiveIndexes is hit
-  // NOTE: Scaling epsilon by the distance to origin fixes some shadow acne
-  let d = Vector4.Distance (r.origin.Vec, point.Vec)
+  let b = bias r.origin point hit.object.transform normalV
   {
     t = hit.t
     object = hit.object
@@ -99,8 +111,8 @@ let prepareComputations (is: Intersection list) (hit: Intersection) r =
     normalV = normalV
     reflectV = reflectV
     inside = inside
-    overPoint = point + (d * epsilon32 * normalV)
-    underPoint = point - (d * epsilon32 * normalV)
+    overPoint = point + b
+    underPoint = point - b
     n1 = n1
     n2 = n2
   }
