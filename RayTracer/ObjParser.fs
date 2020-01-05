@@ -17,6 +17,9 @@ let mapHead fn =
   | head :: rest -> (fn head) :: rest
   | l -> l
 
+let appendChild g c =
+  g |> mapHead (fun (name, els) -> (name, c :: els))
+
 let i = identity
 
 type ParseResult = {
@@ -46,28 +49,20 @@ let parse (t: string list) =
 
     | Face f ->
       let g = getFaces (List.rev vertices) f
-      groups <- groups |> mapHead (fun (name, els) ->
-        (name, g :: els)
-      )
+      groups <- appendChild groups g
 
     | FaceNormal f ->
       let g = getSmoothFaces (List.rev vertices) (List.rev normals) f
-      groups <- groups |> mapHead (fun (name, els) ->
-        (name, g :: els)
-      )
+      groups <- appendChild groups g
     
     | FaceTex f ->
       let g = getFaces (List.rev vertices) (List.map fst f)
-      groups <- groups |> mapHead (fun (name, els) ->
-        (name, g :: els)
-      )
+      groups <- appendChild groups g
 
     | FaceTexNormal f ->
       let normalIds = f |> List.map (fun (v, t, n) -> (v, n))
       let g = getSmoothFaces (List.rev vertices) (List.rev normals) normalIds
-      groups <- groups |> mapHead (fun (name, els) ->
-        (name, g :: els)
-      )
+      groups <- appendChild groups g
 
     | Group name ->
       groups <- (name, []) :: groups
@@ -84,9 +79,7 @@ let parse (t: string list) =
   groups
   |> List.filter (snd >> List.isEmpty >> (not))
   |> List.iter (fun g ->
-    objects <- objects |> mapHead (fun (name, els) ->
-      (name, g :: els)
-    )
+    objects <- appendChild objects g
   )
 
   parseResult vertices normals objects
