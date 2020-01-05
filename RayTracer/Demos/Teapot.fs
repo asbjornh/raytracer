@@ -16,22 +16,24 @@ open World
 
 
 let darkBrown = Color.scale 0.25 (color 1. 0.3 0.4)
-let lightPos = point -10. 20. -10.
-let origin = point 0. 0. 0.
-let sLight = softLight lightPos (origin - lightPos) white 5 8.f
+let pLight = pointLight (point -20. 20. -30.) yellow
+let cLight = constantLight (Color.scale 0.6 blue) Lighten
 let cam = 
-  camera 200 150 (MathF.PI / 3.f)
-  <| (point 0. 25. -30.) <| (point 2.5 5. 0.)
+  camera 400 300 (rad32 8.f)
+  <| (point 0. 0. -300.) <| (point 0. 0. 0.)
 
+let mat = Fresnel {
+  a = material white 0.3 0.7 0.
+  b = Luminance red
+  power = 2.
+  mix = 1.
+}
 let teapot =
   objFromFile "../models/teapot-mid.obj"
-  <| chain [rotateY (rad32 35.f)]
-  <| defaultMaterial ()
+  <| chain [translateY -7.f]
+  <| mat
 
-let objects =
-  [teapot]
-
-let w =  world [sLight] objects
+let w = { world [pLight; cLight] [teapot] with background = red }
 
 
 let run () =
