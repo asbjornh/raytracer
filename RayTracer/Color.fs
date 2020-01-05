@@ -46,6 +46,7 @@ let multiply c = Color.Map2C (*) c
 let scale n = Color.MapC ((*) n)
 let divide n = Color.MapC (flip (/) n)
 let lighten c = Color.Map2C max c
+let darken c = Color.Map2C min c
 let invert c = subtract (color 1. 1. 1.) c
 let screen a b =
   invert (multiply (invert a) (invert b))
@@ -57,6 +58,7 @@ type BlendingMode =
   | Subtract
   | Multiply
   | Lighten
+  | Darken
   | Screen
   | Normal
 
@@ -65,6 +67,7 @@ let blend = function
   | Subtract -> subtract
   | Multiply -> multiply
   | Lighten -> lighten
+  | Darken -> darken
   | Screen -> screen
   | Normal -> always
 
