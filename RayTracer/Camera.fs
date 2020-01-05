@@ -127,3 +127,28 @@ let renderAA (c: Camera) w =
     )
   )
 
+let renderSection (fromX, fromY) (toX, toY) c w =
+  let len = (toX - fromX) * (toY - fromY)
+  let canv = canvas c.hSize c.vSize
+
+  withProgress len <| (fun tick ->
+    canv |> Canvas.render (fun x y ->
+      let inRangeX = x >= fromX && x <= toX
+      let inRangeY = y >= fromY && y <= toY
+      if inRangeX && inRangeY
+      then tick (); rayForPixel x y c |> colorAt w <| 4
+      else white
+    )
+  )
+
+let renderQuad n c w =
+  let maxX = c.hSize - 1
+  let maxY = c.vSize - 1
+  let midX = 0.5 * float c.hSize |> Math.Floor |> int
+  let midY = 0.5 * float c.vSize |> Math.Floor |> int
+  [ ((0, 0), (midX, midY))
+    ((midX + 1, 0), (maxX, midY))
+    ((0, midY + 1), (midX, maxY))
+    ((midX + 1, midY + 1), (maxX, maxY)) ]
+  |> List.item n
+  |> fun (from, To) -> renderSection from To c w
