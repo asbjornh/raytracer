@@ -1,4 +1,4 @@
-module PolyTest
+module TriangleTest
 
 open Expecto
 
@@ -9,7 +9,7 @@ open Matrix
 
 [<Tests>]
 let tests =
-  testList "Tests for Poly" [
+  testList "Tests for Triangle" [
     testCase "Finding the normal on a triangle" <| fun _ ->
       let p = Triangle.make <| point 0. 1. 0. <| point -1. 0. 0. <| point 1. 0. 0.
       let t = shapeT (Triangle p) identity
