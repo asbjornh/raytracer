@@ -21,12 +21,14 @@ let i = identity
 
 type ParseResult = {
   vertices: Tuple list
+  normals: Tuple list
   objects: Shape list
 }
 let parse (t: string list) =
   let mutable objects = [("DefaultObject", [])]
   let mutable groups = [("DefaultGroup", [])]
   let mutable vertices = []
+  let mutable normals = []
 
   t
   |> List.collect (fun s ->
@@ -38,6 +40,9 @@ let parse (t: string list) =
     function
     | Vertex (x, y, z) ->
       vertices <- (point x y z) :: vertices
+
+    | Normal (x, y, z) ->
+      normals <- (vector x y z) :: normals
 
     | Face f ->
       let g = getFaces (List.rev vertices) f
@@ -65,9 +70,9 @@ let parse (t: string list) =
     )
   )
 
-  parseResult vertices objects
+  parseResult vertices normals objects
 
-let parseResult vertices objects =
+let parseResult vertices normals objects =
   let os =
     objects
     |> List.map (fun (n, els) ->
@@ -81,6 +86,7 @@ let parseResult vertices objects =
 
   {
     vertices = List.rev vertices
+    normals = List.rev normals
     objects = os
   }
 
@@ -89,6 +95,7 @@ let getFaces vertices =
 
 type LineResult =
   | Vertex of (float * float * float)
+  | Normal of (float * float * float)
   | Face of int64 list list
   | Group of string
   | Object of string
@@ -100,6 +107,7 @@ let parseOne parser typ str =
 
 let parseLine str =
   [ parseOne vertex Vertex
+    parseOne normal Normal
     parseOne face Face
     parseOne group Group
     parseOne obj Object ]
@@ -109,6 +117,7 @@ let str = pstring
 let coord = pfloat .>> (opt <| str " ")
 let vertexCoords = tuple3 coord coord coord
 let vertex = pchar 'v' >>. spaces >>. vertexCoords
+let normal = str "vn" >>. spaces >>. vertexCoords
 let faceCoords = sepBy (sepBy1 pint64 <| str "/") (str " ")
 let face = pchar 'f' >>. spaces >>. faceCoords
 let group = pchar 'g' >>. spaces >>. restOfLine false

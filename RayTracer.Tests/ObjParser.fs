@@ -152,4 +152,16 @@ let tests =
       Expect.equal (List.length g.children) 2 ""
       Expect.equal ((g.children.[0] |> getGroup).name) "FirstGroup" ""
       Expect.equal ((g.children.[1] |> getGroup).name) "SecondGroup" ""
+
+    testCase "Vertex normal records" <| fun _ ->
+      let file = [
+        "vn 0 0 1"
+        "vn 0.707 0 -0.707"
+        "vn 1 2 3"
+      ]
+      let r = parse file
+      Expect.equal (List.length r.normals) 3 ""
+      Expect.equal r.normals.[0] (vector 0. 0. 1.) ""
+      Expect.equal r.normals.[1] (vector 0.707 0. -0.707) ""
+      Expect.equal r.normals.[2] (vector 1. 2. 3.) ""
   ]
