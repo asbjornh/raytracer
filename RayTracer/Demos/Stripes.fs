@@ -75,7 +75,7 @@ let left =
 let darkBrown = Color.scale 0.25 (color 1. 0.3 0.4)
 let lightPos = point -10. 10. -10.
 let origin = point 0. 0. 0.
-let sLight = softLight lightPos (origin - lightPos) white 5 8.f
+let sLight = softLight lightPos origin white 5 8.f
 let cLight = constantLight darkBrown Add
 let cam = 
   camera 400 200 (MathF.PI / 3.f)

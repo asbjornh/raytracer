@@ -89,6 +89,7 @@ let toArray (a: Tuple) =
 
 let toXYZ (a: Tuple) : (float32 * float32 * float32) =
   (a.Vec.X, a.Vec.Y, a.Vec.Z)
+let toVec3 t = t |> toXYZ |> Vector3
 let toPixel a =
   a |> Tuple.Map (MathF.Round >> int)
   |> fun (x, y, _, _) -> (x, y)

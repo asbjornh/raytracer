@@ -18,7 +18,7 @@ open World
 let darkBrown = Color.scale 0.25 (color 1. 0.3 0.4)
 let lightPos = point 1000. 400. -600.
 let origin = point 0. 0. 0.
-let sLight = softLight lightPos (origin - lightPos) white 5 8.f
+let sLight = pointLight lightPos white
 let cLight = constantLight (mix blue cyan 0.1) Lighten
 let cam =
   camera 400 300 (rad32 30.f)

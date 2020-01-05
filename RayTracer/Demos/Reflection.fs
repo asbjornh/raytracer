@@ -60,7 +60,7 @@ let left =
 
 let lightPos = (point -10. 10. -10.)
 let origin = (point 0. 0. 0.)
-let sLight = softLight lightPos (origin - lightPos) (color 1. 1. 0.9) 5 8.f
+let sLight = softLight lightPos origin (color 1. 1. 0.9) 5 8.f
 let cLight = constantLight (color 0. 0.15 0.3) Lighten
 let lights = [sLight; cLight]
 

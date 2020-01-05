@@ -24,8 +24,6 @@ let marble scaleU scaleV = NormalMap {
   tex = textureRaw "../tex/metal-plate-normal.jpg" (scaleU, scaleV) (0., 0.) i
 }
 
-let t = rotateAlign (vector 0. 1. 0.) (vector 0. 0. 1.)
-
 let floor =
   plane
   <| uniformScale 1000.f

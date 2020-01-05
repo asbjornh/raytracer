@@ -52,7 +52,7 @@ let left =
 
 let lightPos = point -10. 10. -10.
 let origin = point 0. 0. 0.
-let sLight = softLight lightPos (origin - lightPos) (color 1. 0.9 0.7) 2 3.f
+let sLight = softLight lightPos origin (color 1. 0.9 0.7) 2 3.f
 let darkBrown = Color.scale 0.15 (color 1. 0.3 0.6)
 let cLight = constantLight darkBrown Add
 let lights = [sLight; cLight]

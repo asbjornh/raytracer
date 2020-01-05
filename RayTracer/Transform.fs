@@ -21,6 +21,14 @@ let rotateY rad = Matrix4x4.CreateRotationY rad
 let rotateZ rad = Matrix4x4.CreateRotationZ rad
 
 
+
+let lookAt (position: Tuple) (target: Tuple) (up: Tuple) =
+  let t =
+    Matrix4x4.CreateLookAt
+    <| (position |> toVec3, target |> toVec3, up |> toVec3)
+  let (_, _, r, _) = Matrix4x4.Decompose t
+  Matrix4x4.CreateFromQuaternion r
+
 let rotateAlign (fromV: Tuple) (toV: Tuple) =
   // NOTE: https://gist.github.com/kevinmoran/b45980723e53edeb8a5a43c49f134724
   let f = normalize fromV
