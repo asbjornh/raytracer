@@ -10,8 +10,8 @@ let testCubeIntersect origin direction t1 t2 =
   let c = unitCube ()
   let r = ray origin direction
   let xs = localIntersect r c
-  let (localT1, _) = xs.[0]
-  let (localT2, _) = xs.[1]
+  let (localT1, _, _) = xs.[0]
+  let (localT2, _, _) = xs.[1]
   Expect.equal (List.length xs) 2 ""
   Expect.equal localT1 t1 ""
   Expect.equal localT2 t2 ""

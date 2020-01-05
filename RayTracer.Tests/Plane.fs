@@ -35,7 +35,7 @@ let tests =
       let r = ray (point 0. 1. 0.) (vector 0. -1. 0.)
       let xs = localIntersect r p
       Expect.equal (List.length xs) 1 ""
-      let (t, object) = xs.[0]
+      let (t, object, _) = xs.[0]
       Expect.equal t 1.f ""
       Expect.equal object p ""
 
@@ -44,7 +44,7 @@ let tests =
       let r = ray (point 0. -1. 0.) (vector 0. 1. 0.)
       let xs = localIntersect r p
       Expect.equal (List.length xs) 1 ""
-      let (t, object) = xs.[0]
+      let (t, object, _) = xs.[0]
       Expect.equal t 1.f ""
       Expect.equal object p ""
   ]

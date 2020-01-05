@@ -64,10 +64,10 @@ let intersectRaw p1 e1 e2 ray =
       else [(f * dot e2 originCrossE1, (u, v))]
 
 let intersect (t: Triangle) ray =
-  intersectRaw t.p1 t.e1 t.e2 ray |> List.map fst
+  intersectRaw t.p1 t.e1 t.e2 ray
 
 let intersectSmooth (t: SmoothTriangle) ray =
-  intersectRaw t.p1 t.e1 t.e2 ray |> List.map fst
+  intersectRaw t.p1 t.e1 t.e2 ray
 
 let localUV (t: Triangle) ray =
   intersectRaw t.p1 t.e1 t.e2 ray |> List.map snd |> headToOption

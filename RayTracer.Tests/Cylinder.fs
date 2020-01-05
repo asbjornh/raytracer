@@ -35,8 +35,8 @@ let tests =
         let r = ray origin direction
         let xs = shapeIntersect r cyl
         Expect.equal (List.length xs) 2 ""
-        let (localT0, _) = xs.[0]
-        let (localT1, _) = xs.[1]
+        let (localT0, _, _) = xs.[0]
+        let (localT1, _, _) = xs.[1]
         Expect.isTrue (looseEq32 localT0 t0) <| diff localT0 t0
         Expect.isTrue (looseEq32 localT1 t1) <| diff localT1 t1
 

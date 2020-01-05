@@ -60,14 +60,14 @@ let tests =
       let r = ray <| point 0. 0.5 -2. <| vector 0. 0. 1.
       let xs = localIntersect r p
       Expect.equal (List.length xs) 1 ""
-      Expect.equal (fst xs.[0]) 2.f ""
+      let (t, _, _) = xs.[0]
+      Expect.equal t 2.f ""
 
     testCase "An computation with a smooth triangle stores u/v" <| fun _ ->
       let r = ray <| point -0.2 0.3 -2. <| vector 0. 0. 1.
       let xs = Intersection.intersect r testSmoothTri
       let h = Intersection.hit xs |> Option.get
-      let comps = Intersection.prepareComputations xs h r
-      let (u, v) = Option.get comps.triangleUV
+      let (u, v) = Option.get h.triangleUV
       Expect.equal u 0.45f ""
       Expect.equal v 0.25f ""
 

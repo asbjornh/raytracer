@@ -39,20 +39,22 @@ type Group = {
   bounds: (float32 * float32) * (float32 * float32) * (float32 * float32)
 }
 
+let noUV = List.map (fun (t, s) -> (t, s, None))
+
 let localIntersect ray (s: Shape) =
   match s.shape with
-  | Sphere -> Sphere.intersect ray s
-  | Plane -> Plane.intersect ray s
-  | Cylinder -> Cylinder.intersect ray s
-  | OpenCylinder -> Cylinder.intersectOpen ray s
-  | Cube -> Cube.intersect ray s
-  | Cone -> Cone.intersect -1.f 0.f ray s
-  | DoubleCone -> Cone.intersect -1.f 1.f ray s
-  | TestShape -> [(0.f, s)]
+  | Sphere -> Sphere.intersect ray s |> noUV
+  | Plane -> Plane.intersect ray s |> noUV
+  | Cylinder -> Cylinder.intersect ray s |> noUV
+  | OpenCylinder -> Cylinder.intersectOpen ray s |> noUV
+  | Cube -> Cube.intersect ray s |> noUV
+  | Cone -> Cone.intersect -1.f 0.f ray s |> noUV
+  | DoubleCone -> Cone.intersect -1.f 1.f ray s |> noUV
+  | TestShape -> [(0.f, s)] |> noUV
   | Triangle p ->
-    Triangle.intersect p ray |> List.map (fun t -> (t, s))
+    Triangle.intersect p ray |> List.map (fun (t, uv) -> (t, s, Some uv))
   | SmoothTriangle t ->
-    Triangle.intersectSmooth t ray |> List.map (fun t -> (t, s))
+    Triangle.intersectSmooth t ray |> List.map (fun (t, uv) -> (t, s, Some uv))
   | Group g ->
     let (boundsX, boundsY, boundsZ) = g.bounds
     match Cube.intersectBox boundsX boundsY boundsZ ray s with
@@ -89,7 +91,7 @@ let localNormal (s: Shape) p =
   | DoubleCone -> Cone.normal -1.f 1.f p
   | Cube -> Cube.normal p
   | Triangle p -> p.normal
-  | SmoothTriangle t -> normalAtSmooth t (0.5f, 0.5f)
+  | SmoothTriangle t -> normalAtSmooth t (0.2f, 0.2f)
   | Group _ -> failwith "Missing localNormal implementation for Group"
 
 let localNormalUV s p uv =

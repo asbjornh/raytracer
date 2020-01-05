@@ -30,7 +30,7 @@ let tests =
       let g = groupT [s1; s2; s3] <| identity
       let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
       let xs = localIntersect r g
-      let (_, objects) = List.unzip xs
+      let (_, objects, _) = List.unzip3 xs
       Expect.equal (List.length xs) 4 ""
       // NOTE: s1 and s2 do not have a reference to their parent since the group isn't created until after they're initialized
       Expect.equal { objects.[0] with parent = None } s1 ""

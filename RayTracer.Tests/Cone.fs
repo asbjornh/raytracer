@@ -22,8 +22,8 @@ let tests =
         let r = ray origin <| normalize direction
         let xs = localIntersect r shape
         Expect.equal (List.length xs) 2 txt
-        let (_t0, _) = xs.[0]
-        let (_t1, _) = xs.[1]
+        let (_t0, _, _) = xs.[0]
+        let (_t1, _, _) = xs.[1]
         Expect.isTrue (looseEq32 _t0 t0) (diff _t0 t0)
         Expect.isTrue (looseEq32 _t1 t1) (diff _t1 t1)
 
