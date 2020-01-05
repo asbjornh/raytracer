@@ -222,20 +222,31 @@ let namedGroupT n c t = namedGroup n c t  <| defaultMaterial ()
 let defaultGroup c = groupT c identity
 
 
-let fanTriangulation = function
+let fanTriangulation fn = function
   | [] -> []
-  | start :: rest ->
+  | [_;_] -> []
+  | first :: rest ->
     List.pairwise rest
     |> List.map (fun (second, third) ->
-      defaultTriangle start second third
+      fn first second third
     )
 
-let polys (vs: Tuple list) face =
-  match face with
-  | [one; two; three] -> 
-    defaultTriangle vs.[one] vs.[two] vs.[three]
-  | _ ->
-    face
-    |> List.map (fun i -> vs.[i])
-    |> fanTriangulation
-    |> namedGroupT "Poly" <| identity
+let maybeGroup name =
+  function
+  | [single] -> single
+  | many -> namedGroupT name many identity
+
+let polys (vs: Tuple list) indices =
+  indices
+  |> List.map (fun i -> vs.[i])
+  |> fanTriangulation defaultTriangle
+  |> maybeGroup "Poly"
+
+let smoothPolys (vs: Tuple list) (ns: Tuple list) indices =
+  indices
+  |> fanTriangulation (fun (p1, n1) (p2, n2) (p3, n3) ->
+      smoothTriangle vs.[p1] vs.[p2] vs.[p3] ns.[n1] ns.[n2] ns.[n3]
+      <| identity
+      <| defaultMaterial ()
+    )
+  |> maybeGroup "SmoothPoly"

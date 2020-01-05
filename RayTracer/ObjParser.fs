@@ -50,6 +50,25 @@ let parse (t: string list) =
         (name, g :: els)
       )
 
+    | FaceNormal f ->
+      let g = getSmoothFaces (List.rev vertices) (List.rev normals) f
+      groups <- groups |> mapHead (fun (name, els) ->
+        (name, g :: els)
+      )
+    
+    | FaceTex f ->
+      let g = getFaces (List.rev vertices) (List.map fst f)
+      groups <- groups |> mapHead (fun (name, els) ->
+        (name, g :: els)
+      )
+
+    | FaceTexNormal f ->
+      let normalIds = f |> List.map (fun (v, t, n) -> (v, n))
+      let g = getSmoothFaces (List.rev vertices) (List.rev normals) normalIds
+      groups <- groups |> mapHead (fun (name, els) ->
+        (name, g :: els)
+      )
+
     | Group name ->
       groups <- (name, []) :: groups
 
@@ -91,12 +110,20 @@ let parseResult vertices normals objects =
   }
 
 let getFaces vertices =
-  List.map (List.head >> int >> flip (-) 1) >> polys vertices
+  List.map (int >> flip (-) 1) >> polys vertices
+
+let getSmoothFaces vertices normals =
+  List.map (fun (v, n) ->
+    (int v - 1, int n - 1)
+  ) >> smoothPolys vertices normals
 
 type LineResult =
   | Vertex of (float * float * float)
   | Normal of (float * float * float)
-  | Face of int64 list list
+  | Face of int64 list
+  | FaceNormal of (int64 * int64) list
+  | FaceTex of (int64 * int64) list
+  | FaceTexNormal of (int64 * int64 * int64) list
   | Group of string
   | Object of string
 
@@ -108,17 +135,31 @@ let parseOne parser typ str =
 let parseLine str =
   [ parseOne vertex Vertex
     parseOne normal Normal
+    parseOne faceTexNormal FaceTexNormal
+    parseOne faceNormal FaceNormal
+    parseOne faceTex FaceTex
     parseOne face Face
     parseOne group Group
     parseOne obj Object ]
   |> List.tryPick (fun parser -> parser str)
 
 let str = pstring
-let coord = pfloat .>> (opt <| str " ")
+let space = pchar ' '
+let coord = pfloat .>> (opt space)
 let vertexCoords = tuple3 coord coord coord
 let vertex = pchar 'v' >>. spaces >>. vertexCoords
 let normal = str "vn" >>. spaces >>. vertexCoords
-let faceCoords = sepBy (sepBy1 pint64 <| str "/") (str " ")
-let face = pchar 'f' >>. spaces >>. faceCoords
 let group = pchar 'g' >>. spaces >>. restOfLine false
 let obj = pchar 'o' >>. spaces >>. restOfLine false
+
+
+
+let faceBase coord = pchar 'f' >>. spaces >>. (sepBy coord space)
+
+let face = faceBase pint64
+let faceNormal =
+  faceBase (tuple2 pint64 (str "//" >>. pint64))
+let faceTex =
+  faceBase (tuple2 pint64 (str "/" >>. pint64))
+let faceTexNormal =
+  faceBase (tuple3 pint64 (str "/" >>. pint64) (str "/" >>. pint64))

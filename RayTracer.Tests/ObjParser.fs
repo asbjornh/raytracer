@@ -9,7 +9,11 @@ open Tuple
 
 let getTriangle s =
   match s.shape with
-  | Triangle p -> p | _ -> failwith "Not a Poly"
+  | Triangle p -> p | _ -> failwith "Not a Triangle"
+
+let getSmooth s =
+  match s.shape with
+  | SmoothTriangle t -> t | _ -> failwith "Not a SmoothTriangle"
 
 let getGroup s =
   match s.shape with
@@ -164,4 +168,30 @@ let tests =
       Expect.equal r.normals.[0] (vector 0. 0. 1.) ""
       Expect.equal r.normals.[1] (vector 0.707 0. -0.707) ""
       Expect.equal r.normals.[2] (vector 1. 2. 3.) ""
+
+    testCase "Faces with normals" <| fun _ ->
+      let file = [
+        "v 0 1 0​"
+        "v -1 0 0​"
+        "v 1 0 0​"
+        "vn -1 0 0​"
+        "vn 1 0 0​"
+        "vn 0 1 0​"
+        "f 1//3 2//1 3//2​"
+        "f 1/0/3 2/102/1 3/14/2​"
+      ]
+      let r = parse file
+      let g = r.objects.[0].children.[0]
+
+      Expect.equal (List.length g.children) 2 ""
+      let t1 = g.children.[0] |> getSmooth
+      let t2 = g.children.[1] |> getSmooth
+
+      Expect.equal t1.p1 r.vertices.[0] "Vertex 1"
+      Expect.equal t1.p2 r.vertices.[1] "Vertex 2"
+      Expect.equal t1.p3 r.vertices.[2] "Vertex 3"
+      Expect.equal t1.n1 r.normals.[2] "Normal 1"
+      Expect.equal t1.n2 r.normals.[0] "Normal 2"
+      Expect.equal t1.n3 r.normals.[1] "Normal 3"
+      Expect.equal t2 t1 ""
   ]
