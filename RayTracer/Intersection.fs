@@ -28,20 +28,6 @@ let hit (l: Intersection list) =
   | [] -> None
   | visibleShapes -> Some (List.minBy getT visibleShapes)
 
-type Computation = {
-  t: float32
-  object: Shape
-  point: Tuple
-  eyeV: Tuple
-  normalV: Tuple
-  reflectV: Tuple
-  inside: bool
-  overPoint: Tuple
-  underPoint: Tuple
-  n1: float32
-  n2: float32
-}
-
 let pickIndex (a: float32) b =
   if (a = b) then a
   else if (a = 1.f) then b
@@ -98,9 +84,34 @@ let rec resolveMaterial s =
   | Some p -> resolveMaterial p
   | None -> s.material
 
+let triangleUV s r =
+  match s.shape with
+  | Triangle t -> Triangle.localUV t r
+  | SmoothTriangle t -> Triangle.localUVSmooth t r
+  | _ -> None
+
+type Computation = {
+  t: float32
+  object: Shape
+  point: Tuple
+  eyeV: Tuple
+  normalV: Tuple
+  reflectV: Tuple
+  inside: bool
+  overPoint: Tuple
+  underPoint: Tuple
+  triangleUV: (float32 * float32) option
+  n1: float32
+  n2: float32
+}
+
 let prepareComputations (is: Intersection list) (hit: Intersection) r =
   let point = position hit.t r
-  let normalV = normalAt hit.object point
+  let tUV = triangleUV hit.object r
+  let normalV =
+    match tUV with
+    | Some uv -> normalAtUV hit.object point uv
+    | None -> normalAt hit.object point
   let eyeV = negate r.direction
   let inside = (dot normalV eyeV) < 0.f
   let normalV =
@@ -118,6 +129,7 @@ let prepareComputations (is: Intersection list) (hit: Intersection) r =
     inside = inside
     overPoint = point + b
     underPoint = point - b
+    triangleUV = tUV
     n1 = n1
     n2 = n2
   }

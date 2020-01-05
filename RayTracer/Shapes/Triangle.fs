@@ -13,30 +13,69 @@ type Triangle = {
   normal: Tuple
 }
 
+type SmoothTriangle = {
+  p1: Tuple
+  p2: Tuple
+  p3: Tuple
+  e1: Tuple
+  e2: Tuple
+  n1: Tuple
+  n2: Tuple
+  n3: Tuple
+}
+
 let make p1 p2 p3 =
   let e1 = p2 - p1
   let e2 = p3 - p1
   let normal = cross e1 e2 |> normalize
-  { p1 = p1; p2 = p2; p3 = p3; e1 = e1; e2 = e2; normal = normal }
+  { p1=p1; p2=p2; p3=p3; e1=e1; e2=e2; normal=normal }
 
-let bounds p =
+let smoothMake p1 p2 p3 n1 n2 n3 =
+  let e1 = p2 - p1
+  let e2 = p3 - p1
+  { p1=p1; p2=p2; p3=p3; e1=e1; e2=e2; n1=n1; n2=n2; n3=n3 }
+
+let boundsRaw p1 p2 p3 =
   let (xs, ys, zs) =
-    [p.p1; p.p2; p.p3] |> List.map toXYZ |> List.unzip3
+    [p1; p2; p3] |> List.map toXYZ |> List.unzip3
   ( (List.min xs, List.max xs),
     (List.min ys, List.max ys),
     (List.min zs, List.max zs) )
 
-let intersect t ray =
-  let dirCrossE2 = cross ray.direction t.e2
-  let determinant = dot dirCrossE2 t.e1
+let bounds (t: Triangle) =
+  boundsRaw t.p1 t.p2 t.p3
+
+let boundsSmooth (t: SmoothTriangle) =
+  boundsRaw t.p1 t.p2 t.p3
+
+let intersectRaw p1 e1 e2 ray =
+  let dirCrossE2 = cross ray.direction e2
+  let determinant = dot dirCrossE2 e1
   if (looseEq32 determinant 0.f) then []
   else
     let f = 1.f / determinant
-    let p1ToOrigin = ray.origin - t.p1
+    let p1ToOrigin = ray.origin - p1
     let u = f * dot p1ToOrigin dirCrossE2
     if (u < 0.f || u > 1.f) then []
     else
-      let originCrossE1 = cross p1ToOrigin t.e1
+      let originCrossE1 = cross p1ToOrigin e1
       let v = f * dot ray.direction originCrossE1
       if (v < 0.f || u + v > 1.f) then []
-      else [f * dot t.e2 originCrossE1]
+      else [(f * dot e2 originCrossE1, (u, v))]
+
+let intersect (t: Triangle) ray =
+  intersectRaw t.p1 t.e1 t.e2 ray |> List.map fst
+
+let intersectSmooth (t: SmoothTriangle) ray =
+  intersectRaw t.p1 t.e1 t.e2 ray |> List.map fst
+
+let localUV (t: Triangle) ray =
+  intersectRaw t.p1 t.e1 t.e2 ray |> List.map snd |> headToOption
+
+let localUVSmooth (t: SmoothTriangle) ray =
+  intersectRaw t.p1 t.e1 t.e2 ray |> List.map snd |> headToOption
+
+let normalAtSmooth t (u,v) =
+  u * t.n2 +
+  v * t.n3 +
+  (1.f - u - v) * t.n1

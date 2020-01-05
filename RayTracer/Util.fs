@@ -46,6 +46,8 @@ let replace index (newEl: 'a) (list: 'a [])=
   list.[index] <- newEl; list
 let listToOption = function
   | [] -> None | l -> Some l
+let headToOption = function
+ | [] -> None | l -> Some (List.head l)
 let optionToList = function
   | None -> [] | Some l -> l
 

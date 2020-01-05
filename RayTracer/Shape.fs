@@ -18,6 +18,7 @@ type ShapeType =
   | TestShape
   | Group of Group
   | Triangle of Triangle
+  | SmoothTriangle of SmoothTriangle
 
 [<StructuredFormatDisplay("{AsString}")>]
 type Shape =
@@ -48,7 +49,10 @@ let localIntersect ray (s: Shape) =
   | Cone -> Cone.intersect -1.f 0.f ray s
   | DoubleCone -> Cone.intersect -1.f 1.f ray s
   | TestShape -> [(0.f, s)]
-  | Triangle p -> Triangle.intersect p ray |> List.map (fun t -> (t, s))
+  | Triangle p ->
+    Triangle.intersect p ray |> List.map (fun t -> (t, s))
+  | SmoothTriangle t ->
+    Triangle.intersectSmooth t ray |> List.map (fun t -> (t, s))
   | Group g ->
     let (boundsX, boundsY, boundsZ) = g.bounds
     match Cube.intersectBox boundsX boundsY boundsZ ray s with
@@ -72,6 +76,7 @@ let uvAt p s =
   | Cube -> failwith "Missing UV implementation for Cube"
   | Group _ -> failwith "Missing UV implementation for Group"
   | Triangle _ -> failwith "Missing UV implementation for Poly"
+  | SmoothTriangle _ -> failwith "Missing UV implementation for Poly"
 
 let localNormal (s: Shape) p =
   match s.shape with
@@ -84,12 +89,23 @@ let localNormal (s: Shape) p =
   | DoubleCone -> Cone.normal -1.f 1.f p
   | Cube -> Cube.normal p
   | Triangle p -> p.normal
+  | SmoothTriangle t -> normalAtSmooth t (0.5f, 0.5f)
   | Group _ -> failwith "Missing localNormal implementation for Group"
+
+let localNormalUV s p uv =
+  match s.shape with
+  | SmoothTriangle t -> Triangle.normalAtSmooth t uv
+  | _ -> localNormal s p
 
 let normalAt shape =
   worldToObject shape
   >> localNormal shape
   >> normalToWorld shape
+
+let normalAtUV shape point uv =
+  let p = worldToObject shape point
+  localNormalUV shape p uv
+  |> normalToWorld shape
 
 let worldToObject (shape: Shape) (p: Tuple) =
   match shape.parent with
@@ -126,6 +142,9 @@ let boundsForShape s =
   | Cube -> cube
   | Triangle p ->
     let (x, y, z) = Triangle.bounds p
+    bounds x y z
+  | SmoothTriangle t ->
+    let (x, y, z) = Triangle.boundsSmooth t
     bounds x y z
   | Group g ->
     let (x, y, z) = g.bounds
@@ -179,9 +198,13 @@ let cylinder t = shape Cylinder t
 let cone t = shape Cone t
 let doubleCone t = shape DoubleCone t
 let openCylinder t = shape OpenCylinder t
-let triangle p1 p2 p3 t =
+let triangle p1 p2 p3 =
   let p = Triangle.make p1 p2 p3
-  shape (Triangle p) t
+  shape (Triangle p)
+
+let smoothTriangle p1 p2 p3 n1 n2 n3 =
+  let t = Triangle.smoothMake p1 p2 p3 n1 n2 n3
+  shape (SmoothTriangle t)
 
 let unitSphere () = defaultShape Sphere
 let sphereT t = shapeT Sphere t
