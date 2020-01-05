@@ -34,7 +34,7 @@ let left =
 
 let darkBlue = color 0. 0.1 0.2
 let pLight = pointLight (point -10. 10. -10.) (color 1. 0.9 0.7)
-let cLight = constantLight darkBlue true
+let cLight = constantLight darkBlue Add
 let cam =
   camera 400 200 (MathF.PI / 3.f)
   <| (point 0. 1.5 -5.) <| (point 0. 1. 0.)

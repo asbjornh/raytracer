@@ -151,7 +151,7 @@ let shadeHit world comps remaining =
     match light with
     | PointLight _ | SoftLight _ -> add acc colr
     | ConstantLight l ->
-      if l.additive then add acc colr else lighten acc colr
+      blend l.mode acc colr
   ) (color 0. 0. 0.)
 
 let colorAt world ray remaining =

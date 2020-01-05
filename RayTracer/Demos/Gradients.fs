@@ -66,7 +66,7 @@ let left =
 
 let constantColor = Color.scale 0.5 (color 0.4 0.4 1.)
 let pLight = pointLight (point -10. 10. -10.) (color 1. 0.9 0.7)
-let cLight = constantLight constantColor true
+let cLight = constantLight constantColor Add
 let cam =
   camera 400 200 (MathF.PI / 3.f)
   <| (point 0. 1.5 -5.) <| (point 0. 1. 0.)
