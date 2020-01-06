@@ -79,6 +79,7 @@ let black = color 0. 0. 0.
 let yellow = color 1. 0.9 0.
 let orange = color 0.95 0.6 0.1
 let darkGray = color 0.1 0.1 0.1
+let gray v = color v v v
 let pink = color 1. 0.3 0.9
 let cyan = color 0.2 1. 1.
 let gold = color 0.83 0.69 0.22
