@@ -34,7 +34,7 @@ let rotateAlign (fromV: Tuple) (toV: Tuple) =
   let f = normalize fromV
   let t = normalize toV
   let cosA = dot f t
-  if (f = t)
+  if (Tuple.equals f t)
     then identity
   else if (cosA = -1.f)
     then failwith "'from' and 'To' can't point in opposite directions"

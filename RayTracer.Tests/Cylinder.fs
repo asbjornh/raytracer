@@ -2,6 +2,8 @@ module CylinderTest
 
 open Expecto
 
+open TestUtils
+
 open Tuple
 open Shape
 open Ray
@@ -48,7 +50,7 @@ let tests =
       let test point normal =
         let cyl = defaultOpenCylinder ()
         let n = localNormal cyl point
-        Expect.equal n normal ""
+        expectTupleEq n normal
 
       test (point 1. 0. 0.) (vector 1. 0. 0.)
       test (point 0. 5. -1.) (vector 0. 0. -1.)
@@ -99,7 +101,7 @@ let tests =
         ]
         let cyl = cylinder t <| defaultMaterial ()
         let n = normalAt cyl point
-        Expect.equal n normal ""
+        expectTupleEq n normal
 
       test (point 0. 1. 0.) (vector 0. -1. 0.)
       test (point 0.5 1. 0.) (vector 0. -1. 0.)

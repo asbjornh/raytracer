@@ -3,6 +3,8 @@ module SphereTest
 open System
 open Expecto
 
+open TestUtils
+
 open Tuple
 open Shape
 open Ray
@@ -86,41 +88,41 @@ let tests =
     testCase "The normal on a sphere at a point on the x axis" <| fun _ ->
       let s = unitSphere ()
       let n = normalAt s (point 1. 0. 0.)
-      Expect.equal n (vector 1. 0. 0.) ""
+      expectTupleEq n (vector 1. 0. 0.)
 
     testCase "The normal on a sphere at a point on the y axis" <| fun _ ->
       let s = unitSphere ()
       let n = normalAt s (point 0. 1. 0.)
-      Expect.equal n (vector 0. 1. 0.) ""
+      expectTupleEq n (vector 0. 1. 0.)
 
     testCase "The normal on a sphere at a point on the z axis" <| fun _ ->
       let s = unitSphere ()
       let n = normalAt s (point 0. 0. 1.)
-      Expect.equal n (vector 0. 0. 1.) ""
+      expectTupleEq n (vector 0. 0. 1.)
 
     testCase "The normal on a sphere at a nonaxial point" <| fun _ ->
       let s = unitSphere ()
       let a = (sqrt 3.) / 3.
       let n = normalAt s (point a a a)
-      Expect.equal n (vector a a a) ""
+      expectTupleEq n (vector a a a)
 
     testCase "The normal is a normalized vector" <| fun _ ->
       let s = unitSphere ()
       let a = (sqrt 3.) / 3.
       let n = normalAt s (point a a a)
-      Expect.equal n (normalize n) ""
+      expectTupleEq n (normalize n)
 
     testCase "Computing the normal on a translated sphere" <| fun _ ->
       let s = sphere (translate 0.f 1.f 0.f) (defaultMaterial ())
       let n = normalAt s (point 0. 1.70711 -0.70711)
-      Expect.equal n (vector 0. 0.70711 -0.70711) ""
+      expectTupleEq n (vector 0. 0.70711 -0.70711)
 
     testCase "Computing the normal on a transformed sphere" <| fun _ ->
       let m =  (rotateZ (MathF.PI / 5.f)) * (scale 1.f 0.5f 1.f)
       let s = sphere m (defaultMaterial ())
       let a = (sqrt 2.) / 2.
       let n = normalAt s (point 0. a -a)
-      Expect.equal n (vector 0. 0.97014 -0.24254) ""
+      expectTupleEq n (vector 0. 0.97014 -0.24254)
 
     testCase "A sphere has a default material" <| fun _ ->
       let s = unitSphere ()

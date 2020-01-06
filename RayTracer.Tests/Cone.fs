@@ -2,6 +2,8 @@ module ConeTest
 
 open Expecto
 
+open TestUtils
+
 open Cone
 open Tuple
 open Shape
@@ -9,9 +11,6 @@ open Ray
 open Material
 open Transform
 open Util
-
-let diff actual expected =
-  Expect.defaultDiffPrinter expected actual
 
 [<Tests>]
 let tests =
@@ -56,7 +55,7 @@ let tests =
       let test point normal =
         let shape = defaultDoubleCone ()
         let n = localNormal shape point
-        Expect.equal n normal ""
+        expectTupleEq n normal
 
       test (point 0. 0. 0.) (vector 0. 0. 0.)
       test (point 1. 1. 1.) (vector 1. -(sqrt 2.) 1.)

@@ -2,6 +2,8 @@ module IntersectionTest
 
 open Expecto
 
+open TestUtils
+
 open Color
 open Intersection
 open Material
@@ -77,9 +79,9 @@ let tests =
       let comps = prepareComputations [i] i r
       Expect.equal comps.t i.t ""
       Expect.equal comps.object i.object ""
-      Expect.equal comps.point (point 0. 0. -1.) ""
-      Expect.equal comps.eyeV (vector 0. 0. -1.) ""
-      Expect.equal comps.normalV (vector 0. 0. -1.) ""
+      expectTupleEq comps.point (point 0. 0. -1.)
+      expectTupleEq comps.eyeV (vector 0. 0. -1.)
+      expectTupleEq comps.normalV (vector 0. 0. -1.)
 
     testCase "The hit, when an intersection occurs on the outside" <| fun _ ->
       let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
@@ -93,11 +95,11 @@ let tests =
       let shape = unitSphere ()
       let i = intersection 1.f shape
       let comps = prepareComputations [i] i r
-      Expect.equal comps.point (point 0. 0. 1.) ""
-      Expect.equal comps.eyeV (vector 0. 0. -1.) ""
+      expectTupleEq comps.point (point 0. 0. 1.)
+      expectTupleEq comps.eyeV (vector 0. 0. -1.)
       Expect.equal comps.inside true ""
       // normal would have been (0, 0, 1), but is inverted!​
-      Expect.equal comps.normalV (vector 0. 0. -1.) ""
+      expectTupleEq comps.normalV (vector 0. 0. -1.)
 
     testCase "The hit should offset the point" <| fun _ ->
       let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
@@ -113,7 +115,7 @@ let tests =
       let r = ray (point 0. 1. -1.) (vector 0. -a a) 
       let i = intersection (sqrt 2.f) shape
       let comps = prepareComputations [i] i r
-      Expect.equal comps.reflectV (vector 0. a a) ""
+      expectTupleEq comps.reflectV (vector 0. a a)
 
     testCase "Refraction 0" <| fun _ ->
       testRefraction 0 1.0f 1.5f

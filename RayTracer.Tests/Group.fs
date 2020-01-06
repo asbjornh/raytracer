@@ -3,6 +3,8 @@ module GroupTest
 open System
 open Expecto
 
+open TestUtils
+
 open Color
 open Tuple
 open Shape
@@ -10,9 +12,6 @@ open Ray
 open Material
 open Matrix
 open Transform
-
-let diff actual expected =
-  Expect.defaultDiffPrinter expected actual
 
 [<Tests>]
 let tests =
@@ -53,7 +52,7 @@ let tests =
       // NOTE: Reassign s to its corresponding element in the group to get the sphere with references to the parent groups
       let s = g1.children.[0].children.[0]
       let p = worldToObject s (point -2. 0. -10.)
-      Expect.equal p (point 0. 0. -1.) ""
+      expectTupleEq p (point 0. 0. -1.)
 
     testCase "Converting a normal from object to world space" <| fun _ ->
       let s = sphereT <| translate 5.f 0.f 0.f
@@ -64,7 +63,7 @@ let tests =
       // NOTE: Reassign s to its corresponding element in the group to get the sphere with references to the parent groups
       let s = g1.children.[0].children.[0]
       let n = normalToWorld s (vector a a a)
-      Expect.equal n (vector 0.28571 0.42857 -0.85714) ""
+      expectTupleEq n (vector 0.28571 0.42857 -0.85714)
 
     testCase "Finding the normal on a child object" <| fun _ ->
       let s = sphereT <| translate 5.f 0.f 0.f
@@ -74,5 +73,5 @@ let tests =
       // NOTE: Reassign s to its corresponding element in the group to get the sphere with references to the parent groups
       let s = g1.children.[0].children.[0]
       let n = normalAt s (point 1.7321 1.1547 -5.5774)
-      Expect.equal n (vector 0.2857 0.42854 -0.85716) ""
+      expectTupleEq n (vector 0.2857 0.42854 -0.85716)
   ]

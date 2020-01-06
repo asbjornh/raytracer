@@ -202,8 +202,8 @@ let occlusionAt pos normalV (samples: (Tuple * Tuple)[]) =
 
   samples
   |> Array.sumBy (fun (pointB, normalB) ->
-    if (pointB = pos) then 0.f
-    else if (pointB = pointInf || pos = pointInf) then 0.f
+    if (equals pointB pos) then 0.f
+    else if (equals pointB pointInf || equals pos pointInf) then 0.f
     else
       let d = magnitude (pointB - pos) * 800.f * ((abs pos.Z) + 1.f)
       let v = pointB - pos |> normalize

@@ -2,6 +2,8 @@ module PlaneTest
 
 open Expecto
 
+open TestUtils
+
 open Tuple
 open Shape
 open Ray
@@ -14,9 +16,9 @@ let tests =
       let n1 = localNormal p (point 0. 0. 0.)
       let n2 = localNormal p (point 10. 0. -10.)
       let n3 = localNormal p (point -5. 0. 150.)
-      Expect.equal n1 (vector 0. 1. 0.) ""
-      Expect.equal n2 (vector 0. 1. 0.) ""
-      Expect.equal n3 (vector 0. 1. 0.) ""
+      expectTupleEq n1 (vector 0. 1. 0.)
+      expectTupleEq n2 (vector 0. 1. 0.)
+      expectTupleEq n3 (vector 0. 1. 0.)
 
     testCase "Intersect with a ray parallel to the plane" <| fun _ ->
       let p = defaultPlane ()

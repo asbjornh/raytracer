@@ -3,6 +3,8 @@ module CameraTest
 open System
 open Expecto
 
+open TestUtils
+
 open Camera
 open Color
 open Matrix
@@ -12,10 +14,6 @@ open Util
 open World
 
 let testCam hSize vSize fov = cameraT hSize vSize fov identity
-let ExpectEqual actual expected =
-  Expect.isTrue
-  <| looseEq32 actual expected
-  <| Expect.defaultDiffPrinter expected actual
 
 [<Tests>]
 let tests =
@@ -32,23 +30,23 @@ let tests =
 
     testCase "The pixel size for a horizontal canvas" <| fun _ ->
       let c = testCam 200 125 (MathF.PI / 2.f)
-      ExpectEqual c.pixelSize 0.01f
+      expectFloatEq c.pixelSize 0.01f
 
     testCase "The pixel size for a vertical canvas" <| fun _ ->
       let c = testCam 125 200 (MathF.PI / 2.f)
-      ExpectEqual c.pixelSize 0.01f
+      expectFloatEq c.pixelSize 0.01f
 
     testCase "Constructing a ray through the center of the canvas" <| fun _ ->
       let c = testCam 201 101 (MathF.PI / 2.f)
       let r = rayForPixel 100 50 c
-      Expect.equal r.origin (point 0. 0. 0.) ""
-      Expect.equal r.direction (vector 0. 0. -1.) ""
+      expectTupleEq r.origin (point 0. 0. 0.)
+      expectTupleEq r.direction (vector 0. 0. -1.)
       
     testCase "Constructing a ray through a corner of the canvas" <| fun _ ->
       let c = testCam 201 101 (MathF.PI / 2.f)
       let r = rayForPixel 0 0 c
-      Expect.equal r.origin (point 0. 0. 0.) ""
-      Expect.equal r.direction (vector 0.66519 0.33259 -0.66851) ""
+      expectTupleEq r.origin (point 0. 0. 0.)
+      expectTupleEq r.direction (vector 0.66519 0.33259 -0.66851)
 
     testCase "Constructing a ray when the camera is transformed" <| fun _ ->
       let c =
@@ -56,8 +54,8 @@ let tests =
         <| (translate 0.f -2.f 5.f) * (rotateY (MathF.PI / 4.f))
       let r = rayForPixel 100 50 c
       let a = (sqrt 2.) / 2.
-      Expect.equal r.origin (point 0. 2. -5.) ""
-      Expect.equal r.direction (vector a 0. -a) ""
+      expectTupleEq r.origin (point 0. 2. -5.)
+      expectTupleEq r.direction (vector a 0. -a)
 
     testCase "Rendering a world with a camera" <| fun _ ->
       let w = defaultWorld ()

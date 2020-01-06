@@ -1,9 +1,12 @@
 module MatrixTest
 
 open Expecto
+
+open TestUtils
+
 open Matrix
 
-let diff actual expected = Expect.defaultDiffPrinter expected actual
+
 
 [<Tests>]
 
@@ -80,7 +83,7 @@ let tests =
 
     testCase "Multiplying the identity matrix by a tuple" <| fun _ ->
       let t = Tuple.Tuple (1.f, 2.f, 3.f, 4.f)
-      Expect.equal (multiplyT identity t) t ""
+      expectTupleEq (multiplyT identity t) t
 
     testCase "Transposing a matrix" <| fun _ ->
       let m = matrix [

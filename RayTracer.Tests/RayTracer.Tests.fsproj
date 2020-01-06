@@ -6,6 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="TestUtils.fs" />
+
     <Compile Include="Util.fs" />
     <Compile Include="Color.fs" />
     <Compile Include="Tuple.fs" />

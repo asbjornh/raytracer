@@ -2,6 +2,8 @@ module CubeTest
 
 open Expecto
 
+open TestUtils
+
 open Tuple
 open Shape
 open Ray
@@ -58,7 +60,7 @@ let tests =
       let test point normal txt =
         let c = unitCube ()
         let n = localNormal c point
-        Expect.equal n normal txt
+        expectTupleEq n normal
 
       test (point 1. 0.5 -0.8) (vector 1. 0. 0.) "First"
       test (point -1. -0.2 0.9) (vector -1. 0. 0.) "Second"

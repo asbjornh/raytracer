@@ -2,6 +2,8 @@ module ObjParserTest
 
 open Expecto
 
+open TestUtils
+
 open Matrix
 open ObjParser
 open Shape
@@ -31,10 +33,10 @@ let tests =
       ]
       let r = parse file
       Expect.equal (List.length r.vertices) 4 ""
-      Expect.equal r.vertices.[0] (point -1. 1. 0.) ""
-      Expect.equal r.vertices.[1] (point -1. 0.5 0.) ""
-      Expect.equal r.vertices.[2] (point 1. 0. 0.) ""
-      Expect.equal r.vertices.[3] (point 1. 1. 0.) ""
+      expectTupleEq r.vertices.[0] (point -1. 1. 0.)
+      expectTupleEq r.vertices.[1] (point -1. 0.5 0.)
+      expectTupleEq r.vertices.[2] (point 1. 0. 0.)
+      expectTupleEq r.vertices.[3] (point 1. 1. 0.)
 
     testCase "Parsing triangle faces" <| fun _ ->
       let file = [
@@ -52,12 +54,12 @@ let tests =
       let t1 = getTriangle g.children.[0]
       let t2 = getTriangle g.children.[1]
       Expect.equal (List.length r.vertices) 4 ""
-      Expect.equal t1.p1 r.vertices.[0] ""
-      Expect.equal t1.p2 r.vertices.[1] ""
-      Expect.equal t1.p3 r.vertices.[2] ""
-      Expect.equal t2.p1 r.vertices.[0] ""
-      Expect.equal t2.p2 r.vertices.[2] ""
-      Expect.equal t2.p3 r.vertices.[3] ""
+      expectTupleEq t1.p1 r.vertices.[0]
+      expectTupleEq t1.p2 r.vertices.[1]
+      expectTupleEq t1.p3 r.vertices.[2]
+      expectTupleEq t2.p1 r.vertices.[0]
+      expectTupleEq t2.p2 r.vertices.[2]
+      expectTupleEq t2.p3 r.vertices.[3]
 
     testCase "Parsing triangle faces with texture indices and weird whitespace" <| fun _ ->
       let file = [
@@ -79,12 +81,12 @@ let tests =
       let t2 = getTriangle g.children.[1]
       Expect.equal (List.length r.vertices) 4 ""
       Expect.equal (List.length r.objects) 1 ""
-      Expect.equal t1.p1 r.vertices.[0] ""
-      Expect.equal t1.p2 r.vertices.[1] ""
-      Expect.equal t1.p3 r.vertices.[2] ""
-      Expect.equal t2.p1 r.vertices.[0] ""
-      Expect.equal t2.p2 r.vertices.[2] ""
-      Expect.equal t2.p3 r.vertices.[3] ""
+      expectTupleEq t1.p1 r.vertices.[0]
+      expectTupleEq t1.p2 r.vertices.[1]
+      expectTupleEq t1.p3 r.vertices.[2]
+      expectTupleEq t2.p1 r.vertices.[0]
+      expectTupleEq t2.p2 r.vertices.[2]
+      expectTupleEq t2.p3 r.vertices.[3]
 
     testCase "Triangulating polygons" <| fun _ ->
       let file = [
@@ -105,15 +107,15 @@ let tests =
       let t3 = getTriangle poly.children.[2]
 
       Expect.equal (List.length r.vertices) 5 ""
-      Expect.equal t1.p1 r.vertices.[0] ""
-      Expect.equal t1.p2 r.vertices.[1] ""
-      Expect.equal t1.p3 r.vertices.[2] ""
-      Expect.equal t2.p1 r.vertices.[0] ""
-      Expect.equal t2.p2 r.vertices.[2] ""
-      Expect.equal t2.p3 r.vertices.[3] ""
-      Expect.equal t3.p1 r.vertices.[0] ""
-      Expect.equal t3.p2 r.vertices.[3] ""
-      Expect.equal t3.p3 r.vertices.[4] ""
+      expectTupleEq t1.p1 r.vertices.[0]
+      expectTupleEq t1.p2 r.vertices.[1]
+      expectTupleEq t1.p3 r.vertices.[2]
+      expectTupleEq t2.p1 r.vertices.[0]
+      expectTupleEq t2.p2 r.vertices.[2]
+      expectTupleEq t2.p3 r.vertices.[3]
+      expectTupleEq t3.p1 r.vertices.[0]
+      expectTupleEq t3.p2 r.vertices.[3]
+      expectTupleEq t3.p3 r.vertices.[4]
 
     testCase "Triangles in groups" <| fun _ ->
       let file = [
@@ -141,12 +143,12 @@ let tests =
       let t2 = g2.children.[0] |> getTriangle
 
       Expect.equal (List.length r.vertices) 4 ""
-      Expect.equal t1.p1 r.vertices.[0] ""
-      Expect.equal t1.p2 r.vertices.[1] ""
-      Expect.equal t1.p3 r.vertices.[2] ""
-      Expect.equal t2.p1 r.vertices.[0] ""
-      Expect.equal t2.p2 r.vertices.[2] ""
-      Expect.equal t2.p3 r.vertices.[3] ""
+      expectTupleEq t1.p1 r.vertices.[0]
+      expectTupleEq t1.p2 r.vertices.[1]
+      expectTupleEq t1.p3 r.vertices.[2]
+      expectTupleEq t2.p1 r.vertices.[0]
+      expectTupleEq t2.p2 r.vertices.[2]
+      expectTupleEq t2.p3 r.vertices.[3]
 
     testCase "Converting an OBJ file to a group" <| fun _ ->
       let o =
@@ -165,9 +167,9 @@ let tests =
       ]
       let r = parse file
       Expect.equal (List.length r.normals) 3 ""
-      Expect.equal r.normals.[0] (vector 0. 0. 1.) ""
-      Expect.equal r.normals.[1] (vector 0.707 0. -0.707) ""
-      Expect.equal r.normals.[2] (vector 1. 2. 3.) ""
+      expectTupleEq r.normals.[0] (vector 0. 0. 1.)
+      expectTupleEq r.normals.[1] (vector 0.707 0. -0.707)
+      expectTupleEq r.normals.[2] (vector 1. 2. 3.)
 
     testCase "Faces with normals" <| fun _ ->
       let file = [
@@ -187,11 +189,18 @@ let tests =
       let t1 = g.children.[0] |> getSmooth
       let t2 = g.children.[1] |> getSmooth
 
-      Expect.equal t1.p1 r.vertices.[0] "Vertex 1"
-      Expect.equal t1.p2 r.vertices.[1] "Vertex 2"
-      Expect.equal t1.p3 r.vertices.[2] "Vertex 3"
-      Expect.equal t1.n1 r.normals.[2] "Normal 1"
-      Expect.equal t1.n2 r.normals.[0] "Normal 2"
-      Expect.equal t1.n3 r.normals.[1] "Normal 3"
-      Expect.equal t2 t1 ""
+      expectTupleEqTxt t1.p1 r.vertices.[0] "Vertex 1"
+      expectTupleEqTxt t1.p2 r.vertices.[1] "Vertex 2"
+      expectTupleEqTxt t1.p3 r.vertices.[2] "Vertex 3"
+      expectTupleEqTxt t1.n1 r.normals.[2] "Normal 1"
+      expectTupleEqTxt t1.n2 r.normals.[0] "Normal 2"
+      expectTupleEqTxt t1.n3 r.normals.[1] "Normal 3"
+
+      // t1 should equal t2
+      expectTupleEqTxt t1.p1 t2.p1 ""
+      expectTupleEqTxt t1.p2 t2.p2 ""
+      expectTupleEqTxt t1.p3 t2.p3 ""
+      expectTupleEqTxt t1.n1 t2.n1 ""
+      expectTupleEqTxt t1.n2 t2.n2 ""
+      expectTupleEqTxt t1.n3 t2.n3 ""
   ]

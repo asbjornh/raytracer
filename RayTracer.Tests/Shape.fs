@@ -3,12 +3,11 @@ module ShapeTest
 open System
 open Expecto
 
+open TestUtils
+
 open Tuple
 open Shape
 open Transform
-
-let diff actual expected =
-  Expect.defaultDiffPrinter expected actual
 
 let testShape t = {
   transform = t
@@ -24,7 +23,7 @@ let tests =
     testCase "Computing the normal on a translated shape" <| fun _ ->
       let s = testShape (translateY 1.f)
       let n = normalAt s (point 0. 1.70711 -0.70711)
-      Expect.equal n (vector 0. 0.70711 -0.70711) ""
+      expectTupleEq n (vector 0. 0.70711 -0.70711)
 
     testCase "Computing the normal on a transformed shape" <| fun _ ->
       let s =
@@ -32,5 +31,5 @@ let tests =
         <| chain [scale 1.f 0.5f 1.f; rotateZ (MathF.PI / 5.f)]
       let a = (sqrt 2.) / 2.
       let n = normalAt s (point 0. a -a)
-      Expect.equal n (vector 0. 0.97014 -0.24254) ""
+      expectTupleEq n (vector 0. 0.97014 -0.24254)
   ]

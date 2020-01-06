@@ -2,6 +2,8 @@ module TriangleTest
 
 open Expecto
 
+open TestUtils
+
 open Tuple
 open Shape
 open Ray
@@ -27,9 +29,9 @@ let tests =
       let n1 = localNormal t <| point 0. 0.5 0.
       let n2 = localNormal t <| point -0.5 0.75 0.
       let n3 = localNormal t <| point 0.5 0.25 0.
-      Expect.equal n1 p.normal ""
-      Expect.equal n2 p.normal ""
-      Expect.equal n3 p.normal ""
+      expectTupleEq n1 p.normal
+      expectTupleEq n2 p.normal
+      expectTupleEq n3 p.normal
 
     testCase "Intersecting a ray parallel to the triangle" <| fun _ ->
       let p = defaultTriangle <| point 0. 1. 0. <| point -1. 0. 0. <| point 1. 0. 0.
@@ -76,5 +78,5 @@ let tests =
       let xs = Intersection.intersect r testSmoothTri
       let h = Intersection.hit xs |> Option.get
       let comps = Intersection.prepareComputations xs h r
-      Expect.equal comps.normalV (vector -0.5547 0.83205 0.) ""
+      expectTupleEq comps.normalV (vector -0.5547 0.83205 0.)
   ]

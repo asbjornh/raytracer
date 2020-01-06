@@ -2,6 +2,8 @@ module LightTest
 
 open Expecto
 
+open TestUtils
+
 open Color
 open Light
 open Tuple
@@ -14,6 +16,6 @@ let tests =
       let intensity = color 1. 1. 1.
       let position = point 0. 0. 0.
       let light = (pointLightFactory position intensity)
-      Expect.equal (light.position) position ""
+      expectTupleEq (light.position) position
       Expect.equal (light.intensity) intensity ""
   ]

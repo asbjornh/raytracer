@@ -25,33 +25,28 @@ type Tuple (a, b, c, d) =
     let (x2, y2, z2, w2) = b.Return
     (fn x1 x2, fn y1 y2, fn z1 z2, fn w1 w2)
 
-  static member Map2T fn a b =
-    Tuple.Map2 fn a b |> Tuple
-
   static member Fold fn init (a: Tuple) =
     let (x, y, z, w) = a.Return
     fn x init |> fn y |> fn z |> fn w
 
   static member (*) (a, b: Tuple) =
-    Tuple.MapT ((*) a) b
+    a * b.Vec |> fromVec
 
-  static member (/) (a, b: Tuple) =
-    Tuple.MapT (flip (/) a) b
+  static member (/) (a: float32, b: Tuple) =
+    b.Vec / a |> fromVec
 
   static member (+) (a: Tuple, b: Tuple) =
-    Tuple.Map2T (+) a b
+    a.Vec + b.Vec |> fromVec
 
   static member (-) (a: Tuple, b: Tuple) =
-    Tuple.Map2T (-) a b
+    a.Vec - b.Vec |> fromVec
 
-  override x.ToString () = x.Return.ToString ()
-  override x.GetHashCode () = x.Return.GetHashCode ()
-  override x.Equals a =
-    match a with
-      | :? Tuple as a ->
-        let (x, y, z, w) = Tuple.Map2 looseEq32 a x
-        x && y && z && w
-      | _ -> false
+  override x.ToString () =
+    sprintf "< %f %f %f >" x.X x.Y x.Z
+
+let equals a b =
+  let (x, y, z, w) = Tuple.Map2 looseEq32 a b
+  x && y && z && w
 
 let point32 x y z = Tuple (x, y, z, 1.0f)
 let point (x: float) (y: float) (z: float) =
