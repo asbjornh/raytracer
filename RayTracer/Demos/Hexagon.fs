@@ -47,6 +47,5 @@ let getParent (s: Shape) =
   | Some p -> p
   | None -> failwith "No parent"
 let run () =
-  renderProgress cam w
-  |> Canvas.toPpm
+  render defaultOptions cam w
   |> Util.writeFile ("../render/" + (Util.nowStr ()) + ".ppm")

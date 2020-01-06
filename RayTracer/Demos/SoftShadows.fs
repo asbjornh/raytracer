@@ -66,6 +66,5 @@ let objects =
 let w = world lights objects
 
 let run () =
-  renderProgress cam w
-  |> Canvas.toPpm
+  render defaultOptions cam w
   |> Util.writeFile ("../render/" + (Util.nowStr ()) + ".ppm")

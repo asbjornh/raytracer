@@ -57,77 +57,88 @@ let rayForPixel32 x y c =
 let rayForPixel x y c =
   rayForPixel32 (float32 x) (float32 y) c
 
+type RenderOptions = {
+  ambientOcclusion: bool
+  antiAliasing: bool
+  progressBar: bool
+}
 
-// TODO: Make render effects composable
-let renderCb c w fn =
-  (canvas c.hSize c.vSize) |> Canvas.render (fun x y ->
-    fn ()
-    rayForPixel x y c |> colorAt w <| 4
-  )
-let render c w = renderCb c w ignore
-
-let withProgressTxt len txt fn =
-  let bar = new ProgressBar (len, txt len, ConsoleColor.Yellow)
-  let result = fn (fun _ -> bar.Tick ())
-  printfn "\n" // To avoid CLI glitch after rendering
-  result
-
-let withProgress len fn =
-  let txt = sprintf "Rendering %i pixels"
-  withProgressTxt len txt fn
-
-let renderProgress (c: Camera) w =
-  withProgress <| c.hSize * c.vSize <| renderCb c w
-
-// TODO: Check occlusion at different distances
-let renderOcclusion c w =
-  let canv = canvas c.hSize c.vSize
-  let len = Canvas.length canv
-
-  let result = withProgress len <| (fun tick ->
-    canv |> Canvas.map (fun x y ->
-      tick ()
-      rayForPixel x y c |> colorAndDepthAt w <| 4
-    )
-  )
-
-  let pixels = map2d (fun (_, _, c) -> c) result
-  let depths = result |> map2d (fun (p, n, _) -> (p, n))
-  let occlusion =
-    withProgressTxt len <| sprintf "Processing %i pixels"
-    <| (fun tick ->
-      depths
-      |> mapi2d (fun x y (point, normalV) ->
-        tick ()
-        let samples = depths |> subGrid x y 5 |> Array.concat
-        let o = occlusionAt point normalV samples |> float |> (*) 0.5
-        add black (Color.scale o white)
-      )
-    )
-
-  map22d subtract pixels occlusion
+let defaultOptions = {
+  ambientOcclusion = false
+  antiAliasing = false
+  progressBar = true
+}
 
 let aaOffsets offset =
   [ (0.f, offset); (0.f, -offset)
     (offset, 0.f); (-offset, 0.f) ]
 
-let renderAA (c: Camera) w =
-  let canv = canvas c.hSize c.vSize
-  let len = 4 * Canvas.length canv
+let aaColor x y c w =
+  aaOffsets 0.35f
+  |> List.map (fun (dx, dy) ->
+    rayForPixel32 (float32 x + dx) (float32 y + dy) c
+    |> colorAt w <| 4
+  ) |> Color.average
 
-  withProgress len <| (fun tick ->
-    canv |> Canvas.render (fun x y ->
-      let (rs, gs, bs) =
-        aaOffsets 0.35f
-        |> List.map (fun (dx, dy) ->
-          tick ()
-          rayForPixel32 (float32 x + dx) (float32 y + dy) c
-          |> colorAt w <| 4
-          |> (fun c -> c.Return) )
-        |> List.unzip3
-      color <| List.average rs <| List.average gs <| List.average bs
+let withProgressTxt len txt fn =
+  let bar = new ProgressBar (len, txt, ConsoleColor.Yellow)
+  let result = fn (fun _ -> bar.Tick ())
+  printfn "\n" // To avoid CLI glitch after rendering
+  result
+
+let withProgress len fn =
+  let txt = sprintf "Rendering %i pixels" len
+  withProgressTxt len txt fn
+
+// TODO: Check occlusion at different distances
+let occlusionPass c w =
+  let canv = canvas c.hSize c.vSize
+  let len = Canvas.length canv
+
+  let depths =
+    withProgressTxt len "Rendering depth" <| (fun tick ->
+      canv |> Canvas.map (fun x y ->
+        tick ()
+        rayForPixel x y c |> depthAt w
+      )
+    )
+
+  withProgressTxt len "Calculating occlusion" <| (fun tick ->
+    depths
+    |> mapi2d (fun x y (point, normalV) ->
+      tick ()
+      let samples = depths |> subGrid x y 5 |> Array.concat
+      let o = occlusionAt point normalV samples |> float |> (*) 0.5
+      add black (Color.scale o white)
     )
   )
+
+let render o c w =
+  let canv = canvas c.hSize c.vSize
+  let len = Canvas.length canv
+
+  let tick =
+    match o.progressBar with
+    | true ->
+      let txt = sprintf "Rendering %i pixels" len
+      let bar = new ProgressBar (len, txt, ConsoleColor.Yellow)
+      (fun () -> bar.Tick ())
+    | false -> ignore
+
+  let colors = canv |> Canvas.render (fun x y ->
+    tick ()
+    if o.antiAliasing then aaColor x y c w
+    else rayForPixel x y c |> colorAt w <| 4
+  )
+
+  if o.progressBar then printfn "\n"
+
+  match o.ambientOcclusion with
+  | true ->
+    occlusionPass c w
+    |> map22d subtract colors
+  | false -> colors
+  |> Canvas.toPpm
 
 let renderSection (fromX, fromY) (toX, toY) c w =
   let len = (toX - fromX) * (toY - fromY)

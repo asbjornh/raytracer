@@ -186,17 +186,16 @@ let textureAt comps (mat: Textured) =
   let (u, v) = uvAt p comps.object
   Texture.colorAt u v mat.uScale mat.vScale mat.uOffset mat.vOffset mat.tex
 
-let colorAndDepthAt world ray remaining =
+let depthAt world ray =
   let is = intersect ray world
   match (is |> hit) with
   | Some i ->
     let comps = prepareComputations is i ray
-    let c = comps |> shadeHit world <| remaining
-    (comps.point, comps.normalV, c)
+    (comps.point, comps.normalV)
   | None ->
     let p = point infinity infinity infinity
     let n = vector 0. 0. 0.
-    (p, n, world.background)
+    (p, n)
 
 let occlusionAt pos normalV (samples: (Tuple * Tuple)[]) =
   let pointInf = point infinity infinity infinity

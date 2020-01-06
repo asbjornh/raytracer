@@ -67,6 +67,5 @@ let cam =
   <| (point 0. 0. -5.) <| (point 0. 0. 0.)
 
 let run () =
-  renderProgress cam w
-  |> Canvas.toPpm
+  render defaultOptions cam w
   |> Util.writeFile ("../render/" + (Util.nowStr ()) + ".ppm")

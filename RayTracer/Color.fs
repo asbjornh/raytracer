@@ -53,6 +53,10 @@ let screen a b =
 let mix a b amount =
   subtract b a |> scale amount |> add a
 
+let average colors =
+  let len = List.length colors |> float
+  colors |> List.reduce add |> divide len
+
 type BlendingMode =
   | Add
   | Subtract

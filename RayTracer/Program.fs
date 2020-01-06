@@ -2,5 +2,5 @@
 
 [<EntryPoint>]
 let main argv =
-  BackgroundScene.run ()
+  SphereScene.run ()
   0
