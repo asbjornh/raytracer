@@ -156,8 +156,8 @@ let shadeHitSingleLight light world comps remaining =
     | _ -> mix c mat.shadowColor s |> Constant
 
   | TestPattern ->
-    let (x, y, z) = patternPoint objectT identity comps.overPoint |> toXYZ
-    color (float x) (float y) (float z) |> Component
+    let p = patternPoint objectT identity comps.overPoint
+    color (float p.X) (float p.Y) (float p.Z) |> Component
 
 let shadeHit world comps remaining =
   world.lights

@@ -13,22 +13,14 @@ let vector32 x y z = Vector4 (x, y, z, 0.0f)
 let vector (x: float) (y: float) (z: float) =
   vector32 (float32 x) (float32 y) (float32 z)
 
-let equals a b =
-  let (x, y, z, w) = map2 looseEq32 a b
-  x && y && z && w
+let equals (a: Vector4) (b: Vector4) =
+  looseEq32 a.X b.X &&
+  looseEq32 a.Y b.Y &&
+  looseEq32 a.Z b.Z &&
+  looseEq32 a.W b.W
 
-let mapTo4 fn a =
-  let (x, y, z, w) = a |> to4
-  (fn x, fn y, fn z, fn w)
-
-let map fn a =
-  let (x, y, z, w) = a |> to4
-  Vector4 (fn x, fn y, fn z, fn w)
-
-let map2 fn a b =
-  let (x1, y1, z1, w1) = a |> to4
-  let (x2, y2, z2, w2) = b |> to4
-  (fn x1 x2, fn y1 y2, fn z1 z2, fn w1 w2)
+let map fn (a: Vector4) =
+  Vector4 (fn a.X, fn a.Y, fn a.Z, fn a.W)
 
 let fold fn init a =
   let l = a |> toList
@@ -41,9 +33,7 @@ let magnitude (a: Vector4) =
 let normalize a = Vector4.Normalize a
 
 let cross (a: Vector4) (b: Vector4) =
-  let a3 = a |> toVec3
-  let b3 = b |> toVec3
-  let v = Vector3.Cross (a3, b3)
+  let v = Vector3.Cross (toVec3 a, toVec3 b)
   vector32 v.X v.Y v.Z
 
 let reflect (normal: Vector4) (v: Vector4) =
@@ -51,20 +41,15 @@ let reflect (normal: Vector4) (v: Vector4) =
 let angle a b =
   (dot a b) / (magnitude a * magnitude b) |> MathF.Acos
 
-let toVector (a: Vector4) =
-  let (x, y, z) = a |> toXYZ
-  vector32 x y z
-
-let toList (a: Vector4) =
-  let (x, y, z, w) = a |> to4
-  [x; y; z; w]
-
+let toVector (a: Vector4) = vector32 a.X a.Y a.Z
+let toList (a: Vector4) = [a.X; a.Y; a.Z; a.W]
 let to4 (a: Vector4) = (a.X, a.Y, a.Z, a.W)
 let toXYZ (a: Vector4) = (a.X, a.Y, a.Z)
-let toVec3 t = t |> toXYZ |> Vector3
-let toPixel a =
-  a |> mapTo4 (MathF.Round >> int)
-  |> fun (x, y, _, _) -> (x, y)
+let toVec3 a = Vector3 (a.X, a.Y, a.Z)
+let toPixel (a: Vector4) =
+  let (x, y) = (a.X, a.Y)
+  let fn = MathF.Round >> int
+  (fn x, fn y)
 
 let keyframe (start: Vector4) (finish: Vector4) frames =
   let diff = finish - start

@@ -63,7 +63,7 @@ let rotateAlign (fromV: Vector4) (toV: Vector4) =
 let chain = List.reduce multiply
 
 let viewTransform (from: Vector4) (To: Vector4) up =
-  let f = from |> toXYZ |> Vector3
-  let t = To |> toXYZ |> Vector3
-  let u = up |> toXYZ |> Vector3
+  let f = from |> toVec3
+  let t = To |> toVec3
+  let u = up |> toVec3
   Matrix4x4.CreateLookAt (f, t, u)
