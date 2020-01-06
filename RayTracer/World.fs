@@ -202,8 +202,8 @@ let occlusionAt pos normalV (samples: (Vector4 * Vector4)[]) =
 
   samples
   |> Array.sumBy (fun (pointB, normalB) ->
-    if (equals pointB pos) then 0.f
-    else if (equals pointB pointInf || equals pos pointInf) then 0.f
+    if (fastEquals pointB pos) then 0.f
+    else if (fastEquals pointB pointInf || fastEquals pos pointInf) then 0.f
     else
       let d = Vector4.Distance (pointB, pos) * 800.f * ((abs pos.Z) + 1.f)
       let v = pointB - pos |> normalize

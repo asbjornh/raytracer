@@ -19,6 +19,12 @@ let equals (a: Vector4) (b: Vector4) =
   looseEq32 a.Z b.Z &&
   looseEq32 a.W b.W
 
+let fastEquals a b =
+  // NOTE: this has slightly increased performance compared to 'equals' but is probably less precise.
+  // sqrt (e^2 + e^2 + e^2 + e^2) = 2e
+  Vector4.Distance (a, b) < 2.f * epsilon32
+  
+
 let map fn (a: Vector4) =
   Vector4 (fn a.X, fn a.Y, fn a.Z, fn a.W)
 

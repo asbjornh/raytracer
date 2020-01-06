@@ -66,12 +66,12 @@ let filteri fn m =
 let map2d fn arr =
   arr |> Array.map (Array.map fn)
 
-let mapi2d fn =
-  Array.mapi (fun y row ->
+let map2di fn =
+  Array.Parallel.mapi (fun y row ->
     row |> Array.mapi (fun x col -> fn x y col)
   )
 
-let map22d fn arr1 arr2 =
+let map2d2 fn arr1 arr2 =
   Array.map2 (Array.map2 fn) arr1 arr2
 
 let get2d x y (arr: 'a [][]) =

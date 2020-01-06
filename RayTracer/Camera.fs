@@ -94,7 +94,7 @@ let renderColors o c w =
   match o.ambientOcclusion with
   | true ->
     occlusionPass c w
-    |> map22d subtract colors
+    |> map2d2 subtract colors
   | false -> colors
 
 let rayForPixel32 x y c =
@@ -128,7 +128,6 @@ let withProgress len txt fn =
   result
 
 // TODO: Check occlusion at different distances
-// TODO: Check performance
 let occlusionPass c w =
   let canv = canvas c.hSize c.vSize
   let len = Canvas.length canv
@@ -143,7 +142,7 @@ let occlusionPass c w =
 
   withProgress len "Calculating occlusion" <| (fun tick ->
     depths
-    |> mapi2d (fun x y (point, normalV) ->
+    |> map2di (fun x y (point, normalV) ->
       tick ()
       let samples = depths |> subGrid x y 5 |> Array.concat
       let o = occlusionAt point normalV samples |> float |> (*) 0.5
