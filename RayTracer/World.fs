@@ -46,9 +46,9 @@ let intersectObjects ray (objects: Shape list) =
 let intersect (ray: Ray) (w: World) =
   w.objects |> intersectObjects ray
 
-let isInShadow (pos: Tuple) objects (lightPos: Tuple) =
+let isInShadow pos objects lightPos =
   let v = lightPos - pos
-  let distance = Vector4.Distance (lightPos.Vec, pos.Vec)
+  let distance = Vector4.Distance (lightPos, pos)
   let direction = normalize v
   let r = ray pos direction
   let intersections = intersectObjects r objects
@@ -197,7 +197,7 @@ let depthAt world ray =
     let n = vector 0. 0. 0.
     (p, n)
 
-let occlusionAt pos normalV (samples: (Tuple * Tuple)[]) =
+let occlusionAt pos normalV (samples: (Vector4 * Vector4)[]) =
   let pointInf = point infinity infinity infinity
 
   samples
@@ -205,7 +205,7 @@ let occlusionAt pos normalV (samples: (Tuple * Tuple)[]) =
     if (equals pointB pos) then 0.f
     else if (equals pointB pointInf || equals pos pointInf) then 0.f
     else
-      let d = magnitude (pointB - pos) * 800.f * ((abs pos.Z) + 1.f)
+      let d = Vector4.Distance (pointB, pos) * 800.f * ((abs pos.Z) + 1.f)
       let v = pointB - pos |> normalize
       (max 0.f (dot normalV v)) * (1.f / (1.f + d))
   )

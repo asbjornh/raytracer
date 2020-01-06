@@ -1,6 +1,7 @@
 module rec Pattern
 
 open System
+open System.Numerics
 
 open Matrix
 open Tuple
@@ -15,7 +16,7 @@ let patternPoint objectT patternT point =
   multiplyT (inverse objectT) point
   |> multiplyT (inverse patternT)
 
-let patternAt a b (pattern: PatternType) (point: Tuple) =
+let patternAt a b (pattern: PatternType) (point: Vector4) =
   match pattern with
   | Stripes ->
     if ((MathF.Floor point.X) % 2.f = 0.f)
@@ -29,7 +30,7 @@ let patternAt a b (pattern: PatternType) (point: Tuple) =
     then a else b
 
 
-let gradientAt a b sharpness (point: Tuple) =
+let gradientAt a b sharpness (point: Vector4) =
   let amount = point.X - MathF.Floor point.X |> float
   if (sharpness = 0.) then
     Color.mix a b amount

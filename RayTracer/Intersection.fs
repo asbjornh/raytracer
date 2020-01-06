@@ -71,9 +71,9 @@ let refractiveIndexes (is: Intersection list) (hit: Intersection) =
 
 
 // Bias for fixing shadow and pattern acne
-let bias (origin: Tuple) (point: Tuple) objectT normal =
+let bias origin point objectT normal =
   // NOTE: Scaling epsilon by the distance to origin fixes some shadow acne
-  let d = Vector4.Distance (origin.Vec, point.Vec)
+  let d = Vector4.Distance (origin, point)
   let (_, scale, _, _) = Matrix4x4.Decompose objectT
   let minScale = List.min [scale.X; scale.Y; scale.Z]
   let t = uniformScale (1.f / min 1.f minScale)
@@ -89,13 +89,13 @@ let rec resolveMaterial s =
 type Computation = {
   t: float32
   object: Shape
-  point: Tuple
-  eyeV: Tuple
-  normalV: Tuple
-  reflectV: Tuple
+  point: Vector4
+  eyeV: Vector4
+  normalV: Vector4
+  reflectV: Vector4
   inside: bool
-  overPoint: Tuple
-  underPoint: Tuple
+  overPoint: Vector4
+  underPoint: Vector4
   n1: float32
   n2: float32
 }

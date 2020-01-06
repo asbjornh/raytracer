@@ -1,17 +1,18 @@
 module Ray
 
-open Tuple
+open System.Numerics
+
 open Matrix
 
 type Ray = {
-  origin: Tuple;
-  direction: Tuple;
+  origin: Vector4
+  direction: Vector4
 }
 
 let ray origin direction =
   { origin = origin; direction = direction; }
 
-let position t ray =
+let position (t: float32) ray =
   ray.origin + t * ray.direction
 
 let transform m r =

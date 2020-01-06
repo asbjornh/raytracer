@@ -4,7 +4,7 @@ open Ray
 open Util
 open Tuple
 
-let uv (p: Tuple) =
+let uv (p: System.Numerics.Vector4) =
   let scale = 1.f / 10.f
   (p.X * scale, p.Z * scale)
 

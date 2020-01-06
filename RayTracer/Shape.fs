@@ -1,6 +1,7 @@
 module rec Shape
 
 open System.Numerics
+
 open Matrix
 open Material
 open Triangle
@@ -109,13 +110,13 @@ let normalAtUV shape point uv =
   localNormalUV shape p uv
   |> normalToWorld shape
 
-let worldToObject (shape: Shape) (p: Tuple) =
+let worldToObject (shape: Shape) p =
   match shape.parent with
   | Some parent -> worldToObject parent p
   | None -> p
   |> multiplyT (inverse shape.transform)
 
-let normalToWorld (shape: Shape) (v: Tuple) =
+let normalToWorld (shape: Shape) v =
   let t = shape.transform |> inverse |> transpose
   let n1 = multiplyT t v |> toVector |> normalize
   match shape.parent with
@@ -238,13 +239,13 @@ let maybeGroup name =
   | [single] -> single
   | many -> namedGroupT name many identity
 
-let polys (vs: Tuple list) indices =
+let polys (vs: Vector4 list) indices =
   indices
   |> List.map (fun i -> vs.[i])
   |> fanTriangulation defaultTriangle
   |> maybeGroup "Poly"
 
-let smoothPolys (vs: Tuple list) (ns: Tuple list) indices =
+let smoothPolys (vs: Vector4 list) (ns: Vector4 list) indices =
   indices
   |> fanTriangulation (fun (p1, n1) (p2, n2) (p3, n3) ->
       smoothTriangle vs.[p1] vs.[p2] vs.[p3] ns.[n1] ns.[n2] ns.[n3]

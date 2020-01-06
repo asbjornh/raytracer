@@ -5,8 +5,8 @@ open System
 open Ray
 open Tuple
 
-let uv (p: Tuple) =
-  let d = p - (point 0. 0. 0.) |> normalize
+let uv (p: System.Numerics.Vector4) =
+  let d = p - (point32 0.f 0.f 0.f) |> normalize
   let u = 0.5f + MathF.Atan2 (d.Z, d.X) / (2.f * MathF.PI)
   let v = 0.5f - MathF.Asin d.Y / MathF.PI
   (u, v)

@@ -1,5 +1,7 @@
 module rec ObjParser
 
+open System.Numerics
+
 open FParsec
 
 open Matrix
@@ -23,8 +25,8 @@ let addChild g c =
 let i = identity
 
 type ParseResult = {
-  vertices: Tuple list
-  normals: Tuple list
+  vertices: Vector4 list
+  normals: Vector4 list
   objects: Shape list
 }
 let parse (t: string list) =

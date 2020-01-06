@@ -1,6 +1,7 @@
 module MatrixTest
 
 open Expecto
+open System.Numerics
 
 open TestUtils
 
@@ -82,7 +83,7 @@ let tests =
       Expect.equal (m * identity) m ""
 
     testCase "Multiplying the identity matrix by a tuple" <| fun _ ->
-      let t = Tuple.Tuple (1.f, 2.f, 3.f, 4.f)
+      let t = Vector4 (1.f, 2.f, 3.f, 4.f)
       expectTupleEq (multiplyT identity t) t
 
     testCase "Transposing a matrix" <| fun _ ->

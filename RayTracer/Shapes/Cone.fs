@@ -4,7 +4,7 @@ open Ray
 open Tuple
 open Util
 
-let normal minY maxY (p: Tuple) =
+let normal minY maxY (p: System.Numerics.Vector4) =
   let dist = p.X ** 2.f + p.Z ** 2.f
   if (dist < 1.f && p.Y >= maxY - epsilon32)
   then vector 0. 1. 0.

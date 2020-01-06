@@ -1,11 +1,12 @@
 module Projectile
 
 open System
+open System.Numerics
 open Tuple
 open Util
 
-type Projectile = Tuple * Tuple
-type Environment = Tuple * Tuple
+type Projectile = Vector4 * Vector4
+type Environment = Vector4 * Vector4
 
 let tick (e: Environment) (p: Projectile) =
   let (gravity, wind) = e

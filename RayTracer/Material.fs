@@ -95,9 +95,9 @@ type Phong = {
 
 let phongLighting
   (light: PointLight)
-  (pos: Tuple)
-  (eyeV: Tuple)
-  (normalV: Tuple)
+  (pos: Vector4)
+  (eyeV: Vector4)
+  (normalV: Vector4)
   (mat: Phong)
   (shadowAmount: float) =
     let effectiveColor = multiply mat.color light.intensity

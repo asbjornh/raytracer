@@ -22,14 +22,14 @@ let rotateZ rad = Matrix4x4.CreateRotationZ rad
 
 
 
-let lookAt (position: Tuple) (target: Tuple) (up: Tuple) =
+let lookAt (position: Vector4) (target: Vector4) (up: Vector4) =
   let t =
     Matrix4x4.CreateLookAt
     <| (position |> toVec3, target |> toVec3, up |> toVec3)
   let (_, _, r, _) = Matrix4x4.Decompose t
   Matrix4x4.CreateFromQuaternion r
 
-let rotateAlign (fromV: Tuple) (toV: Tuple) =
+let rotateAlign (fromV: Vector4) (toV: Vector4) =
   // NOTE: https://gist.github.com/kevinmoran/b45980723e53edeb8a5a43c49f134724
   let f = normalize fromV
   let t = normalize toV
@@ -62,7 +62,7 @@ let rotateAlign (fromV: Tuple) (toV: Tuple) =
 
 let chain = List.reduce multiply
 
-let viewTransform (from: Tuple) (To: Tuple) up =
+let viewTransform (from: Vector4) (To: Vector4) up =
   let f = from |> toXYZ |> Vector3
   let t = To |> toXYZ |> Vector3
   let u = up |> toXYZ |> Vector3

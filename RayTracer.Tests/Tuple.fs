@@ -15,16 +15,16 @@ let tests =
   testList "Tests for Tuple" [
     testCase "point() creates tuples with w=1" <| fun _ ->
       let p = point 4.0 -4.0 3.0 
-      expectTupleEq p (Tuple (4.0f, -4.0f, 3.0f, 1.0f))
+      expectTupleEq p (Vector4 (4.0f, -4.0f, 3.0f, 1.0f))
 
     testCase "vector() creates tuples with w=0" <| fun _ ->
       let v = vector 4.0 -4.0 3.0
-      expectTupleEq v (Tuple (4.0f, -4.0f, 3.0f, 0.0f) )
+      expectTupleEq v (Vector4 (4.0f, -4.0f, 3.0f, 0.0f) )
 
     testCase "Adding two tuples" <| fun _ ->
-      let a = Tuple (3.0f, -2.0f, 5.0f, 1.0f)
-      let b = Tuple (-2.0f, 3.0f, 1.0f, 0.0f)
-      expectTupleEq (a + b) (Tuple (1.0f, 1.0f, 6.0f, 1.0f))
+      let a = Vector4 (3.0f, -2.0f, 5.0f, 1.0f)
+      let b = Vector4 (-2.0f, 3.0f, 1.0f, 0.0f)
+      expectTupleEq (a + b) (Vector4 (1.0f, 1.0f, 6.0f, 1.0f))
 
     testCase "Subtracting two points" <| fun _ ->
       let a = point 3.0 2.0 1.0
@@ -47,26 +47,26 @@ let tests =
       expectTupleEq (zero - a) (vector -1.0 2.0 -3.0)
 
     testCase "Negating a tuple" <| fun _ ->
-      let a = Tuple (1.0f, -2.0f, 3.0f, -4.0f)
-      expectTupleEq (negate a) (Tuple (-1.0f, 2.0f, -3.0f, 4.0f))
+      let a = Vector4 (1.0f, -2.0f, 3.0f, -4.0f)
+      expectTupleEq (negate a) (Vector4 (-1.0f, 2.0f, -3.0f, 4.0f))
 
     testCase "Multiplying a tuple by a scalar" <| fun _ ->
-      let a = Tuple (1.0f, -2.0f, 3.0f, -4.0f)
-      expectTupleEq (3.5f * a) (Tuple (3.5f, -7.0f, 10.5f, -14.0f) )
+      let a = Vector4 (1.0f, -2.0f, 3.0f, -4.0f)
+      expectTupleEq (3.5f * a) (Vector4 (3.5f, -7.0f, 10.5f, -14.0f) )
 
     testCase "Multiplying a tuple by a fraction" <| fun _ ->
-      let a = Tuple (1.0f, -2.0f, 3.0f, -4.0f)
-      expectTupleEq (0.5f * a) (Tuple (0.5f, -1.0f, 1.5f, -2.0f))
+      let a = Vector4 (1.0f, -2.0f, 3.0f, -4.0f)
+      expectTupleEq (0.5f * a) (Vector4 (0.5f, -1.0f, 1.5f, -2.0f))
 
     testCase "Dividing a tuple by a scalar" <| fun _ ->
-      let a = Tuple (1.0f, -2.0f, 3.0f, -4.0f)
-      expectTupleEq (2.0f / a) (Tuple (0.5f, -1.0f, 1.5f, -2.0f))
+      let a = Vector4 (1.0f, -2.0f, 3.0f, -4.0f)
+      expectTupleEq (a / 2.0f) (Vector4 (0.5f, -1.0f, 1.5f, -2.0f))
 
     testCase "Magnitude is the same as distance between the base and tip of a vector" <| fun _ ->
       let a = point32 1.f 0.f 0.f
       let b = point32 0.f 1.f 1.f
       let m = magnitude (a - b)
-      let v = Vector4.Distance (a.Vec, b.Vec)
+      let v = Vector4.Distance (a, b)
       Expect.equal m v ""
 
     testCase "Computing the magnitude of vector(1, 0, 0)" <| fun _ ->

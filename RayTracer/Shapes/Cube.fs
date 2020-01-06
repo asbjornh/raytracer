@@ -4,7 +4,7 @@ open Ray
 open Tuple
 
 let normal p =
-  let (x, y, z, _) = Tuple.Map abs p
+  let (x, y, z, _) = mapTo4 abs p
   let maxC = List.max [x; y; z]
   if maxC = x then vector32 p.X 0.f 0.f
   else if maxC = y then vector32 0.f p.Y 0.f

@@ -5,96 +5,73 @@ open System.Numerics
 
 open Util
 
-type Tuple (a, b, c, d) =
-  member x.Vec = Vector4 (a, b, c, d)
-  member x.X = x.Vec.X
-  member x.Y = x.Vec.Y
-  member x.Z = x.Vec.Z
-  member x.W = x.Vec.W
-  member x.Return = (x.Vec.X, x.Vec.Y, x.Vec.Z, x.Vec.W)
-
-  static member Map fn (a: Tuple) =
-    let (x, y, z, w) = a.Return
-    (fn x, fn y, fn z, fn w)
-    
-  static member MapT fn (a: Tuple) =
-    Tuple.Map fn a |> Tuple
-
-  static member Map2 fn (a: Tuple) (b: Tuple) =
-    let (x1, y1, z1, w1) = a.Return
-    let (x2, y2, z2, w2) = b.Return
-    (fn x1 x2, fn y1 y2, fn z1 z2, fn w1 w2)
-
-  static member Fold fn init (a: Tuple) =
-    let (x, y, z, w) = a.Return
-    fn x init |> fn y |> fn z |> fn w
-
-  static member (*) (a, b: Tuple) =
-    a * b.Vec |> fromVec
-
-  static member (/) (a: float32, b: Tuple) =
-    b.Vec / a |> fromVec
-
-  static member (+) (a: Tuple, b: Tuple) =
-    a.Vec + b.Vec |> fromVec
-
-  static member (-) (a: Tuple, b: Tuple) =
-    a.Vec - b.Vec |> fromVec
-
-  override x.ToString () =
-    sprintf "< %f %f %f >" x.X x.Y x.Z
-
-let equals a b =
-  let (x, y, z, w) = Tuple.Map2 looseEq32 a b
-  x && y && z && w
-
-let point32 x y z = Tuple (x, y, z, 1.0f)
+let point32 x y z = Vector4 (x, y, z, 1.0f)
 let point (x: float) (y: float) (z: float) =
   point32 (float32 x) (float32 y) (float32 z)
-let vector32 x y z = Tuple (x, y, z, 0.0f)
+
+let vector32 x y z = Vector4 (x, y, z, 0.0f)
 let vector (x: float) (y: float) (z: float) =
   vector32 (float32 x) (float32 y) (float32 z)
-let fromVec (a: Vector4) =
-  Tuple (a.X, a.Y, a.Z, a.W)
 
-let dot (a: Tuple) (b: Tuple) =
-  Vector4.Dot (a.Vec, b.Vec)
-let negate (a: Tuple) = Vector4.Negate a.Vec |> fromVec
-let magnitude (a: Tuple) =
-  Tuple.MapT (fun x -> x * x) a |> Tuple.Fold (+) 0.f |> sqrt
-let normalize (a: Tuple) = Vector4.Normalize a.Vec |> fromVec
+let equals a b =
+  let (x, y, z, w) = map2 looseEq32 a b
+  x && y && z && w
 
-let cross (a: Tuple) (b: Tuple) =
-  let a3 = a |> toXYZ |> Vector3
-  let b3 = b |> toXYZ |> Vector3
+let mapTo4 fn a =
+  let (x, y, z, w) = a |> to4
+  (fn x, fn y, fn z, fn w)
+
+let map fn a =
+  let (x, y, z, w) = a |> to4
+  Vector4 (fn x, fn y, fn z, fn w)
+
+let map2 fn a b =
+  let (x1, y1, z1, w1) = a |> to4
+  let (x2, y2, z2, w2) = b |> to4
+  (fn x1 x2, fn y1 y2, fn z1 z2, fn w1 w2)
+
+let fold fn init a =
+  let l = a |> toList
+  List.fold fn init l
+
+let dot (a) (b) = Vector4.Dot (a, b)
+let negate a = Vector4.Negate a
+let magnitude (a: Vector4) =
+  a |> map (fun x -> x * x) |> fold (+) 0.f |> sqrt
+let normalize a = Vector4.Normalize a
+
+let cross (a: Vector4) (b: Vector4) =
+  let a3 = a |> toVec3
+  let b3 = b |> toVec3
   let v = Vector3.Cross (a3, b3)
-  Tuple (v.X, v.Y, v.Z, 0.0f)
+  vector32 v.X v.Y v.Z
 
-let reflect (normal: Tuple) (v: Tuple) =
+let reflect (normal: Vector4) (v: Vector4) =
   v - (dot v normal * 2.f * normal)
 let angle a b =
   (dot a b) / (magnitude a * magnitude b) |> MathF.Acos
 
-let toVector (a: Tuple) =
-  let (x, y, z, _) = a.Return
-  Tuple (x, y, z, 0.f)
-let toArray (a: Tuple) =
-  let (x, y, z, w) = a.Return
-  [| [|x|]; [|y|]; [|z|]; [|w|]; |]
+let toVector (a: Vector4) =
+  let (x, y, z) = a |> toXYZ
+  vector32 x y z
 
-let toXYZ (a: Tuple) : (float32 * float32 * float32) =
-  (a.Vec.X, a.Vec.Y, a.Vec.Z)
+let toList (a: Vector4) =
+  let (x, y, z, w) = a |> to4
+  [x; y; z; w]
+
+let to4 (a: Vector4) = (a.X, a.Y, a.Z, a.W)
+let toXYZ (a: Vector4) = (a.X, a.Y, a.Z)
 let toVec3 t = t |> toXYZ |> Vector3
 let toPixel a =
-  a |> Tuple.Map (MathF.Round >> int)
+  a |> mapTo4 (MathF.Round >> int)
   |> fun (x, y, _, _) -> (x, y)
 
-let keyframe (start: Tuple) (finish: Tuple) frames =
+let keyframe (start: Vector4) (finish: Vector4) frames =
   let diff = finish - start
   [0..frames-1]
   |> List.map (fun i ->
     let progress = float32 i / float32 (frames - 1)
-    let (a1, b1, c1, d1) = start.Return
-    let (a2, b2, c2, _) = diff.Return
-    Tuple (a1 + a2 * progress, b1 + b2 * progress, c1 + c2 * progress, d1)
+    let (a1, b1, c1, d1) = start |> to4
+    let (a2, b2, c2, _) = diff |> to4
+    Vector4 (a1 + a2 * progress, b1 + b2 * progress, c1 + c2 * progress, d1)
   )

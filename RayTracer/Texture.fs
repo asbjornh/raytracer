@@ -40,7 +40,7 @@ let colorAt (u: float32) (v: float32) uScale vScale uOffset vOffset (cs: Color l
   let y = Math.Floor (v2 * float h) |> int |> wrapAround (h - 1)
   cs.[y].[x]
 
-let mappedNormalAt (normalV: Tuple) (color: Color) =
+let mappedNormalAt (normalV: Vector4) (color: Color) =
   let rotation = rotateAlign (vector 0. 1. 0.) normalV
   let t = multiplyT rotation (vector 0. 0. -1.)
   let b = multiplyT rotation (vector -1. 0. 0.)

@@ -7,7 +7,7 @@ open Util
 let cylMin = -1.f
 let cylMax = 1.f
 
-let normal (p: Tuple) =
+let normal (p: System.Numerics.Vector4) =
   let dist = p.X ** 2.f + p.Z ** 2.f
   if (dist < 1.f && p.Y >= cylMax - epsilon32)
   then vector32 0.f 1.f 0.f

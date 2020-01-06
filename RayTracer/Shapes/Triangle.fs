@@ -1,27 +1,29 @@
 module Triangle
 
+open System.Numerics
+
 open Ray
 open Tuple
 open Util
 
 type Triangle = {
-  p1: Tuple
-  p2: Tuple
-  p3: Tuple
-  e1: Tuple
-  e2: Tuple
-  normal: Tuple
+  p1: Vector4
+  p2: Vector4
+  p3: Vector4
+  e1: Vector4
+  e2: Vector4
+  normal: Vector4
 }
 
 type SmoothTriangle = {
-  p1: Tuple
-  p2: Tuple
-  p3: Tuple
-  e1: Tuple
-  e2: Tuple
-  n1: Tuple
-  n2: Tuple
-  n3: Tuple
+  p1: Vector4
+  p2: Vector4
+  p3: Vector4
+  e1: Vector4
+  e2: Vector4
+  n1: Vector4
+  n2: Vector4
+  n3: Vector4
 }
 
 let make p1 p2 p3 =
