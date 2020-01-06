@@ -48,6 +48,9 @@ type SectionType =
   | Quad of int
   | Section of int * int * int * int
 
+// TODO: filename option
+// TODO: depth map output
+// TODO: Alpha output
 type RenderOptions = {
   ambientOcclusion: bool
   antiAliasing: bool
@@ -91,6 +94,7 @@ let renderColors o c w =
 
   if o.progressBar then printfn "\n"
 
+  // TODO: AA for occlusion
   match o.ambientOcclusion with
   | true ->
     occlusionPass c w
