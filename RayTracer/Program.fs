@@ -2,5 +2,5 @@
 
 [<EntryPoint>]
 let main argv =
-  Teapot.run ()
+  BackgroundScene.run ()
   0
