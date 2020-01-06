@@ -21,7 +21,12 @@ type Material =
   | Textured of Textured
   | NormalMap of NormalMap
   | Luminance of Color
+  | InvisFloor of InvisFloor
   | TestPattern
+
+type InvisFloor = {
+  shadowColor: Color
+}
 
 type Fresnel = {
   a: Material
