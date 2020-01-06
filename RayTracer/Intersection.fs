@@ -78,7 +78,7 @@ let bias origin point objectT normal =
   let minScale = List.min [scale.X; scale.Y; scale.Z]
   let t = uniformScale (1.f / min 1.f minScale)
   // NOTE: Scaling the normal by the inverse of the
-  let newNormal = multiplyT t normal
+  let newNormal = transform t normal
   d * epsilon32 * newNormal
 
 let rec resolveMaterial s =

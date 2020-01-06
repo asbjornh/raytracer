@@ -6,6 +6,7 @@ open System.Numerics
 open Matrix
 open Tuple
 open Util
+open Transform
 
 type PatternType =
   | Stripes
@@ -13,8 +14,8 @@ type PatternType =
   | Ring
   
 let patternPoint objectT patternT point =
-  multiplyT (inverse objectT) point
-  |> multiplyT (inverse patternT)
+  transform (inverse objectT) point
+  |> transform (inverse patternT)
 
 let patternAt a b (pattern: PatternType) (point: Vector4) =
   match pattern with

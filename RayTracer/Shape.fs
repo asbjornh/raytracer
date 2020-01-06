@@ -7,6 +7,7 @@ open Material
 open Triangle
 open Tuple
 open Util
+open Transform
 
 type ShapeType =
   | Sphere
@@ -114,11 +115,11 @@ let worldToObject (shape: Shape) p =
   match shape.parent with
   | Some parent -> worldToObject parent p
   | None -> p
-  |> multiplyT (inverse shape.transform)
+  |> transform (inverse shape.transform)
 
 let normalToWorld (shape: Shape) v =
   let t = shape.transform |> inverse |> transpose
-  let n1 = multiplyT t v |> toVector |> normalize
+  let n1 = transform t v |> toVector |> normalize
   match shape.parent with
   | Some parent -> normalToWorld parent n1
   | None -> n1
@@ -156,7 +157,7 @@ let boundsForShape s =
 let boundsForShapes (objects: Shape list) =
   objects
   |> List.collect (fun s ->
-    s |> boundsForShape |> List.map (multiplyT s.transform)
+    s |> boundsForShape |> List.map (transform s.transform)
   )
 
 let boundingBox (objects: Shape list) =

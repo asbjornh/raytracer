@@ -2,8 +2,6 @@ module Ray
 
 open System.Numerics
 
-open Matrix
-
 type Ray = {
   origin: Vector4
   direction: Vector4
@@ -16,4 +14,4 @@ let position (t: float32) ray =
   ray.origin + t * ray.direction
 
 let transform m r =
-  ray (multiplyT m r.origin) (multiplyT m r.direction)
+  ray (Transform.transform m r.origin) (Transform.transform m r.direction)

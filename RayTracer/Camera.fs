@@ -102,8 +102,8 @@ let rayForPixel32 x y c =
   let yOffset = (y + 0.5f) * c.pixelSize
   let worldX = c.halfWidth - xOffset
   let worldY = c.halfHeight - yOffset
-  let pixel = multiplyT (inverse c.transform) (point32 worldX worldY -1.f)
-  let origin = multiplyT (inverse c.transform) (point32 0.f 0.f 0.f)
+  let pixel = transform (inverse c.transform) (point32 worldX worldY -1.f)
+  let origin = transform (inverse c.transform) (point32 0.f 0.f 0.f)
   let direction = pixel - origin |> normalize
   ray origin direction
 

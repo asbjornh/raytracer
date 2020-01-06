@@ -30,13 +30,13 @@ let ringLight (position: Vector4) target intensity count spread =
   let up = vector 0. 0. 1.
   List.init count (fun i ->
     let degrees = 360.f / (float32 count) * (float32 i)
-    let transform = chain [
+    let t = chain [
       translate position.X position.Y position.Z
       lookAt position target up
       rotateZ (rad32 degrees)
       translateY spread
     ]
-    let p = multiplyT transform (point 0. 0. 0.)
+    let p = transform t (point 0. 0. 0.)
     let i = Color.scale (1. / float count) intensity
     pointLight p i
   )
@@ -47,12 +47,12 @@ let squareOfPoints (position: Vector4) target resolution size =
     List.init resolution (fun x ->
       let delta = size / (float32 resolution)
       let offset = size / 4.f
-      let transform = chain [
+      let t = chain [
         translate position.X position.Y position.Z
         lookAt position target up
         translate (float32 x * delta - offset) (float32 y * delta - offset) 0.f
       ]
-      multiplyT transform (point 0. 0. 0.)
+      transform t (point 0. 0. 0.)
     )
   )
   |> List.reduce (fun a b -> List.concat [a; b])

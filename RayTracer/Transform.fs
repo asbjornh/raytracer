@@ -5,6 +5,8 @@ open System.Numerics
 open Matrix
 open Tuple
 
+let transform (t: Matrix4x4) (a: Vector4) =
+  Vector4.Transform (a, t)
 let translate x y z = Matrix4x4.CreateTranslation <| Vector3 (x, y, z)
 let translateX x = translate x 0.f 0.f
 let translateY y = translate 0.f y 0.f

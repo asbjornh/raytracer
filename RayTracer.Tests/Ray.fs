@@ -28,14 +28,14 @@ let tests =
     testCase "Translating a ray" <| fun _ ->
       let r = ray (point 1. 2. 3.) (vector 0. 1. 0.)
       let m = translate 3.f 4.f 5.f
-      let r2 = transform m r
+      let r2 = Ray.transform m r
       expectTupleEq r2.origin (point 4. 6. 8.)
       expectTupleEq r2.direction (vector 0. 1. 0.)
 
     testCase "Scaling a ray" <| fun _ ->
       let r = ray (point 1. 2. 3.) (vector 0. 1. 0.)
       let m = scale 2.f 3.f 4.f
-      let r2 = transform m r
+      let r2 = Ray.transform m r
       expectTupleEq r2.origin (point 2. 6. 12.)
       expectTupleEq r2.direction (vector 0. 3. 0.)
   ]

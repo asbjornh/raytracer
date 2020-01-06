@@ -28,9 +28,6 @@ let identity = Matrix4x4.Identity
 
 let multiply (a: Matrix4x4) = flip (*) a
 
-let multiplyT (t: Matrix4x4) (a: Vector4) =
-  Vector4.Transform (a, t)
-
 let transpose (a: Matrix4x4) =
   Matrix4x4.Transpose a
 
