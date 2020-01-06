@@ -164,7 +164,7 @@ let boundingBox (objects: Shape list) =
   then ( (0.f, 0.f), (0.f, 0.f), (0.f, 0.f) )
   else
     let (xs, ys, zs) =
-      objects |> boundsForShapes |> List.map toXYZ |> List.unzip3
+      objects |> boundsForShapes |> List.map to3 |> List.unzip3
     ( (List.min xs, List.max xs),
       (List.min ys, List.max ys),
       (List.min zs, List.max zs) )

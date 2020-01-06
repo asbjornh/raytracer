@@ -39,7 +39,7 @@ let smoothMake p1 p2 p3 n1 n2 n3 =
 
 let boundsRaw p1 p2 p3 =
   let (xs, ys, zs) =
-    [p1; p2; p3] |> List.map toXYZ |> List.unzip3
+    [p1; p2; p3] |> List.map to3 |> List.unzip3
   ( (List.min xs, List.max xs),
     (List.min ys, List.max ys),
     (List.min zs, List.max zs) )

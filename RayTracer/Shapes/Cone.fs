@@ -22,8 +22,8 @@ let intersect minY maxY ray s =
   ]
 
 let intersectCone minY maxY ray s =
-  let (oX, oY, oZ) = toXYZ ray.origin
-  let (dX, dY, dZ) = toXYZ ray.direction
+  let (oX, oY, oZ) = to3 ray.origin
+  let (dX, dY, dZ) = to3 ray.direction
   let a = (dX ** 2.f) - (dY ** 2.f) + (dZ ** 2.f)
   let b = (2.f * oX * dX) - (2.f * oY * dY) + (2.f * oZ * dZ)
   let c = (oX ** 2.f) - (oY ** 2.f) + (oZ ** 2.f)
