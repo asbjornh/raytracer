@@ -64,6 +64,7 @@ let tests =
       let pos = point 0. 0. -5.
       let target = point 0. 0. 0.
       let c = camera 11 11 (MathF.PI / 2.f) pos target 
-      let image = render c w
+      let options = { defaultOptions with progressBar = false }
+      let image = renderColors options c w
       Expect.equal (image.[5].[5]) (color 0.38066 0.47583 0.2855) ""
   ]

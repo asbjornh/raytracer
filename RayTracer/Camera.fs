@@ -62,7 +62,11 @@ let defaultOptions = {
   section = None
 }
 
-let render o c w =
+let render options camera world =
+  renderColors options camera world
+  |> Canvas.toPpm
+
+let renderColors o c w =
   let canv = canvas c.hSize c.vSize
   let len = Canvas.length canv
 
@@ -92,7 +96,6 @@ let render o c w =
     occlusionPass c w
     |> map22d subtract colors
   | false -> colors
-  |> Canvas.toPpm
 
 let rayForPixel32 x y c =
   let xOffset = (x + 0.5f) * c.pixelSize
