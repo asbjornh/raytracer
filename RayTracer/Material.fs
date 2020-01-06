@@ -27,7 +27,8 @@ type Fresnel = {
   a: Material
   b: Material
   power: float
-  mix: float
+  mixInner: float
+  mixOuter: float
 }
 
 type Mix = {

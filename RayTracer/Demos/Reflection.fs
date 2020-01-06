@@ -40,7 +40,8 @@ let sphereMat = Fresnel {
   a = materialC white
   b = Reflective { blend = Add }
   power = 3.
-  mix = 1.
+  mixOuter = 1.
+  mixInner = 1.
 }
 
 let middle =

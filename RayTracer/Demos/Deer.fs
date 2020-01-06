@@ -28,7 +28,8 @@ let mat = Fresnel {
   a = material pink 0.1 0.9 0.
   b = Luminance yellow
   power = 2.
-  mix = 1.
+  mixOuter = 1.
+  mixInner = 1.
 }
 let deer =
   objFromFile "../models/Deer.obj"

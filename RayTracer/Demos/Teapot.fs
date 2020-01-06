@@ -26,7 +26,8 @@ let mat = Fresnel {
   a = material white 0.3 0.7 0.
   b = Luminance red
   power = 2.
-  mix = 1.
+  mixOuter = 1.
+  mixInner = 1.
 }
 let teapot =
   objFromFile "../models/teapot-mid.obj"

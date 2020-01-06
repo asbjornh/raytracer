@@ -21,7 +21,8 @@ let ballMat = Fresnel {
   a = baseMat
   b = Reflective { blend = Add }
   power = 3.
-  mix = 1.
+  mixOuter = 1.
+  mixInner = 1.
 }
 
 let ball = sphere identity ballMat
