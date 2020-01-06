@@ -57,6 +57,6 @@ let w =
 
 
 let run () =
-  renderAA cam w
+  renderProgress cam w
   |> Canvas.toPpm
   |> Util.writeFile ("../render/" + (Util.nowStr ()) + ".ppm")
