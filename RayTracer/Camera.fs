@@ -58,6 +58,7 @@ let rayForPixel x y c =
   rayForPixel32 (float32 x) (float32 y) c
 
 
+// TODO: Make render effects composable
 let renderCb c w fn =
   (canvas c.hSize c.vSize) |> Canvas.render (fun x y ->
     fn ()
@@ -78,6 +79,7 @@ let withProgress len fn =
 let renderProgress (c: Camera) w =
   withProgress <| c.hSize * c.vSize <| renderCb c w
 
+// TODO: Check occlusion at different distances
 let renderOcclusion c w =
   let canv = canvas c.hSize c.vSize
   let len = Canvas.length canv
