@@ -39,4 +39,3 @@ let w = { world [pLight; cLight] [teapot] with background = red }
 
 let run () =
   render defaultOptions cam w
-  |> Util.writeFile ("../render/" + (Util.nowStr ()) + ".ppm")

@@ -66,4 +66,3 @@ let w =  world [pLight; cLight] objects
 
 let run () =
   render defaultOptions cam w
-  |> Util.writeFile ("../render/" + (Util.nowStr ()) + ".ppm")

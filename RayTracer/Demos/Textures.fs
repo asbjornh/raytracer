@@ -51,4 +51,3 @@ let w = {
 
 let run () =
   render defaultOptions cam w
-  |> Util.writeFile ("../render/" + (Util.nowStr ()) + ".ppm")

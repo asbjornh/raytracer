@@ -48,13 +48,13 @@ type SectionType =
   | Quad of int
   | Section of int * int * int * int
 
-// TODO: filename option
 // TODO: depth map output
 // TODO: Alpha output
 type RenderOptions = {
   ambientOcclusion: bool
   antiAliasing: bool
   progressBar: bool
+  path: string option
   section: SectionType option
 }
 
@@ -62,14 +62,23 @@ let defaultOptions = {
   ambientOcclusion = false
   antiAliasing = false
   progressBar = true
+  path = None
   section = None
 }
 
 let render options camera world =
-  renderColors options camera world
-  |> Canvas.toPpm
+  let image =
+    renderImage options camera world
+    |> Canvas.toPpm
 
-let renderColors o c w =
+  let path =
+    match options.path with
+    | None -> ("../render/" + (Util.nowStr ()) + ".ppm")
+    | Some path -> path
+
+  Util.writeFile path image
+
+let renderImage o c w =
   let canv = canvas c.hSize c.vSize
   let len = Canvas.length canv
 

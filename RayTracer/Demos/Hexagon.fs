@@ -48,4 +48,3 @@ let getParent (s: Shape) =
   | None -> failwith "No parent"
 let run () =
   render defaultOptions cam w
-  |> Util.writeFile ("../render/" + (Util.nowStr ()) + ".ppm")
