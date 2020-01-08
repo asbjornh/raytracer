@@ -48,6 +48,7 @@ type SectionType =
   | Quad of int
   | Section of int * int * int * int
 
+// TODO: Raytraced ambient occlusion?
 type RenderOptions = {
   ambientOcclusion: bool
   antiAliasing: bool
@@ -104,7 +105,7 @@ let renderImage o c w =
   match o.ambientOcclusion with
   | true ->
     occlusionPass c w
-    |> map2d2 subtract colors
+    |> map2d2 Color.multiply colors
   | false -> colors
 
 let rayForPixel32 x y c =
@@ -137,7 +138,6 @@ let withProgress len txt fn =
   printfn "\n" // To avoid CLI glitch after rendering
   result
 
-// TODO: Check occlusion at different distances
 let occlusionPass c w =
   let canv = canvas c.hSize c.vSize
   let len = Canvas.length canv
@@ -156,7 +156,7 @@ let occlusionPass c w =
       tick ()
       let samples = depths |> subGrid x y 5 |> Array.concat
       let o = occlusionAt point normalV samples |> float |> (*) 0.5
-      add black (Color.scale o white)
+      Color.scale (1. - o) white
     )
   )
 
