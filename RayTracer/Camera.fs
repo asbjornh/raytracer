@@ -48,8 +48,6 @@ type SectionType =
   | Quad of int
   | Section of int * int * int * int
 
-// TODO: depth map output
-// TODO: Alpha output
 type RenderOptions = {
   ambientOcclusion: bool
   antiAliasing: bool
