@@ -14,25 +14,25 @@ open World
 
 let wallMaterial = materialC (color 0.5 0.1 0.6)
 
-let floor = sphere (scale 10.f 0.01f 10.f) wallMaterial
+let floor = plane (uniformScale 10.f) wallMaterial
 
 let leftWall =
-  sphere
+  plane
   <| chain [
     translateZ 5.f
     rotateY (-MathF.PI / 5.3f);
     rotateX (MathF.PI / 2.f)
-    scale 10.f 0.01f 10.f
+    uniformScale 10.f
   ]
   <| wallMaterial
 
 let rightWall =
-  sphere
+  plane
   <| chain [
     translateZ 6.f
     rotateY (MathF.PI / 3.f)
     rotateX (MathF.PI / 2.f)
-    scale 10.f 0.01f 10.f
+    uniformScale 10.f
   ]
   <| wallMaterial
 
