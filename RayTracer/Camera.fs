@@ -94,7 +94,6 @@ let renderColors o c w =
 
   if o.progressBar then printfn "\n"
 
-  // TODO: AA for occlusion
   match o.ambientOcclusion with
   | true ->
     occlusionPass c w
