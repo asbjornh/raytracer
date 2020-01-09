@@ -1,9 +1,11 @@
 module Transform
 
+open System
 open System.Numerics
 
 open Matrix
 open Tuple
+open Util
 
 let transform (t: Matrix4x4) (a: Vector4) =
   Vector4.Transform (a, t)
@@ -21,6 +23,20 @@ let uniformScale (s: float32) = Matrix4x4.CreateScale s
 let rotateX rad = Matrix4x4.CreateRotationX rad
 let rotateY rad = Matrix4x4.CreateRotationY rad
 let rotateZ rad = Matrix4x4.CreateRotationZ rad
+
+let chain = List.reduce multiply
+
+let randInRange radians =
+  (Random ()).Next 1000 |> float
+  |> rangeMap (0., 1000.) (-radians / 2., radians / 2.)
+  |> float32
+
+let randomRotate radians =
+  chain [
+    rotateX (randInRange radians)
+    rotateY (randInRange radians)
+    rotateZ (randInRange radians)
+  ]
 
 
 
@@ -61,8 +77,6 @@ let rotateAlign (fromV: Vector4) (toV: Vector4) =
 
       0.0f, 0.0f, 0.0f, 1.0f
     );
-
-let chain = List.reduce multiply
 
 let viewTransform (from: Vector4) (To: Vector4) up =
   let f = from |> toVec3

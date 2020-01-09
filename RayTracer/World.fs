@@ -1,5 +1,6 @@
 module rec World
 
+open System
 open System.Numerics
 
 open Color
@@ -186,30 +187,20 @@ let textureAt comps (mat: Textured) =
   let (u, v) = uvAt p comps.object
   Texture.colorAt u v mat.uScale mat.vScale mat.uOffset mat.vOffset mat.tex
 
-let depthAt world ray =
-  let is = intersect ray world
+let occlusionAt aoColor numSamples world r =
+  let is = intersect r world
   match (is |> hit) with
   | Some i ->
-    let comps = prepareComputations is i ray
-    (comps.point, comps.normalV)
-  | None ->
-    let p = point infinity infinity infinity
-    let n = vector 0. 0. 0.
-    (p, n)
-
-let occlusionAt pos normalV (samples: (Vector4 * Vector4)[]) =
-  let pointInf = point infinity infinity infinity
-
-  samples
-  |> Array.sumBy (fun (pointB, normalB) ->
-    if (fastEquals pointB pos) then 0.f
-    else if (fastEquals pointB pointInf) then 0.f
-    else if (fastEquals pos pointInf) then 0.f
-    else
-      let d = Vector4.Distance (pointB, pos) * 400.f * ((abs pos.Z) + 1.f)
-      let v = pointB - pos |> normalize
-      (max 0.f (dot normalV v)) * (1.f / (1.f + d))
-  )
+    let comps = prepareComputations is i r
+    [0..numSamples]
+    |> List.averageBy (fun _ ->
+      let t = randomRotate <| Math.PI / 2.
+      let r2 = ray comps.overPoint (transform t comps.normalV)
+      match (intersect r2 world |> hit) with
+      | Some i -> if i.t < 4.f then 1. else 0.
+      | None -> 0.
+    )
+  | None -> 0.
 
 let reflectedColor world comps remaining =
   if (remaining < 1) then black

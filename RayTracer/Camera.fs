@@ -48,9 +48,15 @@ type SectionType =
   | Quad of int
   | Section of int * int * int * int
 
-// TODO: Raytraced ambient occlusion?
+type AmbientOcclusionOptions = {
+  samples: int
+  color: Color
+  opacity: float
+}
+
+// TODO: Blur ambient occlusion
 type RenderOptions = {
-  ambientOcclusion: bool
+  ambientOcclusion: AmbientOcclusionOptions option
   antiAliasing: bool
   progressBar: bool
   path: string option
@@ -58,7 +64,7 @@ type RenderOptions = {
 }
 
 let defaultOptions = {
-  ambientOcclusion = false
+  ambientOcclusion = None
   antiAliasing = false
   progressBar = true
   path = None
@@ -103,10 +109,10 @@ let renderImage o c w =
   if o.progressBar then printfn "\n"
 
   match o.ambientOcclusion with
-  | true ->
-    occlusionPass c w
+  | Some options ->
+    occlusionPass options c w
     |> map2d2 Color.multiply colors
-  | false -> colors
+  | None -> colors
 
 let rayForPixel32 x y c =
   let xOffset = (x + 0.5f) * c.pixelSize
@@ -138,25 +144,17 @@ let withProgress len txt fn =
   printfn "\n" // To avoid CLI glitch after rendering
   result
 
-let occlusionPass c w =
+let occlusionPass options c w =
   let canv = canvas c.hSize c.vSize
   let len = Canvas.length canv
 
-  let depths =
-    withProgress len "Rendering depth" <| (fun tick ->
-      canv |> Canvas.map (fun x y ->
-        tick ()
-        rayForPixel x y c |> depthAt w
-      )
-    )
-
-  withProgress len "Calculating occlusion" <| (fun tick ->
-    depths
-    |> map2di (fun x y (point, normalV) ->
+  withProgress len "Rendering AO" <| (fun tick ->
+    canv |> Canvas.map (fun x y ->
       tick ()
-      let samples = depths |> subGrid x y 5 |> Array.concat
-      let o = occlusionAt point normalV samples |> float |> (*) 0.5
-      Color.scale (1. - o) white
+      rayForPixel x y c
+      |> occlusionAt options.color options.samples w
+      |> rangeMap (0., 1.) (0., options.opacity)
+      |> Color.mix white options.color
     )
   )
 
