@@ -89,8 +89,8 @@ let rec sub from To arr =
   let f = max 0 from
   if (f = 0 && To = 0) then [||]
   else
-    try (Array.sub arr f (To + 1 - f)) with
-    | _ -> sub f (To - 1) arr
+    let t = min (Array.length arr - f) (To + 1 - f)
+    Array.sub arr f t
 
 let subGrid x y size arr =
   sub (y - size) (y + size) arr
