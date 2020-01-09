@@ -27,6 +27,7 @@
     <Compile Include="ObjParser.fs" />
     <Compile Include="Intersection.fs" />
     <Compile Include="World.fs" />
+    <Compile Include="ExperimentalRender.fs" />
     <Compile Include="Camera.fs" />
 
     <Compile Include="Demos/Projectile.fs" />
