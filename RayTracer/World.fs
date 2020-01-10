@@ -187,7 +187,7 @@ let textureAt comps (mat: Textured) =
   let (u, v) = uvAt p comps.object
   Texture.colorAt u v mat.uScale mat.vScale mat.uOffset mat.vOffset mat.tex
 
-let occlusionAt aoColor numSamples world r =
+let occlusionAt numSamples threshold world r =
   let is = intersect r world
   match (is |> hit) with
   | Some i ->
@@ -197,7 +197,7 @@ let occlusionAt aoColor numSamples world r =
       let t = randomRotate <| Math.PI / 2.
       let r2 = ray comps.overPoint (transform t comps.normalV)
       match (intersect r2 world |> hit) with
-      | Some i -> if i.t < 4.f then 1. else 0.
+      | Some i -> if i.t < threshold then 1. else 0.
       | None -> 0.
     )
   | None -> 0.

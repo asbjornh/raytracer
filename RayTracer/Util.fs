@@ -60,14 +60,19 @@ let concat a b = Array.concat [a; b]
 let appendTo arr el = concat arr [| el |]
 let filteri fn m =
   Array.indexed m
-  |> Array.filter (fst >> fn)
+  |> Array.filter (fun (i, v) -> fn i v)
   |> Array.map snd
 
 let map2d fn arr =
   arr |> Array.map (Array.map fn)
 
-let map2di fn =
+let map2diParallel fn =
   Array.Parallel.mapi (fun y row ->
+    row |> Array.mapi (fun x col -> fn x y col)
+  )
+
+let map2di fn =
+  Array.mapi (fun y row ->
     row |> Array.mapi (fun x col -> fn x y col)
   )
 

@@ -4,6 +4,7 @@ open System
 open System.Numerics
 open ShellProgressBar
 
+open Blur
 open Canvas
 open Color
 open Matrix
@@ -52,6 +53,7 @@ type AmbientOcclusionOptions = {
   samples: int
   color: Color
   opacity: float
+  threshold: float32
 }
 
 // TODO: Blur ambient occlusion
@@ -146,15 +148,19 @@ let withProgress len txt fn =
 
 let occlusionPass options c w =
   let canv = canvas c.hSize c.vSize
-  let len = Canvas.length canv
+  let len = 3 * Canvas.length canv
 
   withProgress len "Rendering AO" <| (fun tick ->
     canv |> Canvas.map (fun x y ->
       tick ()
-      rayForPixel x y c
-      |> occlusionAt options.color options.samples w
-      |> rangeMap (0., 1.) (0., options.opacity)
-      |> Color.mix white options.color
+      occlusionAt options.samples options.threshold w
+      <| rayForPixel x y c
+    )
+    |> bilateralFilter 8 20. 0.2 tick
+    |> bilateralFilter 3 10. 0.2 tick
+    |> map2d (fun i ->
+      rangeMap (0., 1.) (1., (1. - options.opacity)) i
+      |> Color.mix options.color white
     )
   )
 
