@@ -113,7 +113,9 @@ let renderImage o c w =
   match o.ambientOcclusion with
   | Some options ->
     occlusionPass options c w
-    |> map2d2 Color.multiply colors
+    |> map2d2 (fun color occlusion ->
+      mix options.color color occlusion
+    ) colors
   | None -> colors
 
 let rayForPixel32 x y c =
@@ -156,11 +158,10 @@ let occlusionPass options c w =
       occlusionAt options.samples options.threshold w
       <| rayForPixel x y c
     )
-    |> bilateralFilter 8 20. 0.2 tick
-    |> bilateralFilter 3 10. 0.2 tick
+    |> bilateralFilter 8 50. 0.15 tick
+    |> bilateralFilter 3 10. 0.15 tick
     |> map2d (fun i ->
       rangeMap (0., 1.) (1., (1. - options.opacity)) i
-      |> Color.mix options.color white
     )
   )
 
