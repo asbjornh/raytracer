@@ -56,7 +56,6 @@ type AmbientOcclusionOptions = {
   threshold: float32
 }
 
-// TODO: Blur ambient occlusion
 type RenderOptions = {
   ambientOcclusion: AmbientOcclusionOptions option
   antiAliasing: bool
