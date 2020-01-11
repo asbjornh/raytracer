@@ -56,12 +56,19 @@ type AmbientOcclusionOptions = {
   threshold: float32
 }
 
+// TODO: Add render module
+type RenderType =
+  | Normal
+  | ColoredNormals of (Color * Color * Color * Color)
+  | DistanceReflection
+
 type RenderOptions = {
   ambientOcclusion: AmbientOcclusionOptions option
   antiAliasing: bool
   progressBar: bool
   path: string option
   section: SectionType option
+  renderType: RenderType
 }
 
 let defaultOptions = {
@@ -70,6 +77,7 @@ let defaultOptions = {
   progressBar = true
   path = None
   section = None
+  renderType = Normal
 }
 
 let render options camera world =
@@ -88,6 +96,12 @@ let renderImage o c w =
   let canv = canvas c.hSize c.vSize
   let len = Canvas.length canv
 
+  let renderFn =
+    match o.renderType with
+    | Normal -> colorAt
+    | DistanceReflection -> ExperimentalRender.distanceReflectionAt
+    | ColoredNormals c -> ExperimentalRender.coloredNormals c
+
   let tick =
     match o.progressBar with
     | true ->
@@ -99,8 +113,8 @@ let renderImage o c w =
   let colors = canv |> Canvas.render (fun x y ->
     tick ()
     let render () =
-      if o.antiAliasing then renderAA x y c w
-      else rayForPixel x y c |> colorAt w <| 4
+      if o.antiAliasing then renderAA x y c w renderFn
+      else rayForPixel x y c |> renderFn w <| 4
 
     match o.section with
     | None -> render ()
@@ -134,11 +148,11 @@ let aaOffsets offset =
   [ (0.f, offset); (0.f, -offset)
     (offset, 0.f); (-offset, 0.f) ]
 
-let renderAA x y c w =
+let renderAA x y c w renderFn =
   aaOffsets 0.35f
   |> List.map (fun (dx, dy) ->
     rayForPixel32 (float32 x + dx) (float32 y + dy) c
-    |> colorAt w <| 4
+    |> renderFn w <| 4
   ) |> Color.average
 
 let withProgress len txt fn =

@@ -18,7 +18,7 @@ let distanceReflectionAt world r _ =
     | None -> world.background
   | None -> world.background
 
-let coloredNormals world r remaining =
+let coloredNormals (first, second, third, bg) world r remaining =
   let is = intersect r world
   match (is |> hit) with
   | Some i ->
@@ -29,9 +29,9 @@ let coloredNormals world r remaining =
     | Some i ->
       let comps = prepareComputations is i r
       let n = comps.normalV
-      let x = scale (float n.X) red
-      let y = scale (float n.Y) yellow
-      let z = scale (float -n.Z) blue
+      let x = scale (float n.X) first
+      let y = scale (float n.Y) second
+      let z = scale (float -n.Z) third
       add x y |> add z
-    | None -> pink
-  | None -> pink
+    | None -> bg
+  | None -> bg
