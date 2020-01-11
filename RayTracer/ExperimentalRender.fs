@@ -17,3 +17,21 @@ let distanceReflectionAt world r _ =
     | Some i -> Color.scale (1. / float i.t) white
     | None -> world.background
   | None -> world.background
+
+let coloredNormals world r remaining =
+  let is = intersect r world
+  match (is |> hit) with
+  | Some i ->
+    let comps = prepareComputations is i r
+    let r2 = ray comps.overPoint comps.reflectV
+    let is2 = intersect r2 world
+    match (is2 |> hit) with
+    | Some i ->
+      let comps = prepareComputations is i r
+      let n = comps.normalV
+      let x = scale (float n.X) red
+      let y = scale (float n.Y) yellow
+      let z = scale (float -n.Z) blue
+      add x y |> add z
+    | None -> pink
+  | None -> pink
