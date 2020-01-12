@@ -2,5 +2,5 @@
 
 [<EntryPoint>]
 let main argv =
-  SphereScene.run ()
+  ToyCar.run ()
   0

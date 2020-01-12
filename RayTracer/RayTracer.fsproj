@@ -50,6 +50,7 @@
     <Compile Include="Demos/Deer.fs" />
     <Compile Include="Demos/BackgroundScene.fs" />
     <Compile Include="Demos/AOSpheres.fs" />
+    <Compile Include="Demos/ToyCar.fs" />
 
     <Compile Include="Program.fs" />
   </ItemGroup>
