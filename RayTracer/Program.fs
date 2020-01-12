@@ -2,5 +2,5 @@
 
 [<EntryPoint>]
 let main argv =
-  ToyCar.run ()
+  Wolf.run ()
   0
