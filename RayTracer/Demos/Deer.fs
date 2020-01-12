@@ -40,6 +40,9 @@ let w =
   { world [sLight; cLight] [deer]
     with background = yellow }
 
+let options =
+  { defaultOptions with 
+      antiAliasing = true }
 
 let run () =
-  render defaultOptions cam w
+  render options cam w
