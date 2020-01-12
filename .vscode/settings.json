@@ -3,5 +3,27 @@
     ".ionide": true,
     "**/bin": true,
     "**/obj": true
-  }
+  },
+  "module-templates.templates": [
+    {
+      "displayName": "F# Module",
+      "defaultPath": "RayTracer",
+      "files": [
+        {
+          "name": "{name.pascal}.fs",
+          "content": ["module {name.pascal}", ""]
+        }
+      ]
+    },
+    {
+      "displayName": "Demo",
+      "defaultPath": "RayTracer/Demos",
+      "files": [
+        {
+          "name": "{name.pascal}.fs",
+          "content": ["module {name.pascal}", ""]
+        }
+      ]
+    }
+  ]
 }
