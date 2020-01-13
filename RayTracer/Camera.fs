@@ -59,8 +59,7 @@ type AmbientOcclusionOptions = {
 // TODO: Add render module
 type RenderType =
   | Normal
-  | ColoredNormals of (Color * Color * Color * Color)
-  | DistanceReflection
+  | ColoredNormals of (Color * Color * Color * bool)
 
 type RenderOptions = {
   ambientOcclusion: AmbientOcclusionOptions option
@@ -99,7 +98,6 @@ let renderImage o c w =
   let renderFn =
     match o.renderType with
     | Normal -> colorAt
-    | DistanceReflection -> ExperimentalRender.distanceReflectionAt
     | ColoredNormals c -> ExperimentalRender.coloredNormals c
 
   let tick =
