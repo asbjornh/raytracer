@@ -16,8 +16,8 @@
       ]
     },
     {
-      "displayName": "Demo",
-      "defaultPath": "RayTracer/Demos",
+      "displayName": "Scene",
+      "defaultPath": "RayTracer/Scenes",
       "files": [
         {
           "name": "{name.pascal}.fs",
