@@ -23,7 +23,7 @@ let cam =
   <| (point -15. 10. -20.) <| (point 0. 1. 0.)
 
 let car =
-  objFromFile "../models/car.obj"
+  importObj "../models/car.obj"
   <| rotateY (rad32 -90.f)
   <| material white 0.2 0.8 0.
 

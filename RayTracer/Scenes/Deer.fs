@@ -32,7 +32,7 @@ let mat = Fresnel {
   mixInner = 1.
 }
 let deer =
-  objFromFile "../models/Deer.obj"
+  importObj "../models/Deer.obj"
   <| chain [translateY -100.f; rotateY (rad32 90.f)]
   <| mat
 

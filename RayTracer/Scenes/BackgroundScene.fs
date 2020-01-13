@@ -37,7 +37,7 @@ let mat = Fresnel {
   mixInner = 1.
 }
 let teapot =
-  objFromFile "../models/teapot-mid.obj"
+  importObj "../models/teapot-mid.obj"
   <| chain [translate -2.f -6.f -5.f; rotateZ (rad32 20.f); rotateY (rad32 20.f)]
   <| mat
 

@@ -9,7 +9,7 @@ open Shape
 open Tuple
 open Util
 
-let objFromFile path t =
+let importObj path t =
   let result =
     readFile path |> Array.toList |> parse
   Shape.group result.objects t

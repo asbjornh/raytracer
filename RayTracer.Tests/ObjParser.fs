@@ -152,7 +152,7 @@ let tests =
 
     testCase "Converting an OBJ file to a group" <| fun _ ->
       let o =
-        objFromFile "./fixtures/triangles.obj" identity
+        importObj "./fixtures/triangles.obj" identity
         <| Material.defaultMaterial ()
       let g = o.children.[0]
       Expect.equal (List.length g.children) 2 ""

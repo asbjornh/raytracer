@@ -15,7 +15,7 @@ open Util
 open World
 
 let wolf =
-  objFromFile "../models/wolf.obj"
+  importObj "../models/wolf.obj"
   <| identity
   <| material white 0.07 1. 0.
 
