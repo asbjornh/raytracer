@@ -27,6 +27,10 @@ type Color (r, g, b) =
       r && g && b
     | _ -> false
 
+let intensity (c: Color) =
+  let (r, g, b) = c.Return
+  (r + g + b) / 3.
+
 let color r g b = Color (r, g, b)
 
 let toList (r, g, b) = [r; g; b]

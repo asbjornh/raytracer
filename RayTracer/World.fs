@@ -102,11 +102,20 @@ let shadeHitSingleLight light world comps remaining =
     patternAt a b mat.pattern p |> Component
 
   | Textured mat ->
-    textureAt comps mat |> Constant
+    let baseColor = textureAt comps mat.transform mat.uvTransform mat.color
+    let specularFactor =
+      match mat.specularMap with
+      | None -> 1.
+      | Some tex ->
+        textureAt comps mat.transform mat.uvTransform tex |> Color.invert |> Color.intensity
+    let specular = mat.specular * specularFactor
+    let mat = materialShiny mat.shininess baseColor mat.ambient mat.diffuse specular
+    let newComps = { comps with object = { comps.object with material = mat } }
+    shadeHitSingleLight light world newComps remaining
 
   | NormalMap mat ->
     let normalV =
-      textureAt comps mat.tex
+      textureAt comps mat.transform mat.uvTransform mat.tex
       |> Color.MapC (rangeMap (0., 1.) (-1., 1.))
       |> mappedNormalAt comps.normalV |> normalize
 
@@ -182,10 +191,10 @@ let colorAt world ray remaining =
   | Some i -> prepareComputations is i ray |> shadeHit world <| remaining
   | None -> world.background
 
-let textureAt comps (mat: Textured) =
-  let p = patternPoint comps.object.transform mat.transform comps.overPoint
+let textureAt comps (transform: Matrix4x4) uvTransform tex =
+  let p = patternPoint comps.object.transform transform comps.overPoint
   let (u, v) = uvAt p comps.object
-  Texture.colorAt u v mat.uScale mat.vScale mat.uOffset mat.vOffset mat.tex
+  Texture.colorAt u v uvTransform tex
 
 let occlusionAt numSamples threshold world r =
   let is = intersect r world

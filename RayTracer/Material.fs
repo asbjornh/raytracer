@@ -49,17 +49,23 @@ type Blend = {
 }
 
 type Textured = {
-  tex: Color list list
-  uScale: float
-  uOffset: float
-  vScale: float
-  vOffset: float
+  ambient: float
+  alpha: (Color list list) option
+  color: Color list list
+  diffuse: float
+  specularMap: (Color list list) option
+  specular: float
+  shininess: float
   transform: Matrix4x4
+  // NOTE: (uScale * vScale * uOffset * vOffset)
+  uvTransform: float * float * float * float
 }
 
 type NormalMap = {
   mat: Material
-  tex: Textured
+  tex: Color list list
+  transform: Matrix4x4
+  uvTransform: float * float * float * float
 }
 
 type Reflective = {
@@ -93,15 +99,19 @@ type Phong = {
   mutable shininess: float
 }
 
-let phongLighting
+let phongColor
+  (baseColor: Color)
+  (ambient: float)
+  (diffuse: float)
+  (specular: float)
+  (shininess: float)
   (light: PointLight)
   (pos: Vector4)
   (eyeV: Vector4)
   (normalV: Vector4)
-  (mat: Phong)
   (shadowAmount: float) =
-    let effectiveColor = multiply mat.color light.intensity
-    let ambient = scale mat.ambient effectiveColor
+    let effectiveColor = multiply baseColor light.intensity
+    let ambient = scale ambient effectiveColor
 
     if (looseEq shadowAmount 1.)
     then ambient
@@ -113,18 +123,23 @@ let phongLighting
         if (lightDotNormal < 0.f)
         then (black, black)
         else
-          let diffuse = effectiveColor |> scale mat.diffuse |> scale (float lightDotNormal)
+          let diffuse = effectiveColor |> scale diffuse |> scale (float lightDotNormal)
           let reflectV = reflect normalV (negate lightV)
           let reflectDotEye = dot eyeV reflectV
 
           if (reflectDotEye <= 0.f)
           then (diffuse, black)
           else
-            let factor = pow mat.shininess (float reflectDotEye)
-            let specular = light.intensity |> scale factor |> scale mat.specular
+            let factor = pow shininess (float reflectDotEye)
+            let specular = light.intensity |> scale factor |> scale specular
             (diffuse, specular)
 
       ambient |> add diffuse |> add specular
+
+let phongLighting (light: PointLight) pos eyeV normalV mat shadowAmount =
+    phongColor
+    <| mat.color <| mat.ambient <| mat.diffuse <| mat.specular <| mat.shininess
+    <| light <| pos <| eyeV <| normalV <| shadowAmount
 
 let softLighting (light: SoftLight) pos eyeV normalV mat shadowAmount =
   let phongComponent = phongLighting light.light pos eyeV normalV mat 0.
@@ -168,14 +183,16 @@ let defaultMaterialP () = {
   shininess = 200.
 }
 
-let material color ambient diffuse specular =
+let materialShiny shininess color ambient diffuse specular =
   Phong {
-    defaultMaterialP () with
       color = color
       ambient = ambient
       diffuse = diffuse
       specular = specular
+    shininess = shininess
   }
+
+let material color = materialShiny 200. color
 
 let materialC color =
   Phong { defaultMaterialP () with color = color }
@@ -185,12 +202,15 @@ let gradient a b t =
 
 let textureRaw path (uScale, vScale) (uOffset, vOffset) t =
   {
-    tex = Texture.read path;
+    alpha = None
+    ambient = 0.1
+    color = Texture.read path;
+    diffuse = 0.9
+    specularMap = None
+    specular = 0.9
+    shininess = 200.
     transform = t
-    uOffset = uOffset
-    uScale = uScale
-    vOffset = vOffset
-    vScale = vScale
+    uvTransform = (uScale, vScale, uOffset, vOffset)
   }
 let texture path (uScale, vScale) (uOffset, vOffset) t =
   textureRaw path (uScale, vScale) (uOffset, vOffset) t |> Textured

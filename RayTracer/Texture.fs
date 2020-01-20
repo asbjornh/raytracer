@@ -5,8 +5,6 @@ open System.Numerics
 open System.Drawing
 
 open Color
-open Matrix
-open Pattern
 open Tuple
 open Transform
 open Util
@@ -31,7 +29,7 @@ let rec wrapAround max n =
   else ((n - max) % max) + max
 
 
-let colorAt (u: float32) (v: float32) uScale vScale uOffset vOffset (cs: Color list list) =
+let colorAt (u: float32) (v: float32) (uScale, vScale, uOffset, vOffset) (cs: Color list list) =
   let u2 = float u / uScale + uOffset
   let v2 = float v / vScale + vOffset
   let w = List.length cs.[0]
