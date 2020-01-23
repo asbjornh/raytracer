@@ -107,12 +107,6 @@ let shadeHitSingleLight light world comps remaining =
     patternAt a b mat.pattern p |> Component
 
   | Textured mat ->
-    let baseColor = textureAt comps mat.transform mat.uvTransform mat.color
-    let specularFactor =
-      match mat.specularMap with
-      | None -> 1.
-      | Some tex ->
-        textureAt comps mat.transform mat.uvTransform tex |> Color.invert |> Color.intensity
     let alpha =
       match mat.alpha with
         | None -> 1.
@@ -121,12 +115,24 @@ let shadeHitSingleLight light world comps remaining =
     if alpha = 0. then
       refractedColor world comps remaining |> Constant
     else
+      let baseColor = textureAt comps mat.transform mat.uvTransform mat.color
+      let occlusionColor =
+        match mat.ambientOcclusion with
+          | None -> white
+          | Some tex -> textureAt comps mat.transform mat.uvTransform tex
+      let specularFactor =
+        match mat.specularMap with
+        | None -> 1.
+        | Some tex ->
+          textureAt comps mat.transform mat.uvTransform tex |> Color.invert |> Color.intensity
       let specular = mat.specular * specularFactor
-      let mat = materialShiny mat.shininess baseColor mat.ambient mat.diffuse specular
-      let newComps = { comps with object = { comps.object with material = mat } }
-      let baseColor = shadeHitSingleLight light world newComps remaining |> getPixelColor
-      if alpha = 1. then baseColor |> Component
-      else Color.mix (refractedColor world comps remaining) baseColor alpha |> Component
+      let newMat = materialShiny mat.shininess baseColor mat.ambient mat.diffuse specular
+      let newComps = { comps with object = { comps.object with material = newMat } }
+      let surfaceColor =
+        shadeHitSingleLight light world newComps remaining |> getPixelColor
+        |> Color.multiply occlusionColor
+      if alpha = 1. then surfaceColor |> Component
+      else Color.mix (refractedColor world comps remaining) surfaceColor alpha |> Component
 
   | NormalMap mat ->
     let normalV =

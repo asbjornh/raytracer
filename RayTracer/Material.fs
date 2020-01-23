@@ -50,6 +50,7 @@ type Blend = {
 
 type Textured = {
   ambient: float
+  ambientOcclusion: (Color list list) option
   alpha: (Color list list) option
   color: Color list list
   diffuse: float
@@ -204,6 +205,7 @@ let textureRaw path (uScale, vScale) (uOffset, vOffset) t =
   {
     alpha = None
     ambient = 0.1
+    ambientOcclusion = None
     color = Texture.read path;
     diffuse = 0.9
     specularMap = None
