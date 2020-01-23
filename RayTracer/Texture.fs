@@ -38,17 +38,16 @@ let colorAt (u: float32) (v: float32) (uScale, vScale, uOffset, vOffset) (cs: Co
   let y = Math.Floor (v2 * float h) |> int |> wrapAround (h - 1)
   cs.[y].[x]
 
-let mappedNormalAt (normalV: Vector4) (color: Color) =
-  let ta = cross (vector 0. 1. 0.) (normalV)
-  let bi = cross normalV ta
+let normalFromColor (normalV: Vector4) (color: Color) =
+  let t = cross (vector 0. 1. 0.) normalV // tangent
+  let b = cross normalV t // bitangent
   let n = normalV
-  let (r, g, b) = color.Return
-
-  let t = 
+  let tangentToModel = 
     Matrix4x4 (
-      -ta.X, bi.X, n.X, 0.f,
-      ta.Y, bi.Y, n.Y, 0.f,
-      -ta.Z, bi.Z, n.Z, 0.f,
+      -t.X, b.X, n.X, 0.f,
+      t.Y, b.Y, n.Y, 0.f,
+      -t.Z, b.Z, n.Z, 0.f,
       0.f, 0.f, 0.f, 1.f
     )
-  transform t (vector r g b) |> normalize
+  let (r, g, b) = color.Return
+  transform tangentToModel (vector r g b) |> normalize
