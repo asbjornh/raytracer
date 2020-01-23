@@ -15,9 +15,10 @@ open World
 
 let i = identity
 
-let uvTransform = (0.5, 0.8, 0., 0.)
+let uvTransform = (0.4, 0.8, 0., 0.)
 let baseMat = Textured {
   ambient = 0.6
+  ambientOcclusion = None
   alpha = Some <| Texture.read "../tex/metal-gate-alpha.jpg"
   color = Texture.read "../tex/metal-gate-color.jpg"
   diffuse = 1.5
