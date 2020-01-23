@@ -15,14 +15,14 @@ open World
 
 let i = identity
 
-let uvTransform = (0.25, 0.4, 0., 0.)
+let uvTransform = (0.5, 0.8, 0., 0.)
 let baseMat = Textured {
-  ambient = 0.2
-  alpha = None
-  color = Texture.read "../tex/padded-fabric-color.jpg"
-  diffuse = 0.9
-  specularMap = Some <| Texture.read "../tex/padded-fabric-specular.jpg"
-  specular = 0.5
+  ambient = 0.6
+  alpha = Some <| Texture.read "../tex/metal-gate-alpha.jpg"
+  color = Texture.read "../tex/metal-gate-color.jpg"
+  diffuse = 1.5
+  specularMap = Some <| Texture.read "../tex/metal-gate-specular.jpg"
+  specular = 1.
   shininess = 3.
   transform = i
   uvTransform = uvTransform
@@ -30,7 +30,7 @@ let baseMat = Textured {
 
 let mat = NormalMap {
   mat = baseMat
-  tex = Texture.read "../tex/padded-fabric-normal.jpg"
+  tex = Texture.read "../tex/metal-gate-normal.jpg"
   transform = i
   uvTransform = uvTransform
 }
@@ -52,7 +52,7 @@ let w = {
 
 let options =
   { defaultOptions with
-      antiAliasing = false }
+      antiAliasing = true }
 
 let run () =
   render options cam w

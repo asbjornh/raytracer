@@ -185,10 +185,10 @@ let defaultMaterialP () = {
 
 let materialShiny shininess color ambient diffuse specular =
   Phong {
-      color = color
-      ambient = ambient
-      diffuse = diffuse
-      specular = specular
+    color = color
+    ambient = ambient
+    diffuse = diffuse
+    specular = specular
     shininess = shininess
   }
 

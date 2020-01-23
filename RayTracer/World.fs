@@ -84,6 +84,11 @@ type PixelColor =
   | Constant of Color
   | Component of Color
   | Blended of BlendingMode * Color
+
+let getPixelColor = function
+  | Constant c -> c
+  | Component c -> c
+  | Blended (_, c) -> c
 let shadeHitSingleLight light world comps remaining =
   let objectT = comps.object.transform
 
@@ -108,10 +113,20 @@ let shadeHitSingleLight light world comps remaining =
       | None -> 1.
       | Some tex ->
         textureAt comps mat.transform mat.uvTransform tex |> Color.invert |> Color.intensity
-    let specular = mat.specular * specularFactor
-    let mat = materialShiny mat.shininess baseColor mat.ambient mat.diffuse specular
-    let newComps = { comps with object = { comps.object with material = mat } }
-    shadeHitSingleLight light world newComps remaining
+    let alpha =
+      match mat.alpha with
+        | None -> 1.
+        | Some tex ->
+          textureAt comps mat.transform mat.uvTransform tex |> Color.intensity
+    if alpha = 0. then
+      refractedColor world comps remaining |> Constant
+    else
+      let specular = mat.specular * specularFactor
+      let mat = materialShiny mat.shininess baseColor mat.ambient mat.diffuse specular
+      let newComps = { comps with object = { comps.object with material = mat } }
+      let baseColor = shadeHitSingleLight light world newComps remaining |> getPixelColor
+      if alpha = 1. then baseColor |> Component
+      else Color.mix (refractedColor world comps remaining) baseColor alpha |> Component
 
   | NormalMap mat ->
     let normalV =
