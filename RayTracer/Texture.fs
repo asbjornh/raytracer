@@ -39,16 +39,16 @@ let colorAt (u: float32) (v: float32) (uScale, vScale, uOffset, vOffset) (cs: Co
   cs.[y].[x]
 
 let mappedNormalAt (normalV: Vector4) (color: Color) =
-  let rotation = rotateAlign (vector 0. 1. 0.) normalV
-  let t = transform rotation (vector 0. 0. -1.)
-  let b = transform rotation (vector -1. 0. 0.)
+  let ta = cross (vector 0. 1. 0.) (normalV)
+  let bi = cross normalV ta
   let n = normalV
-  let t =
-    Matrix4x4 ( 
-      t.X, -t.Y, -t.Z, 0.f,
-      b.X, -b.Y, b.Z, 0.f,
-      n.X,  n.Y, n.Z, 0.f,
+  let (r, g, b) = color.Return
+
+  let t = 
+    Matrix4x4 (
+      -ta.X, bi.X, n.X, 0.f,
+      ta.Y, bi.Y, n.Y, 0.f,
+      -ta.Z, bi.Z, n.Z, 0.f,
       0.f, 0.f, 0.f, 1.f
     )
-  let (r, g, b) = color.Return
-  transform t <| vector r g b
+  transform t (vector r g b) |> normalize
