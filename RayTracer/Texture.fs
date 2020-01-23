@@ -49,5 +49,5 @@ let normalFromColor (normalV: Vector4) (color: Color) =
       -t.Z, b.Z, n.Z, 0.f,
       0.f, 0.f, 0.f, 1.f
     )
-  let (r, g, b) = color.Return
+  let (r, g, b) = color |> Color.Map (rangeMap (0., 1.) (-1., 1.))
   transform tangentToModel (vector r g b) |> normalize

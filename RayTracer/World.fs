@@ -116,7 +116,6 @@ let shadeHitSingleLight light world comps remaining =
   | NormalMap mat ->
     let normalV =
       textureAt comps mat.transform mat.uvTransform mat.tex
-      |> Color.MapC (rangeMap (0., 1.) (-1., 1.))
       |> normalFromColor comps.normalV |> normalize
 
     let newObj = { comps.object with material = mat.mat }
