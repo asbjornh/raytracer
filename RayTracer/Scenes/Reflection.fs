@@ -74,5 +74,9 @@ let objects =
 
 let w = world lights objects
 
+let options =
+  { defaultOptions with 
+      antiAliasing = true }
+
 let run () =
-  render defaultOptions cam w
+  render options cam w
