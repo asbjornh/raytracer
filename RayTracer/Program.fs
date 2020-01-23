@@ -2,5 +2,5 @@
 
 [<EntryPoint>]
 let main argv =
-  Wolf.run ()
+  Textures.run ()
   0

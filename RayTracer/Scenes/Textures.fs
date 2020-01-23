@@ -10,44 +10,49 @@ open Matrix
 open Shape
 open Transform
 open Tuple
-open Util
 open World
 
 
 let i = identity
-let marble scaleU scaleV = NormalMap {
-  mat = Blend {
-    a = materialC white
-    b = texture "../tex/metal-plate-color.jpg" (scaleU, scaleV) (0., 0.) i
-    mode = Multiply
-  }
-  tex = textureRaw "../tex/metal-plate-normal.jpg" (scaleU, scaleV) (0., 0.) i
+
+let uvTransform = (0.25, 0.4, 0., 0.)
+let baseMat = Textured {
+  ambient = 0.2
+  alpha = None
+  color = Texture.read "../tex/padded-fabric-color.jpg"
+  diffuse = 0.9
+  specularMap = Some <| Texture.read "../tex/padded-fabric-specular.jpg"
+  specular = 0.5
+  shininess = 3.
+  transform = i
+  uvTransform = uvTransform
 }
 
-let floor =
-  plane
-  <| uniformScale 1000.f
-  <| marble (0.5 / 1000.) (0.5 / 1000.)
+let mat = NormalMap {
+  mat = baseMat
+  tex = Texture.read "../tex/padded-fabric-normal.jpg"
+  transform = i
+  uvTransform = uvTransform
+}
 
-let middle =
-  sphere
-  <| translateY 1.f
-  <| marble 0.5 0.7
+let ball =
+  sphere i mat
 
-let darkBlue = color 0.1 0.1 0.2
-let pLight = pointLight (point -10. 10. -10.) (color 1. 0.9 0.7)
-let cLight = constantLight (color 0.25 0.25 0.35) Add
+let pLight = pointLight (point -10. 7. 2.) (color 1. 0.9 0.7)
+let pLight2 = pointLight (point 5. 0. -2.) (color 0.8 0.9 1.)
 let cam = 
-  camera 600 600 (MathF.PI / 3.f)
-  <| (point 0. 2. -3.) <| (point 0. 1. 0.)
-
-let objects =
-  [floor; middle]
+  camera 500 500 (MathF.PI / 3.f)
+  <| (point 0. 0. -3.) <| (point 0. 0. 0.)
 
 let w = {
-  world [pLight; cLight] objects with
-    background = darkBlue
+  world [pLight; pLight2] [ball] with
+    background = black
+    shadows = false
 }
 
+let options =
+  { defaultOptions with
+      antiAliasing = false }
+
 let run () =
-  render defaultOptions cam w
+  render options cam w
