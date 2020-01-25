@@ -2,7 +2,7 @@
 
 *.ppm
 *.mov
-tex/*.*
+tex/**/*.*
 models/*.*
 
 # Build results

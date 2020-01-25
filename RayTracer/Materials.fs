@@ -45,20 +45,40 @@ let reflection intensity texturePath uvTransform fresnelInner fresnelOuter =
     mixOuter = fresnelOuter
   }
 
-let metalGate ambient diffuse uvTransform = NormalMap {
-  mat = Textured {
-    ambient = ambient
-    ambientOcclusion = None
-    alpha = Some <| Texture.read "../tex/metal-gate-alpha.jpg"
-    color = Texture.read "../tex/metal-gate-color.jpg"
-    diffuse = diffuse
-    specularMap = Some <| Texture.read "../tex/metal-gate-specular.jpg"
-    specular = white
-    shininess = 3.
+let withNormalMap texturePath uvTransform mat =
+  NormalMap {
+    mat = mat
+    tex = Texture.read texturePath
     transform = identity
     uvTransform = uvTransform
   }
-  tex = Texture.read "../tex/metal-gate-normal.jpg"
-  transform = identity
-  uvTransform = uvTransform
-}
+
+let metalGate ambient diffuse uvTransform =
+  withNormalMap "../tex/metal-gate/metal-gate-normal.jpg" uvTransform
+    <| Textured {
+      ambient = ambient
+      ambientOcclusion = None
+      alpha = Some <| Texture.read "../tex/metal-gate/metal-gate-alpha.jpg"
+      color = Texture.read "../tex/metal-gate/metal-gate-color.jpg"
+      diffuse = diffuse
+      specularMap = Some <| Texture.read "../tex/metal-gate/metal-gate-specular.jpg"
+      specular = white
+      shininess = 3.
+      transform = identity
+      uvTransform = uvTransform
+    }
+
+let meat ambient diffuse uvTransform =
+  withNormalMap "../tex/meat/meat-normal.jpg" uvTransform
+    <| Textured {
+      ambient = ambient
+      ambientOcclusion = None
+      alpha = None
+      color = Texture.read "../tex/meat/meat-color.jpg"
+      diffuse = diffuse
+      specular = white
+      specularMap = Some <| Texture.read "../tex/meat/meat-specular.jpg"
+      shininess = 2.
+      transform = identity
+      uvTransform = uvTransform
+    }
