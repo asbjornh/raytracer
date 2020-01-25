@@ -68,6 +68,21 @@ let metalGate ambient diffuse uvTransform =
       uvTransform = uvTransform
     }
 
+let metalGrill ambient diffuse uvTransform =
+  withNormalMap "../tex/metal-grill/metal-grill-normal.jpg" uvTransform
+    <| Textured {
+      ambient = ambient
+      ambientOcclusion = Some <| Texture.read "../tex/metal-grill/metal-grill-ao.jpg"
+      alpha = None
+      color = Texture.read "../tex/metal-grill/metal-grill-color.jpg"
+      diffuse = diffuse
+      specularMap = Some <| Texture.read "../tex/metal-grill/metal-grill-specular.jpg"
+      specular = white
+      shininess = 3.
+      transform = identity
+      uvTransform = uvTransform
+    }
+
 let meat ambient diffuse uvTransform =
   withNormalMap "../tex/meat/meat-normal.jpg" uvTransform
     <| Textured {
