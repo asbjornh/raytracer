@@ -97,3 +97,18 @@ let meat ambient diffuse uvTransform =
       transform = identity
       uvTransform = uvTransform
     }
+
+let paddedFabric ambient diffuse uvTransform =
+  withNormalMap "../tex/padded-fabric/padded-fabric-normal.jpg" uvTransform
+    <| Textured {
+      ambient = ambient
+      ambientOcclusion = Some <| Texture.read "../tex/padded-fabric/padded-fabric-ao.jpg"
+      alpha = None
+      color = Texture.read "../tex/padded-fabric/padded-fabric-color.jpg"
+      diffuse = diffuse
+      specular = white
+      specularMap = Some <| Texture.read "../tex/padded-fabric/padded-fabric-specular.jpg"
+      shininess = 5.
+      transform = identity
+      uvTransform = uvTransform
+    }
