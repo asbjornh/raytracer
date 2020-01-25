@@ -112,3 +112,18 @@ let paddedFabric ambient diffuse uvTransform =
       transform = identity
       uvTransform = uvTransform
     }
+
+let techno ambient diffuse uvTransform =
+  withNormalMap "../tex/techno/techno-normal.jpg" uvTransform
+    <| Textured {
+      ambient = ambient
+      ambientOcclusion = Some <| Texture.read "../tex/techno/techno-ao.jpg"
+      alpha = None
+      color = Texture.read "../tex/techno/techno-color.jpg"
+      diffuse = diffuse
+      specular = white
+      specularMap = Some <| Texture.read "../tex/techno/techno-specular.jpg"
+      shininess = 5.
+      transform = identity
+      uvTransform = uvTransform
+    }
