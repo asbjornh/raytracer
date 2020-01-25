@@ -11,7 +11,7 @@ let coloredGlass color =
     a = specularOnly
     b = Blend {
       mode = Multiply
-      a = material color 1. 0. 0.
+      a = Luminance color
       b = Transparent { index = 1.5f }
     }
   }
@@ -50,7 +50,7 @@ let carPaint color specular shininess uvTransform =
 
 let reflection intensity texturePath uvTransform fresnelInner fresnelOuter =
   Fresnel {
-    a = material black 0. 0. 0.
+    a = Luminance black
     b = luminance intensity texturePath uvTransform
     power = 2.
     mixInner = fresnelInner
