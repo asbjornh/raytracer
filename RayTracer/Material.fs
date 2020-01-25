@@ -93,11 +93,11 @@ type Pattern = {
 }
 
 type Phong = {
-  mutable color: Color
-  mutable ambient: float
-  mutable diffuse: float
-  mutable specular: float
-  mutable shininess: float
+  color: Color
+  ambient: float
+  diffuse: float
+  specular: float
+  shininess: float
 }
 
 let phongColor
