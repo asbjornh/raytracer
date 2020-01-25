@@ -194,7 +194,7 @@ let defaultMaterialP () = {
 let defaultMaterial () = Phong (defaultMaterialP ())
 
 let material color ambient diffuse specular =
-  materialRaw color ambient diffuse (scale diffuse color) 200.
+  materialRaw color ambient diffuse (scale specular color) 200.
 
 let materialC color =
   Phong { defaultMaterialP () with color = color }
