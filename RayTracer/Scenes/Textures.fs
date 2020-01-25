@@ -23,7 +23,7 @@ let baseMat = Textured {
   color = Texture.read "../tex/metal-gate-color.jpg"
   diffuse = 1.5
   specularMap = Some <| Texture.read "../tex/metal-gate-specular.jpg"
-  specular = 1.
+  specular = white
   shininess = 3.
   transform = i
   uvTransform = uvTransform
@@ -53,7 +53,7 @@ let w = {
 
 let options =
   { defaultOptions with
-      antiAliasing = true }
+      antiAliasing = false }
 
 let run () =
   render options cam w
