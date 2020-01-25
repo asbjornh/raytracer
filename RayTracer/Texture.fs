@@ -11,6 +11,7 @@ open Util
 
 let toColor = float >> rangeMap (0., 255.) (0., 1.)
 
+let solid color = [[color]]
 let read path =
   let i = Image.FromFile path
   let b = new Bitmap (i)
@@ -30,13 +31,16 @@ let rec wrapAround max n =
 
 
 let colorAt (u: float32) (v: float32) (uScale, vScale, uOffset, vOffset) (cs: Color list list) =
-  let u2 = float u / uScale + uOffset
-  let v2 = float v / vScale + vOffset
-  let w = List.length cs.[0]
-  let h = List.length cs
-  let x = Math.Floor (u2 * float w) |> int |> wrapAround (w - 1)
-  let y = Math.Floor (v2 * float h) |> int |> wrapAround (h - 1)
-  cs.[y].[x]
+  if List.length cs = 1 then
+    cs.[0].[0]
+  else
+    let u2 = float u / uScale + uOffset
+    let v2 = float v / vScale + vOffset
+    let w = List.length cs.[0]
+    let h = List.length cs
+    let x = Math.Floor (u2 * float w) |> int |> wrapAround (w - 1)
+    let y = Math.Floor (v2 * float h) |> int |> wrapAround (h - 1)
+    cs.[y].[x]
 
 let normalFromColor (normalV: Vector4) (color: Color) =
   let t = cross (vector 0. 1. 0.) normalV // tangent
