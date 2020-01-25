@@ -4,6 +4,18 @@ open Color
 open Matrix
 open Material
 
+let specularOnly = material white 0. 0. 1.
+let coloredGlass color =
+  Blend {
+    mode = Add
+    a = specularOnly
+    b = Blend {
+      mode = Multiply
+      a = material color 1. 0. 0.
+      b = Transparent { index = 1.5f }
+    }
+  }
+
 let luminance intensity texturePath uvTransform =
   Textured {
     ambient = intensity
@@ -20,7 +32,8 @@ let luminance intensity texturePath uvTransform =
 
 let carPaint color specular shininess uvTransform =
   Blend {
-    a = material white 0. 0. 1. // For specular highlight
+    mode = Add
+    a = specularOnly
     b = Textured {
       ambient = 0.
       ambientOcclusion = None
@@ -33,7 +46,6 @@ let carPaint color specular shininess uvTransform =
       transform = identity
       uvTransform = uvTransform
     }
-    mode = Add
   }
 
 let reflection intensity texturePath uvTransform fresnelInner fresnelOuter =

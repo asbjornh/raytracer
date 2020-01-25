@@ -75,7 +75,6 @@ type Reflective = {
 
 type Transparent = {
   index: float32
-  blend: BlendingMode
 }
 
 type Gradient = {
@@ -170,8 +169,6 @@ let getBlendComponents matA matB a b =
   match (matA, matB) with
   | (Reflective mat, _) -> (blend mat.blend a b, b)
   | (_, Reflective mat) -> (a, blend mat.blend b a)
-  | (Transparent mat, _) -> (blend mat.blend a b, b)
-  | (_, Transparent mat) -> (a, blend mat.blend b a)
   | _ -> (a, b)
 
 let materialRaw color ambient diffuse specular shininess =
