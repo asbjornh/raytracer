@@ -21,6 +21,8 @@ F# implementation of [The Ray Tracer Challenge](https://pragprog.com/book/jbtrac
 
 `mono-libgdiplus` if you're on a mac. [More here](https://medium.com/@hudsonmendes/solved-system-drawing-netcore-on-mac-gdiplus-exception-c455ab3655a2)
 
+Some scenes use textures. None of the textures are included in this repo, but some of them can be downloaded from [3dtextures.me](https://3dtextures.me/).
+
 ## Usage
 
 `dotnet run` in `RayTracer` directory.
