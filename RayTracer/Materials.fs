@@ -44,3 +44,21 @@ let reflection intensity texturePath uvTransform fresnelInner fresnelOuter =
     mixInner = fresnelInner
     mixOuter = fresnelOuter
   }
+
+let metalGate ambient diffuse uvTransform = NormalMap {
+  mat = Textured {
+    ambient = ambient
+    ambientOcclusion = None
+    alpha = Some <| Texture.read "../tex/metal-gate-alpha.jpg"
+    color = Texture.read "../tex/metal-gate-color.jpg"
+    diffuse = diffuse
+    specularMap = Some <| Texture.read "../tex/metal-gate-specular.jpg"
+    specular = white
+    shininess = 3.
+    transform = identity
+    uvTransform = uvTransform
+  }
+  tex = Texture.read "../tex/metal-gate-normal.jpg"
+  transform = identity
+  uvTransform = uvTransform
+}

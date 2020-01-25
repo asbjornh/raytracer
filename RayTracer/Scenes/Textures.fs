@@ -6,6 +6,7 @@ open Camera
 open Color
 open Light
 open Material
+open Materials
 open Matrix
 open Shape
 open Transform
@@ -16,25 +17,7 @@ open World
 let i = identity
 
 let uvTransform = (0.4, 0.8, 0., 0.)
-let baseMat = Textured {
-  ambient = 0.6
-  ambientOcclusion = None
-  alpha = Some <| Texture.read "../tex/metal-gate-alpha.jpg"
-  color = Texture.read "../tex/metal-gate-color.jpg"
-  diffuse = 1.5
-  specularMap = Some <| Texture.read "../tex/metal-gate-specular.jpg"
-  specular = white
-  shininess = 3.
-  transform = i
-  uvTransform = uvTransform
-}
-
-let mat = NormalMap {
-  mat = baseMat
-  tex = Texture.read "../tex/metal-gate-normal.jpg"
-  transform = i
-  uvTransform = uvTransform
-}
+let mat = metalGate 0.6 1.5 (0.4, 0.8, 0., 0.)
 
 let ball =
   sphere i mat
