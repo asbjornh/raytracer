@@ -80,7 +80,7 @@ let blend = function
   | Normal -> always
 
 let red = color 1. 0.1 0.2
-let green = color 0. 1. 0.
+let green = color 0. 0.7 0.4
 let blue = color 0.2 0.4 1.
 let white = color 1. 1. 1.
 let black = color 0. 0. 0.
