@@ -127,3 +127,18 @@ let techno ambient diffuse uvTransform =
       transform = identity
       uvTransform = uvTransform
     }
+
+let metalGrill2 ambient diffuse uvTransform =
+  withNormalMap "../tex/metal-grill2/normal.jpg" uvTransform
+    <| Textured {
+      ambient = ambient
+      ambientOcclusion = Some <| Texture.read "../tex/metal-grill2/ao.jpg"
+      alpha = Some <| Texture.read "../tex/metal-grill2/alpha.jpg"
+      color = Texture.read "../tex/metal-grill2/color.jpg"
+      diffuse = diffuse
+      specular = white
+      specularMap = Some <| Texture.read "../tex/metal-grill2/specular.jpg"
+      shininess = 50.
+      transform = identity
+      uvTransform = uvTransform
+    }
