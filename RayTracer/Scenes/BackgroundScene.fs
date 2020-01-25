@@ -6,6 +6,7 @@ open Light
 open ObjParser
 open Matrix
 open Material
+open Materials
 open Shape
 open Transform
 open Tuple
@@ -13,10 +14,11 @@ open Util
 open World
 
 
-let bgMat =
-  texture "../tex/hall.jpg"
-  <| (1., 1.) <| (0., 0.)
-  <| rotateX (rad32 5.f)
+let bgMat = LuminanceTexture {
+  tex = Texture.read "../tex/hall.jpg"
+  transform = rotateX (rad32 5.f)
+  uvTransform = (1., 1., 0., 0.)
+}
 let background =
   sphere
   <| uniformScale 1000.f

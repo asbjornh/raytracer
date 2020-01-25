@@ -21,6 +21,7 @@ type Material =
   | Textured of Textured
   | NormalMap of NormalMap
   | Luminance of Color
+  | LuminanceTexture of LuminanceTexture
   | InvisFloor of InvisFloor
   | TestPattern
 
@@ -62,15 +63,18 @@ type Textured = {
   uvTransform: float * float * float * float
 }
 
+type LuminanceTexture = {
+  tex: Color list list
+  // NOTE: (uScale * vScale * uOffset * vOffset)
+  transform: Matrix4x4
+  uvTransform: float * float * float * float
+}
+
 type NormalMap = {
   mat: Material
   tex: Color list list
   transform: Matrix4x4
   uvTransform: float * float * float * float
-}
-
-type Reflective = {
-  blend: BlendingMode
 }
 
 type Transparent = {

@@ -127,6 +127,9 @@ let shadeHitSingleLight light world comps remaining =
       if alpha = 1. then surfaceColor |> Component
       else Color.mix (refractedColor world comps remaining) surfaceColor alpha |> Component
 
+  | LuminanceTexture mat ->
+    textureAt comps mat.transform mat.uvTransform mat.tex |> Constant
+
   | NormalMap mat ->
     let normalV =
       textureAt comps mat.transform mat.uvTransform mat.tex

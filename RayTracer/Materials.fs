@@ -16,16 +16,9 @@ let coloredGlass color =
     }
   }
 
-let luminance intensity texturePath uvTransform =
-  Textured {
-    ambient = intensity
-    ambientOcclusion = None
-    alpha = None
-    color = Texture.read texturePath
-    diffuse = 0.
-    specularMap = None
-    specular = black
-    shininess = 0.
+let luminanceTex texturePath uvTransform =
+  LuminanceTexture {
+    tex = Texture.read texturePath
     transform = identity
     uvTransform = uvTransform
   }
@@ -48,10 +41,10 @@ let carPaint color specular shininess uvTransform =
     }
   }
 
-let reflection intensity texturePath uvTransform fresnelInner fresnelOuter =
+let reflectionTex texturePath uvTransform fresnelInner fresnelOuter =
   Fresnel {
     a = Luminance black
-    b = luminance intensity texturePath uvTransform
+    b = luminanceTex texturePath uvTransform
     power = 2.
     mixInner = fresnelInner
     mixOuter = fresnelOuter
