@@ -13,14 +13,6 @@ open Tuple
 
 let tests =
   testList "Tests for Material" [
-    testCase "The default material" <| fun _ ->
-      let m = defaultMaterialP ()
-      Expect.equal m.color (color 1. 1. 1.) ""
-      Expect.equal m.ambient 0.1 ""
-      Expect.equal m.diffuse 0.9 ""
-      Expect.equal m.specular 0.9 ""
-      Expect.equal m.shininess 200.0 ""
-
     testCase "Lighting with the eye between the light and the surface" <| fun _ ->
       let m = defaultMaterialP ()
       let position = point 0. 0. 0.

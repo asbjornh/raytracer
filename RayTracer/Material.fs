@@ -55,7 +55,7 @@ type Textured = {
   color: Color list list
   diffuse: float
   specularMap: (Color list list) option
-  specular: float
+  specular: Color
   shininess: float
   transform: Matrix4x4
   // NOTE: (uScale * vScale * uOffset * vOffset)
@@ -96,7 +96,7 @@ type Phong = {
   color: Color
   ambient: float
   diffuse: float
-  specular: float
+  specular: Color
   shininess: float
 }
 
@@ -104,7 +104,7 @@ let phongColor
   (baseColor: Color)
   (ambient: float)
   (diffuse: float)
-  (specular: float)
+  (specular: Color)
   (shininess: float)
   (light: PointLight)
   (pos: Vector4)
@@ -132,7 +132,7 @@ let phongColor
           then (diffuse, black)
           else
             let factor = pow shininess (float reflectDotEye)
-            let specular = light.intensity |> scale factor |> scale specular
+            let specular = multiply specular light.intensity |> scale factor
             (diffuse, specular)
 
       ambient |> add diffuse |> add specular
@@ -174,26 +174,27 @@ let getBlendComponents matA matB a b =
   | (_, Transparent mat) -> (a, blend mat.blend b a)
   | _ -> (a, b)
 
-let defaultMaterial () = Phong (defaultMaterialP ())
-
-let defaultMaterialP () = {
-  color = color 1. 1. 1.
-  ambient = 0.1
-  diffuse = 0.9
-  specular = 0.9
-  shininess = 200.
-}
-
-let materialShiny shininess color ambient diffuse specular =
+let materialRaw color ambient diffuse specular shininess =
   Phong {
-    color = color
     ambient = ambient
+    color = color
     diffuse = diffuse
     specular = specular
     shininess = shininess
   }
 
-let material color = materialShiny 200. color
+let defaultMaterialP () = {
+  color = white
+  ambient = 0.1
+  diffuse = 0.9
+  specular = scale 0.9 white
+  shininess = 200.
+}
+
+let defaultMaterial () = Phong (defaultMaterialP ())
+
+let material color ambient diffuse specular =
+  materialRaw color ambient diffuse (scale diffuse color) 200.
 
 let materialC color =
   Phong { defaultMaterialP () with color = color }
@@ -209,7 +210,7 @@ let textureRaw path (uScale, vScale) (uOffset, vOffset) t =
     color = Texture.read path;
     diffuse = 0.9
     specularMap = None
-    specular = 0.9
+    specular = scale 0.9 white
     shininess = 200.
     transform = t
     uvTransform = (uScale, vScale, uOffset, vOffset)
