@@ -11,7 +11,7 @@ open Util
 
 type Material =
   | Phong of Phong
-  | Reflective of Reflective
+  | Reflective of BlendingMode
   | Fresnel of Fresnel
   | Mix of Mix
   | Blend of Blend
@@ -167,8 +167,8 @@ let fresnelShade a b power normalV eyeV =
 // If either matA or matB is a Reflective, the non-reflective color is blended with the reflective one (using the blending mode in the reflective material)
 let getBlendComponents matA matB a b =
   match (matA, matB) with
-  | (Reflective mat, _) -> (blend mat.blend a b, b)
-  | (_, Reflective mat) -> (a, blend mat.blend b a)
+  | (Reflective mat, _) -> (blend mat a b, b)
+  | (_, Reflective mat) -> (a, blend mat b a)
   | _ -> (a, b)
 
 let materialRaw color ambient diffuse specular shininess =

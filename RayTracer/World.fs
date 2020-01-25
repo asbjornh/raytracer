@@ -139,11 +139,10 @@ let shadeHitSingleLight light world comps remaining =
   | Reflective mat ->
     match light with
     | PointLight _ | SoftLight _ ->
-      reflectedColor world comps remaining |> Component
+      reflectedColor world comps remaining |> Constant
     | ConstantLight l ->
-      match mat.blend with
-      | Normal -> l.intensity | _ -> black
-      |> Component
+      match mat with
+      | Normal -> Component l.intensity | _ -> Component black
 
   | Transparent _ ->
     match light with

@@ -38,7 +38,7 @@ let rightWall =
 
 let sphereMat = Fresnel {
   a = materialC white
-  b = Reflective { blend = Add }
+  b = Reflective Add
   power = 3.
   mixOuter = 1.
   mixInner = 1.
@@ -76,7 +76,7 @@ let w = world lights objects
 
 let options =
   { defaultOptions with 
-      antiAliasing = true }
+      antiAliasing = false }
 
 let run () =
   render options cam w

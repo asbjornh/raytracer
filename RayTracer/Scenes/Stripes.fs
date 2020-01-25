@@ -31,7 +31,7 @@ let wall =
 
 
 let midMat = Pattern {
-  a = Reflective { blend = Normal }
+  a = Reflective Normal
   b = materialC white
   pattern = Stripes
   transform = chain [
@@ -48,7 +48,7 @@ let middle =
 
 let rightMat = Pattern {
   a = materialC white
-  b = Reflective { blend = Normal }
+  b = Reflective Normal
   pattern = Stripes
   transform = chain [
     rotateZ (rad32 -15.f)
@@ -62,7 +62,7 @@ let right =
   <| rightMat
 
 let leftMat = Pattern {
-  a = Reflective { blend = Normal }
+  a = Reflective Normal
   b = materialC white
   pattern = Stripes
   transform = chain [rotateZ (rad32 15.f); uniformScale 0.25f ]
