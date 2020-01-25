@@ -108,23 +108,16 @@ let shadeHitSingleLight light world comps remaining =
 
   | Textured mat ->
     let alpha =
-      match mat.alpha with
-        | None -> 1.
-        | Some tex ->
-          textureAt comps mat.transform mat.uvTransform tex |> Color.intensity
+      textureOptionAt mat.alpha comps mat.transform mat.uvTransform |> intensity
     if alpha = 0. then
       refractedColor world comps remaining |> Constant
     else
       let baseColor = textureAt comps mat.transform mat.uvTransform mat.color
       let occlusionColor =
-        match mat.ambientOcclusion with
-          | None -> white
-          | Some tex -> textureAt comps mat.transform mat.uvTransform tex
+        textureOptionAt mat.ambientOcclusion comps mat.transform mat.uvTransform
       let specularFactor =
-        match mat.specularMap with
-        | None -> 1.
-        | Some tex ->
-          textureAt comps mat.transform mat.uvTransform tex |> Color.invert |> Color.intensity
+        textureOptionAt mat.specularMap comps mat.transform mat.uvTransform
+        |> invert |> intensity
       let specular = mat.specular * specularFactor
       let newMat = materialShiny mat.shininess baseColor mat.ambient mat.diffuse specular
       let newComps = { comps with object = { comps.object with material = newMat } }
@@ -215,6 +208,11 @@ let textureAt comps (transform: Matrix4x4) uvTransform tex =
   let p = patternPoint comps.object.transform transform comps.overPoint
   let (u, v) = uvAt p comps.object
   Texture.colorAt u v uvTransform tex
+
+let textureOptionAt texture comps transform uvTransform =
+  match texture with
+    | None -> white
+    | Some tex -> textureAt comps transform uvTransform tex
 
 let occlusionAt numSamples threshold world r =
   let is = intersect r world
