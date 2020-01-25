@@ -17,6 +17,7 @@
     <Compile Include="Pattern.fs" />
     <Compile Include="Texture.fs" />
     <Compile Include="Material.fs" />
+    <Compile Include="Materials.fs" />
     <Compile Include="Shapes/Cone.fs" />
     <Compile Include="Shapes/Cube.fs" />
     <Compile Include="Shapes/Cylinder.fs" />
