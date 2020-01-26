@@ -99,6 +99,7 @@ type Computation = {
   underPoint: Vector4
   n1: float32
   n2: float32
+  ray: Ray
 }
 
 let prepareComputations (is: Intersection list) (hit: Intersection) r =
@@ -126,6 +127,7 @@ let prepareComputations (is: Intersection list) (hit: Intersection) r =
     underPoint = point - b
     n1 = n1
     n2 = n2
+    ray = r
   }
 
 let intersect (ray: Ray) (s: Shape) =

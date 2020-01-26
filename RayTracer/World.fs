@@ -142,9 +142,11 @@ let shadeHitSingleLight light world comps remaining =
     let normalV =
       textureAt comps mat.transform mat.uvTransform mat.tex
       |> normalFromColor comps.normalV |> normalize
+    let reflectV = reflect normalV comps.ray.direction
 
     let newObj = { comps.object with material = mat.mat }
-    shadeHit world { comps with normalV = normalV; object = newObj } remaining
+    let newComps = { comps with normalV = normalV; reflectV = reflectV; object = newObj }
+    shadeHit world newComps remaining
     |> Component
 
   | Reflective ->
