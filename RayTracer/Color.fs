@@ -54,6 +54,12 @@ let darken c = Color.Map2C min c
 let invert c = subtract (color 1. 1. 1.) c
 let screen a b =
   invert (multiply (invert a) (invert b))
+let overlay a b =
+  Color.Map2C (fun ca cb ->
+    if ca < 0.5 then 2. * ca * cb
+    else 1. - 2. * (1. - ca) * (1. - cb)
+  ) a b
+let hardLight c = flip overlay c
 let mix a b amount =
   subtract b a |> scale amount |> add a
 
@@ -65,18 +71,22 @@ type BlendingMode =
   | Add
   | Subtract
   | Multiply
-  | Lighten
   | Darken
+  | Lighten
   | Screen
+  | Overlay
+  | HardLight
   | Normal
 
 let blend = function
   | Add -> add
   | Subtract -> subtract
   | Multiply -> multiply
-  | Lighten -> lighten
   | Darken -> darken
+  | Lighten -> lighten
   | Screen -> screen
+  | Overlay -> overlay
+  | HardLight -> hardLight
   | Normal -> always
 
 let red = color 1. 0.1 0.2
@@ -90,4 +100,4 @@ let darkGray = color 0.1 0.1 0.1
 let gray v = color v v v
 let pink = color 1. 0.3 0.9
 let cyan = color 0.2 1. 1.
-let gold = color 0.83 0.69 0.22
+let gold = color 0.85 0.63 0.18

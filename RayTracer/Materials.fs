@@ -4,7 +4,14 @@ open Color
 open Matrix
 open Material
 
+let gold = Blend {
+  mode = Overlay
+  a = Reflective Normal
+  b = Luminance gold
+}
+
 let specularOnly = material white 0. 0. 1.
+
 let coloredGlass color =
   Blend {
     mode = Add
