@@ -2,5 +2,5 @@
 
 [<EntryPoint>]
 let main argv =
-  Textures.run ()
+  SphereRoom.run ()
   0
