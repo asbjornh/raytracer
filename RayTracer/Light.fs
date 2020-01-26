@@ -52,14 +52,14 @@ let squareOfPoints (position: Vector4) target resolution size =
   )
   |> List.reduce (fun a b -> List.concat [a; b])
 
-let softLight position direction intensity resolution size =
-  let points = squareOfPoints position direction resolution size
+let softLight position target intensity resolution size =
+  let points = squareOfPoints position target resolution size
   let l = { position = position; intensity = intensity; }
   SoftLight { light = l; virtualLights = points }
 
-let squareLight position direction intensity resolution size =
+let squareLight position target intensity resolution size =
   let count = resolution * resolution
   let i = Color.scale (1. / float count) intensity
 
-  squareOfPoints position direction resolution size
+  squareOfPoints position target resolution size
     |> List.map (fun p -> pointLight p i)
