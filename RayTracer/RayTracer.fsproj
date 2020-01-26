@@ -53,6 +53,7 @@
     <Compile Include="Scenes/ToyCar.fs" />
     <Compile Include="Scenes/Wolf.fs" />
     <Compile Include="Scenes/SphereRoom.fs" />
+    <Compile Include="Scenes/TeapotScene.fs" />
 
     <Compile Include="Program.fs" />
   </ItemGroup>
