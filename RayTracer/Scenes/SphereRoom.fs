@@ -21,7 +21,8 @@ let plasticBall =
   <| translate -1.5f 1.f 4.f
   <| Fresnel {
     a = material (orange) 0. 1. 0.2
-    b = Reflective Screen
+    b = Reflective
+    blend = Screen
     power = 1.5
     mixOuter = 1.
     mixInner = 1.
@@ -38,7 +39,8 @@ let metalBall =
 
 let glassMat = Fresnel {
   a = coloredGlass orange
-  b = Reflective Screen
+  b = Reflective
+  blend = Screen
   power = 2.
   mixOuter = 1.
   mixInner = 1.

@@ -10,7 +10,7 @@ let coloredMetal color = Blend {
   mode = Overlay
   a = Blend {
     mode = Add
-    a = Reflective Add
+    a = Reflective
     b = specularOnly
   }
   b = Luminance color
@@ -58,6 +58,7 @@ let reflectionTex texturePath uvTransform fresnelInner fresnelOuter =
   Fresnel {
     a = Luminance black
     b = luminanceTex texturePath uvTransform
+    blend = Normal
     power = 2.
     mixInner = fresnelInner
     mixOuter = fresnelOuter

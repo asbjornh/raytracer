@@ -87,7 +87,7 @@ let blend = function
   | Screen -> screen
   | Overlay -> overlay
   | HardLight -> hardLight
-  | Normal -> always
+  | Normal -> flip always
 
 let red = color 1. 0.1 0.2
 let green = color 0. 0.7 0.4

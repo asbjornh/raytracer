@@ -83,7 +83,7 @@ let shadeTwo world comps remaining matA matB =
   let compsB = { comps with object = objectB }
   let a = shadeHit world compsA remaining
   let b = shadeHit world compsB remaining
-  getBlendComponents matA matB a b
+  (a, b)
 
 type PixelColor =
   | Constant of Color
@@ -147,7 +147,7 @@ let shadeHitSingleLight light world comps remaining =
     shadeHit world { comps with normalV = normalV; object = newObj } remaining
     |> Component
 
-  | Reflective mat ->
+  | Reflective ->
     match light with
     | PointLight _ | SoftLight _ ->
       reflectedColor world comps remaining |> Constant
@@ -159,9 +159,10 @@ let shadeHitSingleLight light world comps remaining =
 
   | Fresnel mat ->
     let (a, b) = shadeTwo world comps remaining mat.a mat.b
-    let a2 = mix b a mat.mixInner
-    let b2 = mix a b mat.mixOuter
-    fresnelShade a2 b2 mat.power comps.normalV comps.eyeV |> Component
+    let b2 = blend mat.blend a b
+    let a3 = mix b2 a mat.mixInner
+    let b3 = mix a b2 mat.mixOuter
+    fresnelShade a3 b3 mat.power comps.normalV comps.eyeV |> Component
 
   | Mix mat ->
     let (a, b) = shadeTwo world comps remaining mat.a mat.b

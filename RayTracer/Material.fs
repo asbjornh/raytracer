@@ -12,7 +12,7 @@ open Util
 type Material =
   | Phong of Phong
   | Layer of Phong // NOTE: Ignores shadows
-  | Reflective of BlendingMode
+  | Reflective
   | Fresnel of Fresnel
   | Mix of Mix
   | Blend of Blend
@@ -33,6 +33,7 @@ type InvisFloor = {
 type Fresnel = {
   a: Material
   b: Material
+  blend: BlendingMode
   power: float
   mixInner: float
   mixOuter: float
@@ -165,13 +166,6 @@ let fresnelShade a b power normalV eyeV =
   let max = mapping (Math.PI / 2.)
   let amount = ang |> mapping |> rangeMap (0., max) (0., 1.)
   mix a b amount
-
-// If either matA or matB is a Reflective, the non-reflective color is blended with the reflective one (using the blending mode in the reflective material)
-let getBlendComponents matA matB a b =
-  match (matA, matB) with
-  | (Reflective mat, _) -> (blend mat a b, b)
-  | (_, Reflective mat) -> (a, blend mat b a)
-  | _ -> (a, b)
 
 let materialRaw color ambient diffuse specular shininess =
   Phong {

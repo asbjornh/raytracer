@@ -26,7 +26,8 @@ let cam =
 let mat = Fresnel {
   a = material pink 0.1 0.9 0.
   b = Luminance yellow
-  power = 2.
+  blend = BlendingMode.Normal
+  power = 1.5
   mixOuter = 1.
   mixInner = 1.
 }

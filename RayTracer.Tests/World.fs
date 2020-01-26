@@ -115,7 +115,7 @@ let tests =
       let w = defaultWorld ()
       let mat = Mix {
         a = defaultMaterial ()
-        b = Reflective { blend = Normal }
+        b = Reflective
         mix = 0.5
       }
       let shape = plane (translateY -1.f) mat
@@ -131,7 +131,7 @@ let tests =
       let w = defaultWorld ()
       let mat = Mix {
         a = defaultMaterial ()
-        b = Reflective { blend = Normal }
+        b = Reflective
         mix = 0.5
       }
       let shape = plane (translateY -1.f) mat
@@ -145,7 +145,7 @@ let tests =
 
     testCase "color_at() with mutually reflective surfaces" <| fun _ ->
       let light = pointLight (point 0. 0. 0.) (color 1. 1. 1.)
-      let mat = Reflective { blend = Normal }
+      let mat = Reflective
       let lower = plane (translateY -1.f) mat
       let upper = plane (translateY 1.f) mat
       let w = world [light] [lower; upper]
@@ -156,7 +156,7 @@ let tests =
       let w = defaultWorld ()
       let mat = Mix {
         a = defaultMaterial ()
-        b = Reflective { blend = Normal }
+        b = Reflective
         mix = 0.5
       }
       let shape = plane (translateY -1.f) mat
@@ -170,7 +170,7 @@ let tests =
 
     testCase "The refracted color at the maximum recursive depth" <| fun _ ->
       let w = defaultWorld ()
-      let mat = Transparent { index = 1.5f; blend = Normal }
+      let mat = Transparent { index = 1.5f }
       let shape = w.objects.[0]
       shape.material <- mat
       let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
@@ -184,7 +184,7 @@ let tests =
 
     testCase "The refracted color under total internal reflection" <| fun _ ->
       let w = defaultWorld ()
-      let mat = Transparent { index = 1.5f; blend = Normal }
+      let mat = Transparent { index = 1.5f }
       let shape = w.objects.[0]
       shape.material <- mat
       let a = (sqrt 2.f) / 2.f
@@ -202,7 +202,7 @@ let tests =
     testCase "The refracted color with a refracted ray" <| fun _ ->
       let w = defaultWorld ()
       let matA = TestPattern
-      let matB = Transparent { index = 1.5f; blend = Normal }
+      let matB = Transparent { index = 1.5f }
       let a = { w.objects.[0] with material = matA }
       let b = { w.objects.[1] with material = matB }
       let r = ray (point 0. 0. 0.1) (vector 0. 1. 0.)
@@ -222,7 +222,10 @@ let tests =
       let floor =
         plane <| chain [translateY -1.f; uniformScale 10.f]
         <| Mix {
-          a = Transparent { index = 1.5f; blend = Add }
+          a = Blend {
+            mode = Add
+            a = defaultMaterial ()
+            b = Transparent { index = 1.5f } }
           b = defaultMaterial ()
           mix = 0.5
         }

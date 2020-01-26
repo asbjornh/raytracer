@@ -33,7 +33,8 @@ let floor =
 
 let mat = Fresnel {
   a = material white 0.3 0.7 0.
-  b = Reflective Lighten
+  b = Reflective
+  blend = Lighten
   power = 3.
   mixOuter = 0.4
   mixInner = 1.

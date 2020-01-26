@@ -14,7 +14,7 @@ open Transform
 open Util
 
 let glassSphere index t =
-  sphere t <| Transparent { index = index; blend = Normal }
+  sphere t <| Transparent { index = index }
 
 let testRefraction index n1 n2 =
   let a = glassSphere 1.5f <| uniformScale 2.f
