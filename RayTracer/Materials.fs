@@ -4,13 +4,19 @@ open Color
 open Matrix
 open Material
 
-let gold = Blend {
-  mode = Overlay
-  a = Reflective Normal
-  b = Luminance gold
-}
+let specularOnly = layerMaterial white 0. 0. 1. 200.
 
-let specularOnly = material white 0. 0. 1.
+let coloredMetal color = Blend {
+  mode = Overlay
+  a = Blend {
+    mode = Add
+    a = Reflective Add
+    b = specularOnly
+  }
+  b = Luminance color
+}
+let gold = coloredMetal Color.gold
+let brass = coloredMetal (mix Color.gold (gray 0.5) 0.4)
 
 let coloredGlass color =
   Blend {

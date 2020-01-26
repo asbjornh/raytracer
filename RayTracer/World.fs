@@ -102,6 +102,11 @@ let shadeHitSingleLight light world comps remaining =
       light comps.point comps.eyeV comps.normalV mat s
       |> Component
 
+  | Layer mat ->
+    match light with
+      | PointLight _ | SoftLight _ ->
+        lighting light comps.point comps.eyeV comps.normalV mat 0. |> Component
+
   | Luminance c -> Constant c
 
   | Pattern mat ->

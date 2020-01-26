@@ -45,7 +45,7 @@ let rec indexForMaterial = function
     pickIndex (indexForMaterial m.a) (indexForMaterial m.b)
   | Gradient _ | Pattern _ | Phong _ | NormalMap _ | Luminance _
   | Reflective _ | TestPattern _ | Textured _ | InvisFloor _
-  | LuminanceTexture _ -> 1.f
+  | LuminanceTexture _ | Layer _ -> 1.f
 
 let indexFromIntersection (s: Shape) =
   indexForMaterial s.material

@@ -11,6 +11,7 @@ open Util
 
 type Material =
   | Phong of Phong
+  | Layer of Phong // NOTE: Ignores shadows
   | Reflective of BlendingMode
   | Fresnel of Fresnel
   | Mix of Mix
@@ -178,6 +179,15 @@ let materialRaw color ambient diffuse specular shininess =
     color = color
     diffuse = diffuse
     specular = specular
+    shininess = shininess
+  }
+
+let layerMaterial color ambient diffuse specular shininess =
+  Layer {
+    ambient = ambient
+    color = color
+    diffuse = diffuse
+    specular = (scale specular color)
     shininess = shininess
   }
 
