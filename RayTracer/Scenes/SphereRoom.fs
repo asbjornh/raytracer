@@ -13,7 +13,7 @@ open World
 
 let room =
   cube
-  <| chain [translateY 20.f; uniformScale 20.f]
+  <| chain [translateY 20.f; translateZ -6.f; uniformScale 20.f]
   <| material white 0.2 0.9 0.
 
 let plastic = Blend {
@@ -38,7 +38,7 @@ let metalBall =
   <| translate 1.5f 1.f 4.f
   <| Blend {
       mode = Multiply
-      a = gold (Some { samples = 2; angle = 0.5 })
+      a = gold 0.3 10. (Some { samples = 4; angle = 0.4 })
       b = Luminance (mix Color.gold white 0.8)
     }
 
@@ -57,7 +57,7 @@ let glassBall =
   <| glassMat
 
 let lightPos = point 0. 20. -6.
-let light = softLight lightPos ((point 0. 0. 0.) - lightPos) (mix yellow white 0.97) 3 30.f
+let light = softLight lightPos ((point 0. 0. 0.) - lightPos) (mix yellow white 0.97) 10 30.f
 let w =
   ambientWorld
   <| Some (mix (gray 0.1) blue 0.3, Lighten)
@@ -65,7 +65,7 @@ let w =
   <| [plasticBall; glassBall; metalBall; room]
 
 let cam =
-  camera 400 225 (rad32 20.f)
+  camera 500 225 (rad32 25.f)
   <| (point 0. 2. -19.) <| (point 0. 1. 0.)
 let options =
   { defaultOptions with 

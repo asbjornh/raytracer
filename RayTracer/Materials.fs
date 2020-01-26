@@ -6,12 +6,12 @@ open Material
 
 let specularOnly specular shininess = layerMaterial white 0. 0. specular shininess
 
-let coloredMetal color blurOptions = Blend {
+let coloredMetal color specular shininess blurOptions = Blend {
   mode = Overlay
   a = Blend {
     mode = Add
     a = Reflective blurOptions
-    b = specularOnly 1. 200.
+    b = specularOnly specular shininess
   }
   b = Luminance color
 }
