@@ -16,26 +16,31 @@ let room =
   <| chain [translateY 20.f; uniformScale 20.f]
   <| material white 0.2 0.9 0.
 
-let plasticBall =
-  sphere
-  <| translate -1.5f 1.f 4.f
-  <| Fresnel {
-    a = material (orange) 0. 1. 0.2
+let plastic = Blend {
+  mode = Add
+  a = specularOnly 0.5 50.
+  b = Fresnel {
+    a = glitterHighlight orange 0. 1. 0.7 (0.75, 1.5, 0., 0.)
     b = Reflective
     blend = Screen
     power = 1.5
     mixOuter = 1.
     mixInner = 1.
   }
+}
+let plasticBall =
+  sphere
+  <| translate -1.5f 1.f 4.f
+  <| plastic
 
 let metalBall =
   sphere
   <| translate 1.5f 1.f 4.f
   <| Blend {
-    mode = Multiply
-    a = gold
-    b = Luminance (mix Color.gold white 0.8)
-  }
+      mode = Multiply
+      a = gold
+      b = Luminance (mix Color.gold white 0.8)
+    }
 
 let glassMat = Fresnel {
   a = coloredGlass orange
@@ -52,7 +57,7 @@ let glassBall =
   <| glassMat
 
 let lightPos = point 0. 20. -6.
-let light = softLight lightPos ((point 0. 0. 0.) - lightPos) (mix yellow white 0.97) 4 30.f
+let light = softLight lightPos ((point 0. 0. 0.) - lightPos) (mix yellow white 0.97) 3 30.f
 let w =
   ambientWorld
   <| Some (mix (gray 0.1) blue 0.3, Lighten)
@@ -64,7 +69,7 @@ let cam =
   <| (point 0. 2. -19.) <| (point 0. 1. 0.)
 let options =
   { defaultOptions with 
-      antiAliasing = false }
+      antiAliasing = true }
 
 let run () =
   render options cam w

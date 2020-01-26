@@ -4,14 +4,14 @@ open Color
 open Matrix
 open Material
 
-let specularOnly = layerMaterial white 0. 0. 1. 200.
+let specularOnly specular shininess = layerMaterial white 0. 0. specular shininess
 
 let coloredMetal color = Blend {
   mode = Overlay
   a = Blend {
     mode = Add
     a = Reflective
-    b = specularOnly
+    b = specularOnly 1. 200.
   }
   b = Luminance color
 }
@@ -21,7 +21,7 @@ let brass = coloredMetal (mix Color.gold (gray 0.5) 0.4)
 let coloredGlass color =
   Blend {
     mode = Add
-    a = specularOnly
+    a = specularOnly 1. 200.
     b = Blend {
       mode = Multiply
       a = Luminance color
@@ -36,23 +36,29 @@ let luminanceTex texturePath uvTransform =
     uvTransform = uvTransform
   }
 
-let carPaint color specular shininess uvTransform =
+let specularHighlight color ambient diffuse specular shininess texturePath uvTransform =
+  Textured {
+    ambient = ambient
+    ambientOcclusion = None
+    alpha = None
+    color = Texture.solid color
+    diffuse = diffuse
+    specularMap = Some <| Texture.read texturePath
+    specular = specular
+    shininess = shininess
+    transform = identity
+    uvTransform = uvTransform
+  }
+
+let carPaint color specular uvTransform =
   Blend {
     mode = Add
-    a = specularOnly
-    b = Textured {
-      ambient = 0.
-      ambientOcclusion = None
-      alpha = None
-      color = Texture.solid color
-      diffuse = 0.7
-      specularMap = Some <| Texture.read "../tex/noise-light.jpg"
-      specular = specular
-      shininess = shininess
-      transform = identity
-      uvTransform = uvTransform
-    }
+    a = specularOnly 1. 200.
+    b = specularHighlight color 0. 0.7 specular 2. "../tex/noise-light.jpg" uvTransform
   }
+
+let glitterHighlight color ambient diffuse specular uvTransform =
+  specularHighlight color ambient diffuse (scale specular white) 1.5 "../tex/glitter.jpg" uvTransform
 
 let reflectionTex texturePath uvTransform fresnelInner fresnelOuter =
   Fresnel {
