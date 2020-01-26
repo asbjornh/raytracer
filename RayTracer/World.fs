@@ -65,16 +65,19 @@ let isInShadow pos objects lightPos =
   | Some hit -> if hit.t < distance then 1. else 0.
   | None -> 0.
 
-let shadowAmount point light w =
+let shadowAmount softShadows point light w =
   if not w.shadows then 0.
   else
   match light with
   | PointLight l -> isInShadow point w.objects l.position 
   | SoftLight l ->
-    let count = List.length l.virtualLights
-    let hits =
-      l.virtualLights |> List.sumBy (isInShadow point w.objects)
-    hits / float count
+    if not softShadows then
+      isInShadow point w.objects l.light.position 
+    else
+      let count = List.length l.virtualLights
+      let hits =
+        l.virtualLights |> List.sumBy (isInShadow point w.objects)
+      hits / float count
 
 let shadeTwo world comps remaining matA matB =
   let objectA = { comps.object with material = matA }
@@ -97,9 +100,10 @@ let shadeHitSingleLight light world comps remaining =
 
   match comps.object.material with
   | Phong mat ->
-    let s = shadowAmount comps.overPoint light world
+    let shadow =
+      shadowAmount mat.softShadows comps.overPoint light world
     lighting
-      light comps.point comps.eyeV comps.normalV mat s
+      light comps.point comps.eyeV comps.normalV mat shadow
       |> Component
 
   | Layer mat ->
@@ -174,7 +178,7 @@ let shadeHitSingleLight light world comps remaining =
     gradientAt a b mat.sharpness p |> Component
 
   | InvisFloor mat ->
-    let s = shadowAmount comps.overPoint light world
+    let s = shadowAmount true comps.overPoint light world
     let r = ray comps.underPoint (negate comps.eyeV)
     let c = colorAt world r (remaining - 1)
     mix c mat.shadowColor s |> Constant

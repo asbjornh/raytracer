@@ -107,6 +107,7 @@ type Phong = {
   diffuse: Color
   specular: Color
   shininess: float
+  softShadows: bool
 }
 
 let phongColor
@@ -175,6 +176,7 @@ let materialRaw ambient diffuse specular shininess =
     diffuse = diffuse
     specular = specular
     shininess = shininess
+    softShadows = true
   }
 
 let layerMaterial color ambient diffuse specular shininess =
@@ -183,6 +185,7 @@ let layerMaterial color ambient diffuse specular shininess =
     diffuse = (scale diffuse color)
     specular = (scale specular color)
     shininess = shininess
+    softShadows = true
   }
 
 let defaultMaterialP () = {
@@ -190,6 +193,7 @@ let defaultMaterialP () = {
   diffuse = scale 0.9 white
   specular = scale 0.9 white
   shininess = 200.
+  softShadows = true
 }
 
 let defaultMaterial () = Phong (defaultMaterialP ())
@@ -206,6 +210,15 @@ let material color ambient diffuse specular =
     (scale diffuse color)
     (scale specular color)
     200.
+
+let materialSharp color ambient diffuse specular =
+  Phong {
+    ambient = (scale ambient color)
+    diffuse = (scale diffuse color)
+    specular = (scale specular color)
+    shininess = 200.
+    softShadows = false
+  }
 
 let materialC color =
   material color 0.1 0.9 0.9
