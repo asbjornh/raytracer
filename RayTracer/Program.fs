@@ -2,5 +2,5 @@
 
 [<EntryPoint>]
 let main argv =
-  SphereRoom.run ()
+  Mario.run ()
   0

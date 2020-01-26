@@ -60,6 +60,11 @@ let overlay a b =
     else 1. - 2. * (1. - ca) * (1. - cb)
   ) a b
 let hardLight c = flip overlay c
+let softLight a b =
+  Color.Map2C (fun ca cb ->
+    if cb < 0.5 then 2. * ca * cb + (ca ** 2.) * (1. - 2. * cb)
+    else 2. * ca * (1. - cb) + (sqrt ca) * (2. * cb - 1.)
+  ) a b
 let mix a b amount =
   subtract b a |> scale amount |> add a
 
@@ -76,6 +81,7 @@ type BlendingMode =
   | Screen
   | Overlay
   | HardLight
+  | SoftLight
   | Normal
 
 let blend = function
@@ -87,6 +93,7 @@ let blend = function
   | Screen -> screen
   | Overlay -> overlay
   | HardLight -> hardLight
+  | SoftLight -> softLight
   | Normal -> flip always
 
 let red = color 1. 0.1 0.2

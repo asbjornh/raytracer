@@ -29,6 +29,16 @@ let coloredGlass color =
     }
   }
 
+let nintendo ambient diffuse specular rim =
+  Fresnel {
+    a = materialRaw ambient diffuse specular 3.
+    b = Luminance rim
+    blend = BlendingMode.SoftLight
+    power = 3.
+    mixOuter = 1.
+    mixInner = 1.
+  }
+
 let luminanceTex texturePath uvTransform =
   LuminanceTexture {
     tex = Texture.read texturePath
