@@ -19,7 +19,6 @@ let darkBrown = Color.scale 0.25 (color 1. 0.3 0.4)
 let lightPos = point 1000. 400. -600.
 let origin = point 0. 0. 0.
 let sLight = pointLight lightPos white
-let cLight = constantLight (mix blue cyan 0.1) Lighten
 let cam =
   camera 400 300 (rad32 30.f)
   <| (point 0. 300. -1300.) <| (point 40. 100. 0.)
@@ -37,8 +36,9 @@ let deer =
   <| mat
 
 let w = 
-  { world [sLight; cLight] [deer]
-    with background = yellow }
+  { world [sLight] [deer] with 
+      ambientLight = Some (mix blue cyan 0.1, Lighten)
+      background = yellow }
 
 let options =
   { defaultOptions with 

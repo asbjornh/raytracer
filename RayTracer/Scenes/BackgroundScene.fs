@@ -46,15 +46,15 @@ let teapot =
 let lightBlue = mix white cyan 0.2
 let sLight =
   softLight (point 0. 100. 100.) (point 0. 0. 0.) lightBlue 4 40.f
-let cLight = constantLight (darkBlue |> Color.scale 0.5) Add
 let pLight = pointLight (point 0. 100. -50.) (Color.mix blue white 0.4 |> Color.scale 0.3)
 let cam = 
   camera 400 250 (rad32 60.f)
   <| (point 0. 10. -100.) <| (point 0. 1. 0.)
 
 let w =
-  world
-  <| [pLight; sLight; cLight]
+  ambientWorld
+  <| Some (darkBlue |> Color.scale 0.5, Lighten)
+  <| [pLight; sLight]
   <| [background; teapot; floor]
 
 

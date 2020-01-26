@@ -51,9 +51,11 @@ let glassBall =
 
 let lightPos = point 0. 20. -6.
 let light = softLight lightPos ((point 0. 0. 0.) - lightPos) (mix yellow white 0.97) 4 30.f
-let cLight = constantLight (mix (gray 0.1) blue 0.3) Lighten
-let objects = [glassBall; plasticBall; metalBall; room]
-let w = world [light] objects
+let w =
+  ambientWorld
+  <| Some (mix (gray 0.1) blue 0.3, Lighten)
+  <| [light]
+  <| [glassBall; plasticBall; metalBall; room]
 
 let cam =
   camera 400 225 (rad32 20.f)

@@ -97,7 +97,7 @@ let renderImage o c w =
 
   let renderFn =
     match o.renderType with
-    | Normal -> colorAt
+    | Normal -> colorAndAmbientAt
     | ColoredNormals c -> ExperimentalRender.coloredNormals c
 
   let tick =

@@ -17,7 +17,6 @@ open World
 let lightPos = point 100. 70. -60.
 let pLight = pointLight lightPos white
 let pLight2 = pointLight (point -20. 5. -20.) (Color.scale 0.2 cyan)
-let cLight = constantLight blue Lighten
 let cam =
   camera 400 300 (rad32 30.f)
   <| (point -15. 10. -20.) <| (point 0. 1. 0.)
@@ -32,11 +31,12 @@ let floor =
   <| chain [ translateY -0.5f; uniformScale 10.f ]
   <| InvisFloor { shadowColor = blue }
 
-let w = 
-  { world [pLight; pLight2; cLight] [car; floor]
-    with
-      background = blue 
-      shadows = false }
+let w = {
+  world [pLight; pLight2] [car; floor] with
+    ambientLight = Some (blue, Lighten)
+    background = blue 
+    shadows = false
+}
 
 let aoOptions = {
   samples = 24

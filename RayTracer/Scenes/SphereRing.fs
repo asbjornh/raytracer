@@ -51,7 +51,6 @@ let rightWall =
   <| wallMaterial
 
 let pLight = pointLight (point32 -10.f 10.f -10.f) (color 1. 0.9 0.7)
-let cLight = constantLight (color 0. 0.1 0.2) Add
 let cam = 
   camera 400 200 (MathF.PI / 3.f)
   <| (point32 0.f 1.5f -5.f) <| (point32 0.f 1.f 0.f)
@@ -59,10 +58,12 @@ let cam =
 let spheresT = chain [translateY 1.f; uniformScale 0.2f]
 let spheres =
   sphereRing (vector32 0.f 0.f 1.f) spheresT 8 3.f
-let objects =
-  List.concat [spheres; [floor; leftWall; rightWall;]]
 
-let w =  world [pLight; cLight] objects 
+let w =
+  ambientWorld
+  <| Some (color 0. 0.1 0.2, Add)
+  <| [pLight]
+  <| List.concat [spheres; [floor; leftWall; rightWall;]]
 
 let run () =
   render defaultOptions cam w

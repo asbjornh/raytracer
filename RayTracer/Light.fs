@@ -9,12 +9,10 @@ open Transform
 open Util
 
 type PointLight = { intensity: Color; position: Vector4 }
-type ConstantLight = { intensity: Color; mode: BlendingMode }
 type SoftLight = { light: PointLight; virtualLights: Vector4 list }
 
 type Light =
   | PointLight of PointLight
-  | ConstantLight of ConstantLight
   | SoftLight of SoftLight
 
 let pointLightFactory position intensity =
@@ -22,9 +20,6 @@ let pointLightFactory position intensity =
 
 let pointLight p i =
   pointLightFactory p i |> PointLight
-
-let constantLight intensity mode =
-  ConstantLight { intensity = intensity; mode = mode }
 
 let ringLight (position: Vector4) target intensity count spread =
   let up = vector 0. 0. 1.

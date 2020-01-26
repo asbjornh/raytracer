@@ -52,15 +52,15 @@ let left =
   <| defaultMaterial ()
 
 let pLight = pointLight (point -10. 10. -10.) (color 1. 0.9 0.7)
-let cLight = constantLight (color 0. 0.1 0.2) Add
 let cam = 
   camera 400 200 (MathF.PI / 3.f)
   <| (point 0. 1.5 -5.) <| (point 0. 1. 0.)
 
-let objects =
-  [middle; right; left; floor; leftWall; rightWall;]
-
-let w = world [pLight; cLight] objects
+let w =
+  ambientWorld
+  <| Some (color 0. 0.1 0.2, Add)
+  <| [pLight]
+  <| [middle; right; left; floor; leftWall; rightWall;]
 
 let run () =
   render defaultOptions cam w

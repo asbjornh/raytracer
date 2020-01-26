@@ -21,8 +21,8 @@ let wolf =
 
 let backdropMat =
   gradient
-  <| Luminance red
-  <| Luminance blue
+  <| Luminance (Color.scale 2. red)
+  <| Luminance (Color.scale 1.5 (mix blue cyan 0.1))
   <| chain [uniformScale 2.f; translateX 0.5f]
 let backdrop =
   plane
@@ -36,13 +36,13 @@ let backdrop =
 
 let lightPos = point 1000. 600. -200.
 let sLight = pointLight lightPos (mix yellow white 0.85)
-let cLight = constantLight (Color.scale 0.1 blue) Add
 let cam =
   camera 400 240 (rad32 30.f)
   <| (point 450. 470. -1100.) <| (point 450. 470. 0.)
-let w = 
-  { world [sLight; cLight] [wolf; backdrop]
-    with background = (Color.scale 0.1 blue) }
+let w = {
+  world [sLight] [wolf; backdrop] with
+    ambientLight = Some (Color.scale 0.1 blue, Add)
+}
 
 let aoOptions = {
   samples = 8

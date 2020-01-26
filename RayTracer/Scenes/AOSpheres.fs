@@ -53,7 +53,6 @@ let left =
 
 let darkBlue = (color 0. 0.1 0.2)
 let pLight = pointLight (point -10. 10. -10.) (color 1. 0.9 0.7)
-let cLight = constantLight darkBlue Add
 let cam = 
   camera 400 200 (MathF.PI / 3.f)
   <| (point 0. 1.5 -10.) <| (point 0. 1. 0.)
@@ -61,7 +60,10 @@ let cam =
 let objects =
   [middle; right; left; floor; leftWall; rightWall]
 
-let w = { world [pLight; cLight] objects with shadows = false }
+let w = 
+  { world [pLight] objects with 
+      ambientLight = Some (darkBlue, Add)
+      shadows = false }
 
 let aoOptions =
   { color = mix darkBlue white 0.1

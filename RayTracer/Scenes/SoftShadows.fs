@@ -54,16 +54,16 @@ let lightPos = point -10. 10. -10.
 let origin = point 0. 0. 0.
 let sLight = softLight lightPos origin (color 1. 0.9 0.7) 2 3.f
 let darkBrown = Color.scale 0.15 (color 1. 0.3 0.6)
-let cLight = constantLight darkBrown Add
-let lights = [sLight; cLight]
 let cam = 
   camera 400 200 (MathF.PI / 3.f)
   <| (point 0. 1.5 -5.) <| (point 0. 1. 0.)
+  
 
-let objects =
-  [middle; right; left; floor; leftWall; rightWall;]
-
-let w = world lights objects
+let w = 
+  ambientWorld
+  <| Some (darkBrown, Add)
+  <| [sLight]
+  <| [middle; right; left; floor; leftWall; rightWall;]
 
 let run () =
   render defaultOptions cam w

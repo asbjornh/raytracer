@@ -17,21 +17,27 @@ open Tuple
 open Util
 
 type World = {
+  ambientLight: (Color * BlendingMode) Option
   background: Color
   shadows: bool
   objects: Shape list
   lights: Light list
 }
 
-let world lights objects = {
+let ambientWorld ambientLight lights objects = {
+  ambientLight = ambientLight
   background = black
   shadows = true
   objects = objects
   lights = lights
 }
 
+let world lights objects =
+  ambientWorld None lights objects
+
 let defaultWorld () =
   {
+    ambientLight = None
     background = black
     shadows = true
     lights = [pointLight (point -10. 10. -10.) (color 1. 1. 1.)]
@@ -63,7 +69,6 @@ let shadowAmount point light w =
   if not w.shadows then 0.
   else
   match light with
-  | ConstantLight _ -> 0.
   | PointLight l -> isInShadow point w.objects l.position 
   | SoftLight l ->
     let count = List.length l.virtualLights
@@ -83,12 +88,10 @@ let shadeTwo world comps remaining matA matB =
 type PixelColor =
   | Constant of Color
   | Component of Color
-  | Blended of BlendingMode * Color
 
 let getPixelColor = function
   | Constant c -> c
   | Component c -> c
-  | Blended (_, c) -> c
 let shadeHitSingleLight light world comps remaining =
   let objectT = comps.object.transform
 
@@ -143,15 +146,11 @@ let shadeHitSingleLight light world comps remaining =
     match light with
     | PointLight _ | SoftLight _ ->
       reflectedColor world comps remaining |> Constant
-    | ConstantLight l ->
-      match mat with
-      | Normal -> Component l.intensity | _ -> Component black
 
   | Transparent _ ->
     match light with
-    | PointLight _ | SoftLight _ -> refractedColor world comps remaining
-    | ConstantLight _ -> black
-    |> Component
+    | PointLight _ | SoftLight _ ->
+      refractedColor world comps remaining |> Component
 
   | Fresnel mat ->
     let (a, b) = shadeTwo world comps remaining mat.a mat.b
@@ -177,8 +176,8 @@ let shadeHitSingleLight light world comps remaining =
     let r = ray comps.underPoint (negate comps.eyeV)
     let c = colorAt world r (remaining - 1)
     match light with
-    | ConstantLight _ -> Blended (Add, black)
-    | _ -> mix c mat.shadowColor s |> Constant
+    | PointLight _ | SoftLight _ ->
+      mix c mat.shadowColor s |> Constant
 
   | TestPattern ->
     let p = patternPoint objectT identity comps.overPoint
@@ -192,13 +191,16 @@ let shadeHit world comps remaining =
 
     match colr with
     | Constant c -> c
-    | Blended (mode, c) -> blend mode acc c
     | Component c ->
-      match light with
-      | PointLight _ | SoftLight _ -> add acc c
-      | ConstantLight l ->
-        blend l.mode acc c
+      match light with | PointLight _ | SoftLight _ -> add acc c
   ) (color 0. 0. 0.)
+
+let colorAndAmbientAt world ray remaining =
+  let color =
+    colorAt world ray remaining |> Color.MapC (clamp 0. 1.)
+  match world.ambientLight with
+  | None -> color
+  | Some (c, mode) -> blend mode c color
 
 let colorAt world ray remaining =
   let is = intersect ray world

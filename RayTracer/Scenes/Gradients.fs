@@ -66,14 +66,15 @@ let left =
 
 let constantColor = Color.scale 0.5 (color 0.4 0.4 1.)
 let pLight = pointLight (point -10. 10. -10.) (color 1. 0.9 0.7)
-let cLight = constantLight constantColor Add
 let cam =
   camera 400 200 (MathF.PI / 3.f)
   <| (point 0. 1.5 -5.) <| (point 0. 1. 0.)
 
-let objects = [middle; right; left; floor; wall]
-
-let w = world [pLight; cLight] objects
+let w =
+  ambientWorld 
+  <| Some (constantColor, Add)
+  <| [pLight]
+  <| [middle; right; left; floor; wall]
 
 let run () =
   render defaultOptions cam w

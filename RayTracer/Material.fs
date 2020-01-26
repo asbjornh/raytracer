@@ -153,11 +153,8 @@ let softLighting (light: SoftLight) pos eyeV normalV mat shadowAmount =
     let shadowComponent = phongLighting light.light pos eyeV normalV mat 1.
     mix phongComponent shadowComponent shadowAmount
 
-let constantLighting (l: ConstantLight) _ _ _ _ _ = l.intensity
-
 let lighting light =
   match light with
-  | ConstantLight l -> constantLighting l
   | PointLight l -> phongLighting l
   | SoftLight l -> softLighting l
 

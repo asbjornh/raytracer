@@ -76,7 +76,6 @@ let darkBrown = Color.scale 0.25 (color 1. 0.3 0.4)
 let lightPos = point -10. 10. -10.
 let origin = point 0. 0. 0.
 let sLight = softLight lightPos origin white 5 8.f
-let cLight = constantLight darkBrown Add
 let cam = 
   camera 400 200 (MathF.PI / 3.f)
   <| (point 0. 1.5 -5.) <| (point 0. 1. 0.)
@@ -85,7 +84,8 @@ let objects =
   [middle; right; left; floor; wall]
 
 let w = {
-  world [sLight; cLight] objects with
+  world [sLight] objects with
+    ambientLight = Some (darkBrown, Add)
     background = darkBrown
 }
 
