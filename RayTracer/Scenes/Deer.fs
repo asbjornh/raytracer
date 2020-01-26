@@ -16,7 +16,7 @@ open World
 
 
 let darkBrown = Color.scale 0.25 (color 1. 0.3 0.4)
-let lightPos = point 1000. 400. -600.
+let lightPos = point 1000. 400. -400.
 let origin = point 0. 0. 0.
 let sLight = pointLight lightPos white
 let cam =
@@ -24,7 +24,7 @@ let cam =
   <| (point 0. 300. -1300.) <| (point 40. 100. 0.)
 
 let mat = Fresnel {
-  a = material pink 0.1 0.9 0.
+  a = materialRaw blue red black 0.
   b = Luminance yellow
   blend = BlendingMode.Normal
   power = 1.5
@@ -38,7 +38,6 @@ let deer =
 
 let w = 
   { world [sLight] [deer] with 
-      ambientLight = Some (mix blue cyan 0.1, Lighten)
       background = yellow }
 
 let options =

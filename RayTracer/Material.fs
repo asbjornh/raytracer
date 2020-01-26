@@ -98,17 +98,15 @@ type Pattern = {
 }
 
 type Phong = {
-  color: Color
-  ambient: float
-  diffuse: float
+  ambient: Color
+  diffuse: Color
   specular: Color
   shininess: float
 }
 
 let phongColor
-  (baseColor: Color)
-  (ambient: float)
-  (diffuse: float)
+  (ambient: Color)
+  (diffuse: Color)
   (specular: Color)
   (shininess: float)
   (light: PointLight)
@@ -116,8 +114,7 @@ let phongColor
   (eyeV: Vector4)
   (normalV: Vector4)
   (shadowAmount: float) =
-    let effectiveColor = multiply baseColor light.intensity
-    let ambient = scale ambient effectiveColor
+    let ambient = multiply ambient light.intensity
 
     if (looseEq shadowAmount 1.)
     then ambient
@@ -129,7 +126,7 @@ let phongColor
         if (lightDotNormal < 0.f)
         then (black, black)
         else
-          let diffuse = effectiveColor |> scale diffuse |> scale (float lightDotNormal)
+          let diffuse = multiply diffuse light.intensity |> scale (float lightDotNormal)
           let reflectV = reflect normalV (negate lightV)
           let reflectDotEye = dot eyeV reflectV
 
@@ -144,8 +141,8 @@ let phongColor
 
 let phongLighting (light: PointLight) pos eyeV normalV mat shadowAmount =
     phongColor
-    <| mat.color <| mat.ambient <| mat.diffuse <| mat.specular <| mat.shininess
-    <| light <| pos <| eyeV <| normalV <| shadowAmount
+      mat.ambient mat.diffuse mat.specular mat.shininess
+      light pos eyeV normalV shadowAmount
 
 let softLighting (light: SoftLight) pos eyeV normalV mat shadowAmount =
   let phongComponent = phongLighting light.light pos eyeV normalV mat 0.
@@ -167,10 +164,9 @@ let fresnelShade a b power normalV eyeV =
   let amount = ang |> mapping |> rangeMap (0., max) (0., 1.)
   mix a b amount
 
-let materialRaw color ambient diffuse specular shininess =
+let materialRaw ambient diffuse specular shininess =
   Phong {
     ambient = ambient
-    color = color
     diffuse = diffuse
     specular = specular
     shininess = shininess
@@ -178,28 +174,36 @@ let materialRaw color ambient diffuse specular shininess =
 
 let layerMaterial color ambient diffuse specular shininess =
   Layer {
-    ambient = ambient
-    color = color
-    diffuse = diffuse
+    ambient = (scale ambient color)
+    diffuse = (scale diffuse color)
     specular = (scale specular color)
     shininess = shininess
   }
 
 let defaultMaterialP () = {
-  color = white
-  ambient = 0.1
-  diffuse = 0.9
+  ambient = scale 0.1 white
+  diffuse = scale 0.9 white
   specular = scale 0.9 white
   shininess = 200.
 }
 
 let defaultMaterial () = Phong (defaultMaterialP ())
 
+let materialShiny color ambient diffuse specular shininess =
+  materialRaw
+    (scale ambient color)
+    (scale diffuse color)
+    specular
+    shininess
 let material color ambient diffuse specular =
-  materialRaw color ambient diffuse (scale specular color) 200.
+  materialRaw
+    (scale ambient color)
+    (scale diffuse color)
+    (scale specular color)
+    200.
 
 let materialC color =
-  Phong { defaultMaterialP () with color = color }
+  material color 0.1 0.9 0.9
 
 let gradient a b t =
   Gradient { a = a; b = b; sharpness = 0.; transform = t }

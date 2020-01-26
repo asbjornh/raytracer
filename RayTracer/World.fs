@@ -127,7 +127,7 @@ let shadeHitSingleLight light world comps remaining =
         textureOptionAt mat.specularMap comps mat.transform mat.uvTransform
         |> invert |> intensity
       let specular = Color.scale specularAmount mat.specular
-      let newMat = materialRaw baseColor mat.ambient mat.diffuse specular mat.shininess
+      let newMat = materialShiny baseColor mat.ambient mat.diffuse specular mat.shininess
       let newComps = { comps with object = { comps.object with material = newMat } }
       let surfaceColor =
         shadeHitSingleLight light world newComps remaining |> getPixelColor

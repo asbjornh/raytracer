@@ -16,13 +16,16 @@ open World
 
 
 let darkBrown = Color.scale 0.25 (color 1. 0.3 0.4)
-let pLight = pointLight (point -20. 20. -30.) yellow
+let pLight = pointLight <| point -20. 20. -30. <| white
 let cam = 
   camera 400 300 (rad32 8.f)
   <| (point 0. 0. -300.) <| (point 0. 0. 0.)
 
 let mat = Fresnel {
-  a = material white 0.3 0.7 0.
+  a = materialRaw
+        (mix blue red 0.1 |> Color.scale 0.6)
+        (Color.scale 0.8 yellow)
+        black 0.
   b = Luminance red
   blend = BlendingMode.Normal
   power = 2.
@@ -36,7 +39,6 @@ let teapot =
 
 let w = {
   world [pLight] [teapot] with
-    ambientLight = Some (Color.scale 0.6 blue, Lighten)
     background = red
 }
 
