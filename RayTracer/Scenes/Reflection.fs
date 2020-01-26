@@ -38,7 +38,7 @@ let rightWall =
 
 let sphereMat = Fresnel {
   a = materialC white
-  b = Reflective
+  b = Reflective None
   blend = Add
   power = 3.
   mixOuter = 1.

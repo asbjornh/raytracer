@@ -12,7 +12,7 @@ open Util
 type Material =
   | Phong of Phong
   | Layer of Phong // NOTE: Ignores shadows
-  | Reflective
+  | Reflective of BlurryReflection option
   | Fresnel of Fresnel
   | Mix of Mix
   | Blend of Blend
@@ -77,6 +77,11 @@ type NormalMap = {
   tex: Color list list
   transform: Matrix4x4
   uvTransform: float * float * float * float
+}
+
+type BlurryReflection = {
+  samples: int
+  angle: float
 }
 
 type Transparent = {

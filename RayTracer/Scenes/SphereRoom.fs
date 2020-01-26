@@ -21,7 +21,7 @@ let plastic = Blend {
   a = specularOnly 0.5 50.
   b = Fresnel {
     a = glitterHighlight orange 0. 1. 0.7 (0.75, 1.5, 0., 0.)
-    b = Reflective
+    b = Reflective None
     blend = Screen
     power = 1.5
     mixOuter = 1.
@@ -38,13 +38,13 @@ let metalBall =
   <| translate 1.5f 1.f 4.f
   <| Blend {
       mode = Multiply
-      a = gold
+      a = gold (Some { samples = 2; angle = 0.5 })
       b = Luminance (mix Color.gold white 0.8)
     }
 
 let glassMat = Fresnel {
   a = coloredGlass orange
-  b = Reflective
+  b = Reflective None
   blend = Screen
   power = 2.
   mixOuter = 1.
@@ -62,7 +62,7 @@ let w =
   ambientWorld
   <| Some (mix (gray 0.1) blue 0.3, Lighten)
   <| [light]
-  <| [glassBall; plasticBall; metalBall; room]
+  <| [plasticBall; glassBall; metalBall; room]
 
 let cam =
   camera 400 225 (rad32 20.f)

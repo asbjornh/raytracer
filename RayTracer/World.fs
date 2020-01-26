@@ -149,10 +149,10 @@ let shadeHitSingleLight light world comps remaining =
     shadeHit world newComps remaining
     |> Component
 
-  | Reflective ->
+  | Reflective mat ->
     match light with
     | PointLight _ | SoftLight _ ->
-      reflectedColor world comps remaining |> Constant
+      reflectedColor mat world comps remaining |> Constant
 
   | Transparent _ ->
     match light with
@@ -241,11 +241,21 @@ let occlusionAt numSamples threshold world r =
     )
   | None -> 0.
 
-let reflectedColor world comps remaining =
+let reflectedColor mat world comps remaining =
   if (remaining < 1) then black
-  else
-    let r = ray comps.overPoint comps.reflectV
-    colorAt world r (remaining - 1)
+  else 
+    match mat with
+    | None ->
+      let r = ray comps.overPoint comps.reflectV
+      colorAt world r (remaining - 1)
+    | Some blurOptions ->
+      [0..blurOptions.samples]
+      |> List.map (fun _ ->
+        let t = randomRotate <| blurOptions.angle
+        let r = ray comps.overPoint (transform t comps.reflectV)
+        colorAt world r (remaining - 1)
+      )
+      |> Color.average
 
 let refractedColor world comps remaining =
   if (remaining < 1) then black
