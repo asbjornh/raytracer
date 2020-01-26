@@ -44,7 +44,6 @@
     <Compile Include="Scenes/Reflection.fs" />
     <Compile Include="Scenes/SphereRing.fs" />
     <Compile Include="Scenes/SoftShadows.fs" />
-    <Compile Include="Scenes/Refraction.fs" />
     <Compile Include="Scenes/Textures.fs" />
     <Compile Include="Scenes/Hexagon.fs" />
     <Compile Include="Scenes/Teapot.fs" />
