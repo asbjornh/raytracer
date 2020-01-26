@@ -103,9 +103,7 @@ let shadeHitSingleLight light world comps remaining =
       |> Component
 
   | Layer mat ->
-    match light with
-      | PointLight _ | SoftLight _ ->
-        lighting light comps.point comps.eyeV comps.normalV mat 0. |> Component
+    lighting light comps.point comps.eyeV comps.normalV mat 0. |> Component
 
   | Luminance c -> Constant c
 
@@ -150,14 +148,10 @@ let shadeHitSingleLight light world comps remaining =
     |> Component
 
   | Reflective mat ->
-    match light with
-    | PointLight _ | SoftLight _ ->
-      reflectedColor mat world comps remaining |> Constant
+    reflectedColor mat world comps remaining |> Constant
 
   | Transparent _ ->
-    match light with
-    | PointLight _ | SoftLight _ ->
-      refractedColor world comps remaining |> Component
+    refractedColor world comps remaining |> Component
 
   | Fresnel mat ->
     let (a, b) = shadeTwo world comps remaining mat.a mat.b
@@ -183,9 +177,7 @@ let shadeHitSingleLight light world comps remaining =
     let s = shadowAmount comps.overPoint light world
     let r = ray comps.underPoint (negate comps.eyeV)
     let c = colorAt world r (remaining - 1)
-    match light with
-    | PointLight _ | SoftLight _ ->
-      mix c mat.shadowColor s |> Constant
+    mix c mat.shadowColor s |> Constant
 
   | TestPattern ->
     let p = patternPoint objectT identity comps.overPoint
@@ -199,8 +191,7 @@ let shadeHit world comps remaining =
 
     match colr with
     | Constant c -> c
-    | Component c ->
-      match light with | PointLight _ | SoftLight _ -> add acc c
+    | Component c -> add acc c
   ) (color 0. 0. 0.)
 
 let colorAndAmbientAt world ray remaining =
