@@ -45,33 +45,57 @@ let face =
       (Color.scale 0.2 pigSkin)
       (add pigSkin white |> Color.scale 0.9)
 
-let hairMat =
+let hair =
+  importObj "../models/mario/hair.obj" t
+  <| nintendo
+      (color 0.15 0.03 0.03)
+      (color 0.3 0.16 0.1)
+      (gray 0.2)
+      (Color.scale 3. white)
+
+let facialHair =
   nintendo
-    (color 0.15 0.03 0.03)
-    (color 0.3 0.16 0.1)
+    (color 0.03 0.01 0.02)
+    (color 0.1 0.05 0.02)
     (gray 0.2)
     (Color.scale 3. white)
+
 let mustache =
-  importObj "../models/mario/mustache.obj" t hairMat
-let hair =
-  importObj "../models/mario/hair.obj" t hairMat
+  importObj "../models/mario/mustache.obj" t facialHair
+
+let eyeBallMat uvTransform =
+  Blend {
+    mode = Multiply
+    a = nintendo
+      (mix blue (gray 0.5) 0.5)
+      white black
+      (Color.scale 2. white)
+    b = luminanceTex "../models/mario/eye-color.png" uvTransform
+  }
+let leftEye =
+  sphere
+  <| chain [
+    translate -0.045f 1.7f -0.8f
+    rotateX (rad32 -1.f)
+    rotateY (rad32 -6.f)
+    scale 0.3f 0.7f 0.1f
+  ]
+  <| eyeBallMat (0.55, 0.45, -0.05, -0.57)
 
 let eyeMat =
   nintendo
     (mix blue (gray 0.5) 0.5)
     white black
     (Color.scale 2. white)
-let leftEye =
-  importObj "../models/mario/eye-left.obj" t eyeMat
 
 let rightEye =
   importObj "../models/mario/eye-right.obj" t eyeMat
 
 let leftEyebrow =
-  importObj "../models/mario/eyebrow-left.obj" t hairMat
+  importObj "../models/mario/eyebrow-left.obj" t facialHair
 
 let rightEyebrow =
-  importObj "../models/mario/eyebrow-right.obj" t hairMat
+  importObj "../models/mario/eyebrow-right.obj" t facialHair
 
 let badge =
   importObj "../models/mario/hat-badge.obj" t eyeMat
@@ -87,7 +111,6 @@ let hat =
 let mario =
   [ face
     mustache
-    leftEye
     rightEye
     leftEyebrow
     rightEyebrow
@@ -98,12 +121,12 @@ let mario =
 
 let sLight = pointLight (point -10. 10. -10.) (color 1. 1. 0.9)
 let cam =
-  camera 200 200 (rad32 60.f)
+  camera 400 400 (rad32 60.f)
   <| (point 0. 2. -4.8) <| (point 0. 2. 0.)
   
 let w = 
-  { world [sLight] ([backDrop] @ mario) with
-      shadows = true
+  { world [sLight] ([leftEye] @ mario) with
+      shadows = false
       background = gray 0.12
   }
 
