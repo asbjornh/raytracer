@@ -69,15 +69,22 @@ let shadowAmount softShadows point light w =
   if not w.shadows then 0.
   else
   match light with
-  | PointLight l -> isInShadow point w.objects l.position 
-  | SoftLight l ->
-    if not softShadows then
+  | PointLight l ->
+      isInShadow point w.objects l.position
+  | SoftLight l when (not softShadows) ->
       isInShadow point w.objects l.light.position 
-    else
+  | SoftLight l ->
       let count = List.length l.virtualLights
       let hits =
         l.virtualLights |> List.sumBy (isInShadow point w.objects)
       hits / float count
+
+// NOTE: the shadow point is shifted for smooth triangles in order to remove some artefacts
+// https://computergraphics.stackexchange.com/questions/4986/ray-tracing-shadows-the-shadow-line-artifact
+let shadowPoint comps =
+  match comps.object.shape with
+  | SmoothTriangle t -> comps.overPoint + (0.005f * comps.normalV)
+  | _ -> comps.overPoint
 
 let shadeTwo world comps remaining matA matB =
   let objectA = { comps.object with material = matA }
@@ -101,7 +108,7 @@ let shadeHitSingleLight light world comps remaining =
   match comps.object.material with
   | Phong mat ->
     let shadow =
-      shadowAmount mat.softShadows comps.overPoint light world
+      shadowAmount mat.softShadows (shadowPoint comps) light world
     lighting
       light comps.point comps.eyeV comps.normalV mat shadow
       |> Component
