@@ -9,10 +9,10 @@ open Shape
 open Tuple
 open Util
 
-let importObj path t =
+let importObj path t mat =
   let result =
-    readFile path |> Array.toList |> parse
-  Shape.group result.objects t
+    readFile path |> Array.toList |> parse mat
+  Shape.group result.objects t mat
 
 let mapHead fn =
   function
@@ -29,7 +29,7 @@ type ParseResult = {
   normals: Vector4 list
   objects: Shape list
 }
-let parse (t: string list) =
+let parse mat (t: string list) =
   let mutable objects = [("DefaultObject", [])]
   let mutable groups = [("DefaultGroup", [])]
   let mutable vertices = []
@@ -50,20 +50,20 @@ let parse (t: string list) =
       normals <- (vector x y z) :: normals
 
     | Face f ->
-      let g = getFaces (List.rev vertices) f
+      let g = getFaces mat (List.rev vertices) f
       groups <- addChild groups g
 
     | FaceNormal f ->
-      let g = getSmoothFaces (List.rev vertices) (List.rev normals) f
+      let g = getSmoothFaces mat (List.rev vertices) (List.rev normals) f
       groups <- addChild groups g
     
     | FaceTex f ->
-      let g = getFaces (List.rev vertices) (List.map fst f)
+      let g = getFaces mat (List.rev vertices) (List.map fst f)
       groups <- addChild groups g
 
     | FaceTexNormal f ->
       let normalIds = f |> List.map (fun (v, t, n) -> (v, n))
-      let g = getSmoothFaces (List.rev vertices) (List.rev normals) normalIds
+      let g = getSmoothFaces mat (List.rev vertices) (List.rev normals) normalIds
       groups <- addChild groups g
 
     | Group name ->
@@ -104,13 +104,13 @@ let parseResult vertices normals objects =
     objects = os
   }
 
-let getFaces vertices =
-  List.map (int >> flip (-) 1) >> polys vertices
+let getFaces mat vertices =
+  List.map (int >> flip (-) 1) >> polys mat vertices
 
-let getSmoothFaces vertices normals =
+let getSmoothFaces mat vertices normals =
   List.map (fun (v, n) ->
     (int v - 1, int n - 1)
-  ) >> smoothPolys vertices normals
+  ) >> smoothPolys mat vertices normals
 
 type LineResult =
   | Vertex of (float * float * float)

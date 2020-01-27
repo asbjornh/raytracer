@@ -21,6 +21,8 @@ let getGroup s =
   match s.shape with
   | Group g -> g | _ -> failwith "Not a Group"
 
+let mat = Material.defaultMaterial ()
+
 [<Tests>]
 let tests =
   testList "Tests for ObjParser" [
@@ -31,7 +33,7 @@ let tests =
         "v 1 0 0"
         "v 1 1 0"
       ]
-      let r = parse file
+      let r = parse mat file
       Expect.equal (List.length r.vertices) 4 ""
       expectTupleEq r.vertices.[0] (point -1. 1. 0.)
       expectTupleEq r.vertices.[1] (point -1. 0.5 0.)
@@ -48,7 +50,7 @@ let tests =
         "f 1 2 3"
         "f 1 3 4"
       ]
-      let r = parse file
+      let r = parse mat file
       let g = r.objects.[0].children.[0]
       Expect.equal (List.length g.children) 2 ""
       let t1 = getTriangle g.children.[0]
@@ -74,7 +76,7 @@ let tests =
         "g BlahBlah01" // NOTE: Should support numbers in group
         "f 1/1 3/1 4/1 "
       ]
-      let r = parse file
+      let r = parse mat file
       let g = r.objects.[0].children.[0]
       Expect.equal (List.length g.children) 2 ""
       let t1 = getTriangle g.children.[0]
@@ -98,7 +100,7 @@ let tests =
         ""
         "f 1 2 3 4 5"
       ]
-      let r = parse file
+      let r = parse mat file
       let poly = r.objects.[0].children.[0].children.[0]
 
       Expect.equal (List.length poly.children) 3 ""
@@ -129,7 +131,7 @@ let tests =
         "g SecondGroup"
         "f 1 3 4"
       ]
-      let r = parse file
+      let r = parse mat file
       let groups = r.objects.[0].children
 
       Expect.equal (List.length groups) 2 ""
@@ -165,7 +167,7 @@ let tests =
         "vn 0.707 0 -0.707"
         "vn 1 2 3"
       ]
-      let r = parse file
+      let r = parse mat file
       Expect.equal (List.length r.normals) 3 ""
       expectTupleEq r.normals.[0] (vector 0. 0. 1.)
       expectTupleEq r.normals.[1] (vector 0.707 0. -0.707)
@@ -182,7 +184,7 @@ let tests =
         "f 1//3 2//1 3//2​"
         "f 1/0/3 2/102/1 3/14/2​"
       ]
-      let r = parse file
+      let r = parse mat file
       let g = r.objects.[0].children.[0]
 
       Expect.equal (List.length g.children) 2 ""

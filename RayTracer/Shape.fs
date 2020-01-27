@@ -206,6 +206,9 @@ let triangle p1 p2 p3 =
   let p = Triangle.make p1 p2 p3
   shape (Triangle p)
 
+let triangleM mat p1 p2 p3 =
+  triangle p1 p2 p3 identity mat
+
 let smoothTriangle p1 p2 p3 n1 n2 n3 =
   let t = Triangle.smoothMake p1 p2 p3 n1 n2 n3
   shape (SmoothTriangle t)
@@ -240,17 +243,17 @@ let maybeGroup name =
   | [single] -> single
   | many -> namedGroupT name many identity
 
-let polys (vs: Vector4 list) indices =
+let polys mat (vs: Vector4 list) indices =
   indices
   |> List.map (fun i -> vs.[i])
-  |> fanTriangulation defaultTriangle
+  |> fanTriangulation (triangleM mat)
   |> maybeGroup "Poly"
 
-let smoothPolys (vs: Vector4 list) (ns: Vector4 list) indices =
+let smoothPolys mat (vs: Vector4 list) (ns: Vector4 list) indices =
   indices
   |> fanTriangulation (fun (p1, n1) (p2, n2) (p3, n3) ->
       smoothTriangle vs.[p1] vs.[p2] vs.[p3] ns.[n1] ns.[n2] ns.[n3]
       <| identity
-      <| defaultMaterial ()
+      <| mat
     )
   |> maybeGroup "SmoothPoly"

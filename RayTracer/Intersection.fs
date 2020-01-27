@@ -81,11 +81,6 @@ let bias origin point objectT normal =
   let newNormal = transform t normal
   d * epsilon32 * newNormal
 
-let rec resolveMaterial s =
-  match s.parent with
-  | Some p -> resolveMaterial p
-  | None -> s.material
-
 type Computation = {
   t: float32
   object: Shape
@@ -116,7 +111,7 @@ let prepareComputations (is: Intersection list) (hit: Intersection) r =
   let b = bias r.origin point hit.object.transform normalV
   {
     t = hit.t
-    object = { hit.object with material = resolveMaterial hit.object }
+    object = hit.object
     point = point
     eyeV = eyeV
     normalV = normalV
