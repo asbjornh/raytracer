@@ -12,24 +12,6 @@ open Tuple
 open Util
 open World
 
-let backDrop =
-  plane
-  <| chain [
-    translate 0.f 2.f 4.f
-    uniformScale 5.5f
-    rotateX (rad32 -90.f)
-  ]
-  <| Gradient {
-    a = Luminance blue
-    b = Luminance (mix cyan white 0.5)
-    sharpness = 0.1
-    transform = chain [
-      uniformScale 2.f
-      translateZ 0.5f
-      rotateY (rad32 90.f)
-    ]
-  }
-
 let t =
   chain [
     uniformScale 0.05f
@@ -82,14 +64,15 @@ let leftEye =
   ]
   <| eyeBallMat (0.55, 0.45, -0.05, -0.57)
 
-let eyeMat =
-  nintendo
-    (mix blue (gray 0.5) 0.5)
-    white black
-    (Color.scale 2. white)
-
 let rightEye =
-  importObj "../models/mario/eye-right.obj" t eyeMat
+  sphere
+  <| chain [
+    translate 0.63f 1.7f -0.56f
+    rotateX (rad32 -1.f)
+    rotateY (rad32 -30.f)
+    scale 0.3f 0.7f 0.1f
+  ]
+  <| eyeBallMat (0.55, 0.45, 0.1, -0.57)
 
 let leftEyebrow =
   importObj "../models/mario/eyebrow-left.obj" t facialHair
@@ -98,7 +81,11 @@ let rightEyebrow =
   importObj "../models/mario/eyebrow-right.obj" t facialHair
 
 let badge =
-  importObj "../models/mario/hat-badge.obj" t eyeMat
+  importObj "../models/mario/hat-badge.obj" t
+  <| nintendo
+      (mix blue (gray 0.5) 0.5)
+      white black
+      (Color.scale 2. white)
 
 let hat =
   importObj "../models/mario/hat.obj" t
@@ -111,7 +98,6 @@ let hat =
 let mario =
   [ face
     mustache
-    rightEye
     leftEyebrow
     rightEyebrow
     hair
@@ -125,8 +111,8 @@ let cam =
   <| (point 0. 2. -4.8) <| (point 0. 2. 0.)
   
 let w = 
-  { world [sLight] ([leftEye] @ mario) with
-      shadows = false
+  { world [sLight] ([leftEye; rightEye] @ mario) with
+      shadows = true
       background = gray 0.12
   }
 
