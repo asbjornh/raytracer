@@ -95,6 +95,10 @@ let hat =
       black
       (Color.scale 1.7 white)
 
+let symbol =
+  importObj "../models/mario/m-symbol.obj" t
+    <| material red 0.5 0.7 0.
+
 let mario =
   [ face
     mustache
@@ -103,6 +107,7 @@ let mario =
     hair
     hat
     badge
+    symbol
   ]
 
 let sLight = pointLight (point -10. 10. -10.) (color 1. 1. 0.9)
