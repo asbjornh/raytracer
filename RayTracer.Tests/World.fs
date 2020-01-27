@@ -67,36 +67,36 @@ let tests =
     testCase "The color with an intersection behind the ray" <| fun _ ->
       let w = defaultWorld ()
       let outer = w.objects.[0]
-      outer.material <- Phong { defaultMaterialP () with ambient = 1. }
+      outer.material <- Phong { defaultMaterialP () with ambient = white }
       let inner = w.objects.[1]
-      inner.material <- Phong { defaultMaterialP () with ambient = 1. }
+      inner.material <- Phong { defaultMaterialP () with ambient = white }
       let r = ray (point 0. 0. 0.75) (vector 0. 0. -1.)
       let c = colorAt w r 1
       let actual =
         match inner.material with
-        | Phong m -> m.color
+        | Phong m -> m.ambient
         | _ -> red
       Expect.equal c actual ""
 
     testCase "There is no shadow when nothing is collinear with point and light" <| fun _ ->
       let w = defaultWorld ()
       let p = point 0. 10. 0.
-      Expect.equal (shadowAmount p w.lights.[0] w) 0. ""
+      Expect.equal (shadowAmount false p w.lights.[0] w) 0. ""
 
     testCase "The shadow when an object is between the point and the light" <| fun _ ->
       let w = defaultWorld ()
       let p = point 10. -10. 10.
-      Expect.equal (shadowAmount p w.lights.[0] w) 1. ""
+      Expect.equal (shadowAmount false p w.lights.[0] w) 1. ""
 
     testCase "There is no shadow when an object is behind the light" <| fun _ ->
       let w = defaultWorld ()
       let p = point -20. 20. -20.
-      Expect.equal (shadowAmount p w.lights.[0] w) 0. ""
+      Expect.equal (shadowAmount false p w.lights.[0] w) 0. ""
 
     testCase "There is no shadow when an object is behind the point" <| fun _ ->
       let w = defaultWorld ()
       let p = point -2. 2. -2.
-      Expect.equal (shadowAmount p w.lights.[0] w) 0. ""
+      Expect.equal (shadowAmount false p w.lights.[0] w) 0. ""
 
     testCase "shade_hit() is given an intersection in shadow" <| fun _ ->
       let s = sphereT (translateZ 10.f)
@@ -115,7 +115,7 @@ let tests =
       let w = defaultWorld ()
       let mat = Mix {
         a = defaultMaterial ()
-        b = Reflective
+        b = Reflective None
         mix = 0.5
       }
       let shape = plane (translateY -1.f) mat
@@ -124,14 +124,14 @@ let tests =
       let r = ray (point 0. 0. -3.) (vector 0. -a a)
       let i = intersection (sqrt 2.f) shape
       let comps = prepareComputations [i] i r
-      let c = reflectedColor w comps 1
+      let c = reflectedColor None w comps 1
       Expect.equal c (color 0.38066 0.47583 0.28549) ""
 
     testCase "shade_hit() with a reflective material" <| fun _ ->
       let w = defaultWorld ()
       let mat = Mix {
         a = defaultMaterial ()
-        b = Reflective
+        b = Reflective None
         mix = 0.5
       }
       let shape = plane (translateY -1.f) mat
@@ -145,7 +145,7 @@ let tests =
 
     testCase "color_at() with mutually reflective surfaces" <| fun _ ->
       let light = pointLight (point 0. 0. 0.) (color 1. 1. 1.)
-      let mat = Reflective
+      let mat = Reflective None
       let lower = plane (translateY -1.f) mat
       let upper = plane (translateY 1.f) mat
       let w = world [light] [lower; upper]
@@ -156,7 +156,7 @@ let tests =
       let w = defaultWorld ()
       let mat = Mix {
         a = defaultMaterial ()
-        b = Reflective
+        b = Reflective None
         mix = 0.5
       }
       let shape = plane (translateY -1.f) mat
@@ -165,7 +165,7 @@ let tests =
       let r = ray (point 0. 0. -3.) (vector 0. -a a)
       let i = intersection (sqrt 2.f) shape
       let comps = prepareComputations [i] i r
-      let c = reflectedColor w comps 0
+      let c = reflectedColor None w comps 0
       Expect.equal c black ""
 
     testCase "The refracted color at the maximum recursive depth" <| fun _ ->
