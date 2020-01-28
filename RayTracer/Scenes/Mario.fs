@@ -137,8 +137,8 @@ let mario =
 // let light = pointLight (point -10. 10. -10.) (color 1. 1. 0.9)
 let light = softLight (point -10. 10. -10.) (point 0. 2. 0.) (color 1. 1. 0.9) 2 4.f
 let cam =
-  camera 200 200 (rad32 30.f)
-  <| (point 0. 2. -10.) <| (point 0. 2. 0.)
+  camera 300 200 (rad32 30.f)
+  <| (point 0. 2. -14.) <| (point 0. 2. 0.)
   
 let w = 
   { world [light] [backDrop; mario] with
