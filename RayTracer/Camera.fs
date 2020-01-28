@@ -56,7 +56,6 @@ type AmbientOcclusionOptions = {
   threshold: float32
 }
 
-// TODO: Add render module
 type RenderType =
   | Normal
   | ColoredNormals of (Color * Color * Color * bool)
