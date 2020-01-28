@@ -134,11 +134,11 @@ let mario =
   groupT [faceGroup; rightEye; leftEye]
   <| chain [rotateY (rad32 -5.f); rotateX (rad32 3.f)]
 
-// let light = pointLight (point -10. 10. -10.) (color 1. 1. 0.9)
-let light = softLight (point -10. 10. -10.) (point 0. 2. 0.) (color 1. 1. 0.9) 2 4.f
+let light = pointLight (point -10. 10. -10.) (color 1. 1. 0.9)
+// let light = softLight (point -10. 10. -10.) (point 0. 2. 0.) (color 1. 1. 0.9) 2 4.f
 let cam =
-  camera 300 200 (rad32 30.f)
-  <| (point 0. 2. -14.) <| (point 0. 2. 0.)
+  camera 300 200 (rad32 35.f)
+  <| (point 0. 2. -11.5) <| (point 0. 2. 0.)
   
 let w = 
   { world [light] [backDrop; mario] with
@@ -156,8 +156,8 @@ let aoOptions =
 
 let options =
   { defaultOptions with 
-      antiAliasing = true 
-      ambientOcclusion = Some aoOptions
+      antiAliasing = false 
+      ambientOcclusion = None
   }
 
 let run () =
