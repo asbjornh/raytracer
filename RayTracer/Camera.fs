@@ -120,7 +120,7 @@ let renderImage o c w =
 
   match o.ambientOcclusion with
   | Some options ->
-    occlusionPass options o.section c w
+    renderOcclusion options o.section c w
     |> map2d2 (fun color occlusion ->
       mix occlusion options.color color
     ) colors
@@ -156,7 +156,7 @@ let withProgress len txt fn =
   printfn "\n" // To avoid CLI glitch after rendering
   result
 
-let occlusionPass options section c w =
+let renderOcclusion options section c w =
   let canv = canvas c.hSize c.vSize
   let len = 3 * Canvas.length canv
 
