@@ -17,8 +17,8 @@ let pigSkin = color 1. 0.7 0.58
 let face =
   importObj "../models/mario/face.obj" identity
   <| nintendo
-      (color 0.5 0.26 0.27)
-      (Color.scale 0.6 pigSkin)
+      (color 0.5 0.26 0.27 |> Color.scale 1.2)
+      (Color.scale 0.5 pigSkin)
       (Color.scale 0.2 pigSkin)
       (add pigSkin white |> Color.scale 0.9)
 
@@ -59,7 +59,7 @@ let hat =
       (color 0.3 0. 0.0)
       (color 0.6 0.1 0.2)
       black
-      (Color.scale 1.7 white)
+      (mix 0.5 white cyan |> Color.scale 2.)
 
 let symbol =
   importObj "../models/mario/m-symbol.obj" identity
@@ -87,8 +87,9 @@ let eyeMat uOffset vOffset =
   Blend {
     mode = Multiply
     a = nintendo
-      (mix 0.5 blue (gray 0.5))
-      white black
+      (mix 0.5 blue (gray 0.5) |> Color.scale 1.2)
+      (Color.scale 0.8 white)
+      black
       (Color.scale 2. white)
     b = luminanceTex
       "../models/mario/eye-color.png"
