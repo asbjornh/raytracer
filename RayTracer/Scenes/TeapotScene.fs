@@ -52,18 +52,16 @@ let teapot =
   <| chain [translateZ 1.5f; uniformScale 0.1f; rotateY (rad32 30.f)]
   <| sphereMat
 
-let lightPos = (point -10. 10. -10.)
-let origin = (point 0. 0. 0.)
-let sLight = softLight lightPos origin (color 1. 1. 0.9) 6 8.f
+let light = softLight (point -10. 10. -10.) (point 0. 1. 0.) (color 1. 1. 0.9) 6 8.f
 let cam =
-  camera 400 200 (rad32 47.f)
-  <| (point 0. 1.5 -5.) <| (point 0. 1. 0.)
+  camera 400 267 (rad32 47.f)
+  <| (point 0. 1.5 -4.5) <| (point 0. 1. 0.)
   
 
 let w = 
   ambientWorld
   <| Some (color 0. 0.15 0.3, Lighten)
-  <| [sLight]
+  <| [light]
   <| [teapot; floor; leftWall; rightWall;]
 
 let options =
