@@ -34,9 +34,9 @@ let patternAt a b (pattern: PatternType) (point: Vector4) =
 let gradientAt a b sharpness (point: Vector4) =
   let amount = point.X - MathF.Floor point.X |> float
   if (sharpness = 0.) then
-    Color.mix a b amount
+    Color.mix amount a b
   else
     let p1 = 0. - sharpness
     let p2 = 1. + sharpness
     let mapped = cubicBezier p1 p2 amount |> clamp 0. 1.
-    Color.mix a b mapped
+    Color.mix mapped a b

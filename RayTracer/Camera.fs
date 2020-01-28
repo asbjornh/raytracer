@@ -125,7 +125,7 @@ let renderImage o c w =
   | Some options ->
     occlusionPass options c w
     |> map2d2 (fun color occlusion ->
-      mix options.color color occlusion
+      mix occlusion options.color color
     ) colors
   | None -> colors
 

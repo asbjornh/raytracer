@@ -66,7 +66,7 @@ let w =
       shadows = false }
 
 let aoOptions =
-  { color = mix darkBlue white 0.1
+  { color = mix 0.1 darkBlue white
     samples = 24
     opacity = 0.8
     threshold = 8.f }

@@ -65,7 +65,7 @@ let softLight a b =
     if cb < 0.5 then 2. * ca * cb + (ca ** 2.) * (1. - 2. * cb)
     else 2. * ca * (1. - cb) + (sqrt ca) * (2. * cb - 1.)
   ) a b
-let mix a b amount =
+let mix amount a b =
   subtract b a |> scale amount |> add a
 
 let average colors =
@@ -82,6 +82,7 @@ type BlendingMode =
   | Overlay
   | HardLight
   | SoftLight
+  | Mix of float
   | Normal
 
 let blend = function
@@ -94,6 +95,7 @@ let blend = function
   | Overlay -> overlay
   | HardLight -> hardLight
   | SoftLight -> softLight
+  | Mix amount -> mix amount
   | Normal -> flip always
 
 let red = color 1. 0.1 0.2

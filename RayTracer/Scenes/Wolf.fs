@@ -22,7 +22,7 @@ let wolf =
 let backdropMat =
   gradient
   <| Luminance (Color.scale 2. red)
-  <| Luminance (Color.scale 1.5 (mix blue cyan 0.1))
+  <| Luminance (Color.scale 1.5 (mix 0.1 blue cyan))
   <| chain [uniformScale 2.f; translateX 0.5f]
 let backdrop =
   plane
@@ -35,7 +35,7 @@ let backdrop =
   <| backdropMat
 
 let lightPos = point 1000. 600. -200.
-let sLight = pointLight lightPos (mix yellow white 0.85)
+let sLight = pointLight lightPos (mix 0.85 yellow white)
 let cam =
   camera 400 240 (rad32 30.f)
   <| (point 450. 470. -1100.) <| (point 450. 470. 0.)

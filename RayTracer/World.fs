@@ -142,7 +142,7 @@ let shadeHitSingleLight light world comps remaining =
         shadeHitSingleLight light world newComps remaining |> getPixelColor
         |> Color.multiply occlusionColor
       if alpha = 1. then surfaceColor |> Component
-      else Color.mix (refractedColor world comps remaining) surfaceColor alpha |> Component
+      else Color.mix alpha (refractedColor world comps remaining) surfaceColor |> Component
 
   | LuminanceTexture mat ->
     textureAt comps mat.uvTransform mat.tex |> Constant
@@ -167,13 +167,9 @@ let shadeHitSingleLight light world comps remaining =
   | Fresnel mat ->
     let (a, b) = shadeTwo world comps remaining mat.a mat.b
     let b2 = blend mat.blend a b
-    let a3 = mix b2 a mat.mixInner
-    let b3 = mix a b2 mat.mixOuter
+    let a3 = mix mat.mixInner b2 a
+    let b3 = mix mat.mixOuter a b2
     fresnelShade a3 b3 mat.power comps.normalV comps.eyeV |> Component
-
-  | Mix mat ->
-    let (a, b) = shadeTwo world comps remaining mat.a mat.b
-    mix a b mat.mix |> Component
 
   | Blend mat ->
     let (a, b) = shadeTwo world comps remaining mat.a mat.b
@@ -188,7 +184,7 @@ let shadeHitSingleLight light world comps remaining =
     let s = shadowAmount true comps.overPoint light world
     let r = ray comps.underPoint (negate comps.eyeV)
     let c = colorAt world r (remaining - 1)
-    mix c mat.shadowColor s |> Constant
+    mix s c mat.shadowColor |> Constant
 
   | TestPattern ->
     let p = patternPoint objectT identity comps.overPoint

@@ -39,7 +39,7 @@ let metalBall =
   <| Blend {
       mode = Multiply
       a = gold 0.3 10. (Some { samples = 4; angle = 0.4 })
-      b = Luminance (mix Color.gold white 0.8)
+      b = Luminance (mix 0.8 Color.gold white)
     }
 
 let glassMat = Fresnel {
@@ -57,10 +57,10 @@ let glassBall =
   <| glassMat
 
 let lightPos = point 0. 20. -6.
-let light = softLight lightPos ((point 0. 0. 0.) - lightPos) (mix yellow white 0.97) 10 30.f
+let light = softLight lightPos ((point 0. 0. 0.) - lightPos) (mix 0.97 yellow white) 10 30.f
 let w =
   ambientWorld
-  <| Some (mix (gray 0.1) blue 0.3, Lighten)
+  <| Some (mix 0.3 (gray 0.1) blue, Lighten)
   <| [light]
   <| [plasticBall; glassBall; metalBall; room]
 

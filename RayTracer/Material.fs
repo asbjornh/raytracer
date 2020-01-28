@@ -14,7 +14,6 @@ type Material =
   | Layer of Phong // NOTE: Ignores shadows
   | Reflective of BlurryReflection option
   | Fresnel of Fresnel
-  | Mix of Mix
   | Blend of Blend
   | Pattern of Pattern
   | Gradient of Gradient
@@ -37,12 +36,6 @@ type Fresnel = {
   power: float
   mixInner: float
   mixOuter: float
-}
-
-type Mix = {
-  a: Material
-  b: Material
-  mix: float
 }
 
 type Blend = {
@@ -155,7 +148,7 @@ let softLighting (light: SoftLight) pos eyeV normalV mat shadowAmount =
   then phongComponent
   else
     let shadowComponent = phongLighting light.light pos eyeV normalV mat 1.
-    mix phongComponent shadowComponent shadowAmount
+    mix shadowAmount phongComponent shadowComponent
 
 let lighting light =
   match light with
@@ -167,7 +160,7 @@ let fresnelShade a b power normalV eyeV =
   let mapping = pow power
   let max = mapping (Math.PI / 2.)
   let amount = ang |> mapping |> rangeMap (0., max) (0., 1.)
-  mix a b amount
+  mix amount a b
 
 let materialRaw ambient diffuse specular shininess =
   Phong {

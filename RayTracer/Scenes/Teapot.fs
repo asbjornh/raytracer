@@ -23,7 +23,7 @@ let cam =
 
 let mat = Fresnel {
   a = materialRaw
-        (mix blue red 0.1 |> Color.scale 0.6)
+        (mix 0.1 blue red |> Color.scale 0.6)
         (Color.scale 0.8 yellow)
         black 0.
   b = Luminance red

@@ -40,7 +40,7 @@ let w = {
 
 let aoOptions = {
   samples = 24
-  color = mix black blue 0.6
+  color = mix 0.6 black blue
   opacity = 1.
   threshold = 4.f
 }

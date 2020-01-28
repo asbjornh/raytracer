@@ -16,7 +16,7 @@ let coloredMetal color specular shininess blurOptions = Blend {
   b = Luminance color
 }
 let gold = coloredMetal Color.gold
-let brass = coloredMetal (mix Color.gold (gray 0.5) 0.4)
+let brass = coloredMetal (mix 0.4 Color.gold (gray 0.5))
 
 let coloredGlass color =
   Blend {

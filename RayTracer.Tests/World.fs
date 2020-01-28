@@ -113,10 +113,10 @@ let tests =
 
     testCase "The reflected color for a reflective material" <| fun _ ->
       let w = defaultWorld ()
-      let mat = Mix {
+      let mat = Blend {
+        mode = Mix 0.5
         a = defaultMaterial ()
         b = Reflective None
-        mix = 0.5
       }
       let shape = plane (translateY -1.f) mat
       let w = { w with objects = List.concat [w.objects; [shape]] }
@@ -129,10 +129,10 @@ let tests =
 
     testCase "shade_hit() with a reflective material" <| fun _ ->
       let w = defaultWorld ()
-      let mat = Mix {
+      let mat = Blend {
+        mode = Mix 0.5
         a = defaultMaterial ()
         b = Reflective None
-        mix = 0.5
       }
       let shape = plane (translateY -1.f) mat
       let w = { w with objects = List.concat [w.objects; [shape]] }
@@ -154,10 +154,10 @@ let tests =
 
     testCase "The reflected color at the maximum recursive depth" <| fun _ ->
       let w = defaultWorld ()
-      let mat = Mix {
+      let mat = Blend {
+        mode = Mix 0.5
         a = defaultMaterial ()
         b = Reflective None
-        mix = 0.5
       }
       let shape = plane (translateY -1.f) mat
       let w = { w with objects = List.concat [w.objects; [shape]] }
@@ -221,13 +221,13 @@ let tests =
       let w = defaultWorld ()
       let floor =
         plane <| chain [translateY -1.f; uniformScale 10.f]
-        <| Mix {
+        <| Blend {
+          mode = Mix 0.5
           a = Blend {
             mode = Add
             a = defaultMaterial ()
             b = Transparent { index = 1.5f } }
           b = defaultMaterial ()
-          mix = 0.5
         }
       let ball =
         sphere <| translate 0.f -3.5f -0.5f

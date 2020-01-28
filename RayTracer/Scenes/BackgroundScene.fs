@@ -44,10 +44,10 @@ let teapot =
   <| chain [translate -2.f -6.f -5.f; rotateZ (rad32 20.f); rotateY (rad32 20.f)]
   <| mat
 
-let lightBlue = mix white cyan 0.2
+let lightBlue = mix 0.2 white cyan
 let sLight =
   softLight (point 0. 100. 100.) (point 0. 0. 0.) lightBlue 4 40.f
-let pLight = pointLight (point 0. 100. -50.) (Color.mix blue white 0.4 |> Color.scale 0.3)
+let pLight = pointLight (point 0. 100. -50.) (mix 0.4 blue white |> Color.scale 0.3)
 let cam = 
   camera 400 250 (rad32 60.f)
   <| (point 0. 10. -100.) <| (point 0. 1. 0.)
