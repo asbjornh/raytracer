@@ -110,20 +110,18 @@ let renderImage o c w =
 
   let colors = canv |> Canvas.render (fun x y ->
     tick ()
-    let render () =
+    match shouldRender o.section x y c with
+    | true ->
       if o.antiAliasing then renderAA x y c w renderFn
       else rayForPixel x y c |> renderFn w <| 4
-
-    match o.section with
-    | None -> render ()
-    | Some s -> renderSection s render x y c
+    | false -> white
   )
 
   if o.progressBar then printfn "\n"
 
   match o.ambientOcclusion with
   | Some options ->
-    occlusionPass options c w
+    occlusionPass options o.section c w
     |> map2d2 (fun color occlusion ->
       mix occlusion options.color color
     ) colors
@@ -159,15 +157,18 @@ let withProgress len txt fn =
   printfn "\n" // To avoid CLI glitch after rendering
   result
 
-let occlusionPass options c w =
+let occlusionPass options section c w =
   let canv = canvas c.hSize c.vSize
   let len = 3 * Canvas.length canv
 
   withProgress len "Rendering AO" <| (fun tick ->
     canv |> Canvas.map (fun x y ->
       tick ()
-      occlusionAt options.samples options.threshold w
-      <| rayForPixel x y c
+      match shouldRender section x y c with
+      | true ->
+        occlusionAt options.samples options.threshold w
+        <| rayForPixel x y c
+      | false -> 0.
     )
     |> bilateralFilter 8 50. 0.15 tick
     |> bilateralFilter 3 10. 0.15 tick
@@ -176,14 +177,15 @@ let occlusionPass options c w =
     )
   )
 
-let renderSection section renderFn x y c =
+let shouldRender section x y c =
   match section with
-  | Section (fromX, fromY, toX, toY) ->
+  | None -> true
+  | Some (Section (fromX, fromY, toX, toY)) ->
     let inRangeX = x >= fromX && x <= toX
     let inRangeY = y >= fromY && y <= toY
-    if inRangeX && inRangeY then renderFn () else white
+    inRangeX && inRangeY
 
-  | Quad n ->
+  | Some (Quad n) ->
     let maxX = c.hSize - 1
     let maxY = c.vSize - 1
     let midX = 0.5 * float c.hSize |> Math.Floor |> int
@@ -193,4 +195,4 @@ let renderSection section renderFn x y c =
       (0, midY + 1, midX, maxY)
       (midX + 1, midY + 1, maxX, maxY) ]
     |> List.item n
-    |> fun range -> renderSection (Section range) renderFn x y c
+    |> fun range -> shouldRender (Some <| Section range) x y c
