@@ -21,7 +21,7 @@ let getGroup s =
   match s.shape with
   | Group g -> g | _ -> failwith "Not a Group"
 
-let mat = Material.defaultMaterial ()
+let mat = Material.defaultMaterial
 
 [<Tests>]
 let tests =
@@ -155,7 +155,7 @@ let tests =
     testCase "Converting an OBJ file to a group" <| fun _ ->
       let o =
         importObj "./fixtures/triangles.obj" identity
-        <| Material.defaultMaterial ()
+        <| Material.defaultMaterial
       let g = o.children.[0]
       Expect.equal (List.length g.children) 2 ""
       Expect.equal ((g.children.[0] |> getGroup).name) "FirstGroup" ""

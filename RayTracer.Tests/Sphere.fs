@@ -68,12 +68,12 @@ let tests =
 
     testCase "Changing a sphere's transformation" <| fun _ ->
       let t = translate 2.f 3.f 4.f
-      let s = sphere t (defaultMaterial ())
+      let s = sphere t (defaultMaterial)
       Expect.equal s.transform t ""
 
     testCase "Intersecting a scaled sphere with a ray" <| fun _ ->
       let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
-      let s = sphere (scale 2.f 2.f 2.f) (defaultMaterial ())
+      let s = sphere (scale 2.f 2.f 2.f) (defaultMaterial)
       let xs = intersect r s
       Expect.equal (List.length xs) 2 ""
       Expect.equal xs.[0].t 3.f ""
@@ -81,7 +81,7 @@ let tests =
 
     testCase "Intersecting a translated sphere with a ray" <| fun _ ->
       let r = ray (point 0. 0. -5.) (vector 0. 0. 1.)
-      let s = sphere (translate 5.f 0.f 0.f) (defaultMaterial ())
+      let s = sphere (translate 5.f 0.f 0.f) (defaultMaterial)
       let xs = intersect r s
       Expect.equal (List.length xs) 0 ""
 
@@ -113,13 +113,13 @@ let tests =
       expectTupleEq n (normalize n)
 
     testCase "Computing the normal on a translated sphere" <| fun _ ->
-      let s = sphere (translate 0.f 1.f 0.f) (defaultMaterial ())
+      let s = sphere (translate 0.f 1.f 0.f) (defaultMaterial)
       let n = normalAt s (point 0. 1.70711 -0.70711)
       expectTupleEq n (vector 0. 0.70711 -0.70711)
 
     testCase "Computing the normal on a transformed sphere" <| fun _ ->
       let m =  (rotateZ (MathF.PI / 5.f)) * (scale 1.f 0.5f 1.f)
-      let s = sphere m (defaultMaterial ())
+      let s = sphere m (defaultMaterial)
       let a = (sqrt 2.) / 2.
       let n = normalAt s (point 0. a -a)
       expectTupleEq n (vector 0. 0.97014 -0.24254)
@@ -129,14 +129,14 @@ let tests =
       let m =
         match s.material with
         | Phong m -> Some m | _ -> None
-      Expect.equal m (Some <| defaultMaterialP ()) ""
+      Expect.equal m (Some <| defaultMaterialP) ""
 
     testCase "A sphere may be assigned a material" <| fun _ ->
       let s = unitSphere ()
-      let m = defaultMaterial ()
+      let m = defaultMaterial
       let s2 = { s with material = m }
       let m2 =
         match s2.material with
         | Phong m -> Some m | _ -> None
-      Expect.equal m2 (Some <| defaultMaterialP () ) ""
+      Expect.equal m2 (Some <| defaultMaterialP ) ""
   ]

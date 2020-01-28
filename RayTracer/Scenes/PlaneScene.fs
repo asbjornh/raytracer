@@ -20,17 +20,17 @@ let floor = plane (scale 10000.f 1.f 10000.f) mat
 let middle =
   sphere
   <| (translate -0.5f 1.f 0.5f)
-  <| defaultMaterial ()
+  <| defaultMaterial
 
 let right =
   sphere
   <| (chain [ translate 1.5f 0.5f -0.5f; uniformScale 0.5f ])
-  <| defaultMaterial ()
+  <| defaultMaterial
 
 let left =
   sphere
   <| (chain [ translate -1.5f 0.33f -0.75f; uniformScale 0.33f ])
-  <| defaultMaterial ()
+  <| defaultMaterial
 
 let darkBlue = color 0. 0.1 0.2
 let pLight = pointLight (point -10. 10. -10.) (color 1. 0.9 0.7)

@@ -32,7 +32,7 @@ let tests =
     testCase "A ray strikes a cylinder" <| fun _ ->
       let test origin direction t0 t1 =
         let t = scale 1.f 1000.f 1.f
-        let cyl = openCylinder t <| defaultMaterial ()
+        let cyl = openCylinder t <| defaultMaterial
         let direction = normalize direction
         let r = ray origin direction
         let xs = shapeIntersect r cyl
@@ -63,7 +63,7 @@ let tests =
           translateY 1.5f
           scaleY 0.5f
         ]
-        let cyl = openCylinder t <| defaultMaterial ()
+        let cyl = openCylinder t <| defaultMaterial
         let direction = normalize direction
         let r = ray point direction
         let xs = shapeIntersect r cyl
@@ -82,7 +82,7 @@ let tests =
           translateY 1.5f
           scaleY 0.5f
         ]
-        let cyl = cylinder t <| defaultMaterial ()
+        let cyl = cylinder t <| defaultMaterial
         let r = ray point <| normalize direction
         let xs = shapeIntersect r cyl
         Expect.equal (List.length xs) count txt
@@ -99,7 +99,7 @@ let tests =
           translateY 1.5f
           scaleY 0.5f
         ]
-        let cyl = cylinder t <| defaultMaterial ()
+        let cyl = cylinder t <| defaultMaterial
         let n = normalAt cyl point
         expectTupleEq n normal
 

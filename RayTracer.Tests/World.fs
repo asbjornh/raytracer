@@ -67,9 +67,9 @@ let tests =
     testCase "The color with an intersection behind the ray" <| fun _ ->
       let w = defaultWorld ()
       let outer = w.objects.[0]
-      outer.material <- Phong { defaultMaterialP () with ambient = white }
+      outer.material <- Phong { defaultMaterialP with ambient = white }
       let inner = w.objects.[1]
-      inner.material <- Phong { defaultMaterialP () with ambient = white }
+      inner.material <- Phong { defaultMaterialP with ambient = white }
       let r = ray (point 0. 0. 0.75) (vector 0. 0. -1.)
       let c = colorAt w r 1
       let actual =
@@ -115,7 +115,7 @@ let tests =
       let w = defaultWorld ()
       let mat = Blend {
         mode = Mix 0.5
-        a = defaultMaterial ()
+        a = defaultMaterial
         b = Reflective None
       }
       let shape = plane (translateY -1.f) mat
@@ -131,7 +131,7 @@ let tests =
       let w = defaultWorld ()
       let mat = Blend {
         mode = Mix 0.5
-        a = defaultMaterial ()
+        a = defaultMaterial
         b = Reflective None
       }
       let shape = plane (translateY -1.f) mat
@@ -156,7 +156,7 @@ let tests =
       let w = defaultWorld ()
       let mat = Blend {
         mode = Mix 0.5
-        a = defaultMaterial ()
+        a = defaultMaterial
         b = Reflective None
       }
       let shape = plane (translateY -1.f) mat
@@ -225,9 +225,9 @@ let tests =
           mode = Mix 0.5
           a = Blend {
             mode = Add
-            a = defaultMaterial ()
+            a = defaultMaterial
             b = Transparent { index = 1.5f } }
-          b = defaultMaterial ()
+          b = defaultMaterial
         }
       let ball =
         sphere <| translate 0.f -3.5f -0.5f

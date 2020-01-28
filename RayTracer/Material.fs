@@ -179,7 +179,7 @@ let layerMaterial color ambient diffuse specular shininess =
     softShadows = true
   }
 
-let defaultMaterialP () = {
+let defaultMaterialP = {
   ambient = scale 0.1 white
   diffuse = scale 0.9 white
   specular = scale 0.9 white
@@ -187,7 +187,7 @@ let defaultMaterialP () = {
   softShadows = true
 }
 
-let defaultMaterial () = Phong (defaultMaterialP ())
+let defaultMaterial = Phong defaultMaterialP
 
 let materialShiny color ambient diffuse specular shininess =
   materialRaw

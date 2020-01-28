@@ -11,7 +11,7 @@ open Transform
 
 let testShape t = {
   transform = t
-  material = Material.defaultMaterial ()
+  material = Material.defaultMaterial
   shape = TestShape
   parent = None
   children = []

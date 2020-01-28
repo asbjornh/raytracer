@@ -197,8 +197,8 @@ let namedGroup n c t m =
 
 let group c t m = namedGroup "N/A" c t m
 let shapeM s m = shape s identity m
-let shapeT s t = shape s t <| defaultMaterial ()
-let defaultShape s = shape s identity <| defaultMaterial ()
+let shapeT s t = shape s t <| defaultMaterial
+let defaultShape s = shape s identity <| defaultMaterial
 let sphere t = shape Sphere t
 let plane t = shape Plane t
 let cube t = shape Cube t
@@ -228,8 +228,8 @@ let defaultCone () = defaultShape Cone
 let defaultDoubleCone () = defaultShape DoubleCone
 let triangleT p1 p2 p3 t = shapeT (Triangle <| Triangle.make p1 p2 p3) t
 let defaultTriangle p1 p2 p3 = defaultShape (Triangle <| Triangle.make p1 p2 p3)
-let groupT c t = group c t <| defaultMaterial ()
-let namedGroupT n c t = namedGroup n c t  <| defaultMaterial ()
+let groupT c t = group c t <| defaultMaterial
+let namedGroupT n c t = namedGroup n c t  <| defaultMaterial
 let defaultGroup c = groupT c identity
 
 

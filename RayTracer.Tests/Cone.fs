@@ -42,7 +42,7 @@ let tests =
     testCase "Intersecting a cone's end caps" <| fun _ ->
       let test origin direction count txt =
         let t = scale 0.5f 0.5f 0.5f
-        let shape = doubleCone t <| defaultMaterial ()
+        let shape = doubleCone t <| defaultMaterial
         let r = ray origin <| normalize direction
         let xs = shapeIntersect r shape
         Expect.equal (List.length xs) count txt

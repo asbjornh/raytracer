@@ -38,17 +38,17 @@ let rightWall =
 let middle =
   sphere
   <| translate -0.5f 1.f 0.5f
-  <| defaultMaterial ()
+  <| defaultMaterial
 
 let right =
   sphere
   <| chain [ translate 1.5f 0.5f -0.5f; uniformScale 0.5f ]
-  <| defaultMaterial ()
+  <| defaultMaterial
 
 let left =
   sphere
   <| chain [ translate -1.5f 0.33f -0.75f; uniformScale 0.33f ]
-  <| defaultMaterial ()
+  <| defaultMaterial
 
 let lightPos = point -10. 10. -10.
 let origin = point 0. 0. 0.

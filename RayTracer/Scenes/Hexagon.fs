@@ -24,16 +24,16 @@ let edge =
     rotateY (-MathF.PI / 6.f)
     scale 0.25f 0.5f 0.25f
   ]
-  <| defaultMaterial ()
+  <| defaultMaterial
 
 let side t =
-  group [corner; edge] t <| defaultMaterial ()
+  group [corner; edge] t <| defaultMaterial
 
 let hexagon =
   List.init 6 (fun i ->
     side <| rotateY (float32 i * MathF.PI / 3.f)
   )
-  |> group <| identity <| defaultMaterial ()
+  |> group <| identity <| defaultMaterial
 
 let pLight = pointLight (point -10. 10. -10.) white
 let cam =

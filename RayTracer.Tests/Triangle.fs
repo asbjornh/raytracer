@@ -18,7 +18,7 @@ let testSmoothTri =
   let n1 = vector 0. 1. 0.
   let n2 = vector -1. 0. 0.
   let n3 = vector 1. 0. 0.
-  smoothTriangle p1 p2 p3 n1 n2 n3 identity <| defaultMaterial ()
+  smoothTriangle p1 p2 p3 n1 n2 n3 identity <| defaultMaterial
 
 [<Tests>]
 let tests =

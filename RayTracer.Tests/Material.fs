@@ -14,7 +14,7 @@ open Tuple
 let tests =
   testList "Tests for Material" [
     testCase "Lighting with the eye between the light and the surface" <| fun _ ->
-      let m = defaultMaterialP ()
+      let m = defaultMaterialP
       let position = point 0. 0. 0.
       let eyev = vector 0. 0. -1.
       let normalv = vector 0. 0. -1.
@@ -23,7 +23,7 @@ let tests =
       Expect.equal result (color 1.9 1.9 1.9) ""
 
     testCase "Lighting with the eye between light and surface, eye offset 45°" <| fun _ ->
-      let m = defaultMaterialP ()
+      let m = defaultMaterialP
       let position = point 0. 0. 0.
       let a = (sqrt 2.) / 2.
       let eyev = vector 0. a -a
@@ -33,7 +33,7 @@ let tests =
       Expect.equal result  (color 1.0 1.0 1.0) ""
 
     testCase "Lighting with eye opposite surface, light offset 45°" <| fun _ ->
-      let m = defaultMaterialP ()
+      let m = defaultMaterialP
       let position = point 0. 0. 0.
       let eyev = vector 0. 0. -1.
       let normalv = vector 0. 0. -1.
@@ -42,7 +42,7 @@ let tests =
       Expect.equal result  (color 0.7364 0.7364 0.7364) ""
 
     testCase "Lighting with eye in the path of the reflection vector" <| fun _ ->
-      let m = defaultMaterialP ()
+      let m = defaultMaterialP
       let position = point 0. 0. 0.
       let a = (sqrt 2.) / 2.
       let eyev = vector 0. -a -a
@@ -52,7 +52,7 @@ let tests =
       Expect.equal result  (color 1.6364 1.6364 1.6364) ""
 
     testCase "Lighting with the light behind the surface" <| fun _ ->
-      let m = defaultMaterialP ()
+      let m = defaultMaterialP
       let position = point 0. 0. 0.
       let eyev = vector 0. 0. -1.
       let normalv = vector 0. 0. -1.
@@ -61,7 +61,7 @@ let tests =
       Expect.equal result  (color 0.1 0.1 0.1) ""
 
     testCase "Lighting with the surface in shadow" <| fun _ ->
-      let m = defaultMaterialP ()
+      let m = defaultMaterialP
       let position = point 0. 0. 0.
       let eyeV = vector 0. 0. -1.
       let normalV = vector 0. 0. -1.
