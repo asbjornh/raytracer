@@ -83,7 +83,7 @@ let faceGroup =
       rotateY (rad32 160.f)
     ]
 
-let eyeBallMat uOffset vOffset =
+let eyeMat uOffset vOffset =
   Blend {
     mode = Multiply
     a = nintendo
@@ -103,7 +103,7 @@ let rightEye =
     rotateY (rad32 -6.f)
     scale 0.3f 0.7f 0.1f
   ]
-  <| eyeBallMat -0.05 -0.57
+  <| eyeMat 0.12 -0.57
 
 let leftEye =
   sphere
@@ -113,16 +113,16 @@ let leftEye =
     rotateY (rad32 -30.f)
     scale 0.3f 0.7f 0.1f
   ]
-  <| eyeBallMat 0.1 -0.57
+  <| eyeMat 0.15 -0.57
 
 let mario =
   groupT [faceGroup; rightEye; leftEye]
-  <| chain [rotateX (rad32 5.f)]
+  <| chain [rotateY (rad32 -5.f); rotateX (rad32 3.f)]
 
 let sLight = pointLight (point -10. 10. -10.) (color 1. 1. 0.9)
 let cam =
-  camera 200 200 (rad32 60.f)
-  <| (point 0. 2. -4.8) <| (point 0. 2. 0.)
+  camera 200 200 (rad32 30.f)
+  <| (point 0. 2. -10.) <| (point 0. 2. 0.)
   
 let w = 
   { world [sLight] [mario] with
