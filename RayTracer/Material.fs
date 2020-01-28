@@ -225,7 +225,7 @@ let materialC color =
 let gradient a b t =
   Gradient { a = a; b = b; sharpness = 0.; transform = t }
 
-let textureRaw path (uScale, vScale) (uOffset, vOffset) =
+let textureRaw path uvTransform =
   {
     alpha = None
     ambient = 0.1
@@ -235,8 +235,7 @@ let textureRaw path (uScale, vScale) (uOffset, vOffset) =
     specularMap = None
     specular = scale 0.9 white
     shininess = 200.
-    uvTransform = (uScale, vScale, uOffset, vOffset)
+    uvTransform = uvTransform
   }
-let texture path (uScale, vScale) (uOffset, vOffset) =
-  textureRaw path (uScale, vScale) (uOffset, vOffset) |> Textured
-let textureT path = texture path (1., 1.) (0., 0.)
+let texture path uvTransform =
+  textureRaw path uvTransform |> Textured
