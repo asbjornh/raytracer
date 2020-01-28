@@ -83,7 +83,6 @@ let withNormalMap texturePath uvTransform mat =
   NormalMap {
     mat = mat
     tex = Texture.read texturePath
-    transform = identity
     uvTransform = uvTransform
   }
 

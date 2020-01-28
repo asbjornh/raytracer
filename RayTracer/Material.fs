@@ -67,7 +67,6 @@ type LuminanceTexture = {
 type NormalMap = {
   mat: Material
   tex: Color list list
-  transform: Matrix4x4
   uvTransform: float * float * float * float
 }
 
