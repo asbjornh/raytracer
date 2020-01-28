@@ -83,17 +83,19 @@ let faceGroup =
       rotateY (rad32 160.f)
     ]
 
-let eyeBallMat uvTransform =
+let eyeBallMat uOffset vOffset =
   Blend {
     mode = Multiply
     a = nintendo
       (mix 0.5 blue (gray 0.5))
       white black
       (Color.scale 2. white)
-    b = luminanceTex "../models/mario/eye-color.png" uvTransform
+    b = luminanceTex
+      "../models/mario/eye-color.png"
+      (0.55, 0.45, uOffset, vOffset)
   }
 
-let leftEye =
+let rightEye =
   sphere
   <| chain [
     translate -0.045f 1.7f -0.8f
@@ -101,9 +103,9 @@ let leftEye =
     rotateY (rad32 -6.f)
     scale 0.3f 0.7f 0.1f
   ]
-  <| eyeBallMat (0.55, 0.45, -0.05, -0.57)
+  <| eyeBallMat -0.05 -0.57
 
-let rightEye =
+let leftEye =
   sphere
   <| chain [
     translate 0.63f 1.7f -0.56f
@@ -111,10 +113,10 @@ let rightEye =
     rotateY (rad32 -30.f)
     scale 0.3f 0.7f 0.1f
   ]
-  <| eyeBallMat (0.55, 0.45, 0.1, -0.57)
+  <| eyeBallMat 0.1 -0.57
 
 let mario =
-  groupT [faceGroup; leftEye; rightEye]
+  groupT [faceGroup; rightEye; leftEye]
   <| chain [rotateX (rad32 5.f)]
 
 let sLight = pointLight (point -10. 10. -10.) (color 1. 1. 0.9)
