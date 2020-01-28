@@ -13,6 +13,20 @@ open Tuple
 open Util
 open World
 
+let backDrop =
+  plane
+  <| chain [
+    translate 0.f 2.f 5.f
+    rotateX (rad32 90.f)
+    uniformScale 10.f
+  ]
+  <| Pattern {
+    a = Luminance (yellow |> mix 0.7 orange)
+    b = Luminance (yellow |> mix 0.7 orange |> mix 0.8 white)
+    pattern = Pattern.Stripes
+    transform = chain [rotateY (rad32 -45.f); uniformScale 0.05f]
+  }
+
 let pigSkin = color 1. 0.7 0.58
 let face =
   importObj "../models/mario/face.obj" identity
@@ -20,15 +34,15 @@ let face =
       (color 0.5 0.26 0.27 |> Color.scale 1.2)
       (Color.scale 0.5 pigSkin)
       (Color.scale 0.2 pigSkin)
-      (add pigSkin white |> Color.scale 0.9)
+      (add pigSkin white |> Color.scale 1.1)
 
 let hair =
   importObj "../models/mario/hair.obj" identity
   <| nintendo
       (color 0.15 0.03 0.03)
-      (color 0.3 0.16 0.1)
+      (color 0.3 0.06 0.06)
       (gray 0.2)
-      (Color.scale 3. white)
+      (Color.scale 2.5 white)
 
 let facialHair =
   nintendo
@@ -59,7 +73,7 @@ let hat =
       (color 0.3 0. 0.0)
       (color 0.6 0.1 0.2)
       black
-      (mix 0.5 white cyan |> Color.scale 2.)
+      (mix 0.5 white cyan |> Color.scale 3.)
 
 let symbol =
   importObj "../models/mario/m-symbol.obj" identity
@@ -120,20 +134,21 @@ let mario =
   groupT [faceGroup; rightEye; leftEye]
   <| chain [rotateY (rad32 -5.f); rotateX (rad32 3.f)]
 
-let sLight = pointLight (point -10. 10. -10.) (color 1. 1. 0.9)
+// let light = pointLight (point -10. 10. -10.) (color 1. 1. 0.9)
+let light = softLight (point -10. 10. -10.) (point 0. 2. 0.) (color 1. 1. 0.9) 2 4.f
 let cam =
   camera 200 200 (rad32 30.f)
   <| (point 0. 2. -10.) <| (point 0. 2. 0.)
   
 let w = 
-  { world [sLight] [mario] with
+  { world [light] [backDrop; mario] with
       shadows = true
-      background = gray 0.12
+      background = black
   }
 
 let aoOptions =
   {
-    samples = 4
+    samples = 8
     color = black
     opacity = 0.7
     threshold = 0.1f
@@ -141,8 +156,8 @@ let aoOptions =
 
 let options =
   { defaultOptions with 
-      antiAliasing = false 
-      ambientOcclusion = None
+      antiAliasing = true 
+      ambientOcclusion = Some aoOptions
   }
 
 let run () =
