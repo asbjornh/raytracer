@@ -68,7 +68,7 @@ let shapeIntersect ray (shape: Shape) =
   <| Ray.transform (inverse shape.transform) ray
   <| shape
 
-let uvAt p s =
+let localUvAt s p =
   match s.shape with
   | Sphere -> Sphere.uv p
   | Plane -> Plane.uv p
@@ -81,6 +81,10 @@ let uvAt p s =
   | Group _ -> failwith "Missing UV implementation for Group"
   | Triangle _ -> failwith "Missing UV implementation for Poly"
   | SmoothTriangle _ -> failwith "Missing UV implementation for Poly"
+
+let uvAt shape =
+  worldToObject shape
+  >> localUvAt shape
 
 let localNormal (s: Shape) p =
   match s.shape with

@@ -56,7 +56,6 @@ let specularHighlight color ambient diffuse specular shininess texturePath uvTra
     specularMap = Some <| Texture.read texturePath
     specular = specular
     shininess = shininess
-    transform = identity
     uvTransform = uvTransform
   }
 
@@ -99,7 +98,6 @@ let metalGate ambient diffuse uvTransform =
       specularMap = Some <| Texture.read "../tex/metal-gate/metal-gate-specular.jpg"
       specular = white
       shininess = 3.
-      transform = identity
       uvTransform = uvTransform
     }
 
@@ -114,7 +112,6 @@ let metalGrill ambient diffuse uvTransform =
       specularMap = Some <| Texture.read "../tex/metal-grill/metal-grill-specular.jpg"
       specular = white
       shininess = 3.
-      transform = identity
       uvTransform = uvTransform
     }
 
@@ -129,7 +126,6 @@ let meat ambient diffuse uvTransform =
       specular = white
       specularMap = Some <| Texture.read "../tex/meat/meat-specular.jpg"
       shininess = 2.
-      transform = identity
       uvTransform = uvTransform
     }
 
@@ -144,7 +140,6 @@ let paddedFabric ambient diffuse uvTransform =
       specular = white
       specularMap = Some <| Texture.read "../tex/padded-fabric/padded-fabric-specular.jpg"
       shininess = 5.
-      transform = identity
       uvTransform = uvTransform
     }
 
@@ -159,7 +154,6 @@ let techno ambient diffuse uvTransform =
       specular = white
       specularMap = Some <| Texture.read "../tex/techno/techno-specular.jpg"
       shininess = 5.
-      transform = identity
       uvTransform = uvTransform
     }
 
@@ -174,6 +168,5 @@ let metalGrill2 ambient diffuse uvTransform =
       specular = white
       specularMap = Some <| Texture.read "../tex/metal-grill2/specular.jpg"
       shininess = 50.
-      transform = identity
       uvTransform = uvTransform
     }

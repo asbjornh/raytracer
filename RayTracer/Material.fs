@@ -60,7 +60,6 @@ type Textured = {
   specularMap: (Color list list) option
   specular: Color
   shininess: float
-  transform: Matrix4x4
   // NOTE: (uScale * vScale * uOffset * vOffset)
   uvTransform: float * float * float * float
 }
@@ -226,7 +225,7 @@ let materialC color =
 let gradient a b t =
   Gradient { a = a; b = b; sharpness = 0.; transform = t }
 
-let textureRaw path (uScale, vScale) (uOffset, vOffset) t =
+let textureRaw path (uScale, vScale) (uOffset, vOffset) =
   {
     alpha = None
     ambient = 0.1
@@ -236,9 +235,8 @@ let textureRaw path (uScale, vScale) (uOffset, vOffset) t =
     specularMap = None
     specular = scale 0.9 white
     shininess = 200.
-    transform = t
     uvTransform = (uScale, vScale, uOffset, vOffset)
   }
-let texture path (uScale, vScale) (uOffset, vOffset) t =
-  textureRaw path (uScale, vScale) (uOffset, vOffset) t |> Textured
+let texture path (uScale, vScale) (uOffset, vOffset) =
+  textureRaw path (uScale, vScale) (uOffset, vOffset) |> Textured
 let textureT path = texture path (1., 1.) (0., 0.)

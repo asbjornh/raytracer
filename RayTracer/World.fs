@@ -125,15 +125,15 @@ let shadeHitSingleLight light world comps remaining =
 
   | Textured mat ->
     let alpha =
-      textureOptionAt mat.alpha comps mat.transform mat.uvTransform |> intensity
+      textureOptionAt mat.alpha comps mat.uvTransform |> intensity
     if alpha = 0. then
       refractedColor world comps remaining |> Constant
     else
-      let baseColor = textureAt comps mat.transform mat.uvTransform mat.color
+      let baseColor = textureAt comps mat.uvTransform mat.color
       let occlusionColor =
-        textureOptionAt mat.ambientOcclusion comps mat.transform mat.uvTransform
+        textureOptionAt mat.ambientOcclusion comps mat.uvTransform
       let specularAmount =
-        textureOptionAt mat.specularMap comps mat.transform mat.uvTransform
+        textureOptionAt mat.specularMap comps mat.uvTransform
         |> invert
       let specular = Color.multiply specularAmount mat.specular
       let newMat = materialShiny baseColor mat.ambient mat.diffuse specular mat.shininess
@@ -145,11 +145,11 @@ let shadeHitSingleLight light world comps remaining =
       else Color.mix (refractedColor world comps remaining) surfaceColor alpha |> Component
 
   | LuminanceTexture mat ->
-    textureAt comps mat.transform mat.uvTransform mat.tex |> Constant
+    textureAt comps mat.uvTransform mat.tex |> Constant
 
   | NormalMap mat ->
     let normalV =
-      textureAt comps mat.transform mat.uvTransform mat.tex
+      textureAt comps mat.uvTransform mat.tex
       |> normalFromColor comps.normalV |> normalize
     let reflectV = reflect normalV comps.ray.direction
 
@@ -218,15 +218,14 @@ let colorAt world ray remaining =
   | Some i -> prepareComputations is i ray |> shadeHit world <| remaining
   | None -> world.background
 
-let textureAt comps (transform: Matrix4x4) uvTransform tex =
-  let p = patternPoint comps.object.transform transform comps.overPoint
-  let (u, v) = uvAt p comps.object
+let textureAt comps uvTransform tex =
+  let (u, v) = uvAt comps.object comps.overPoint
   Texture.colorAt u v uvTransform tex
 
-let textureOptionAt texture comps transform uvTransform =
+let textureOptionAt texture comps uvTransform =
   match texture with
     | None -> white
-    | Some tex -> textureAt comps transform uvTransform tex
+    | Some tex -> textureAt comps uvTransform tex
 
 let occlusionAt numSamples threshold world r =
   let is = intersect r world
