@@ -13,6 +13,15 @@ open Tuple
 open Util
 open World
 
+let backDrop =
+  plane
+  <| chain [
+    translate 0.f 2.f 5.f
+    rotateX (rad32 90.f)
+    uniformScale 10.f
+  ]
+  <| luminanceTex "../tex/stars.jpg" (0.2, 0.15, 0.5, 0.5)
+
 let body =
   importObj "../models/luma/body.obj"
   <| identity
@@ -49,11 +58,11 @@ let luma =
 
 let light = pointLight (point -10. 10. -10.) (color 1. 1. 0.9)
 let cam =
-  camera 300 200 (rad32 35.f)
+  camera 600 400 (rad32 35.f)
   <| (point 0. 2. -12.) <| (point 0. 2. 0.)
   
 let w = 
-  { world [light] [luma] with
+  { world [light] [backDrop; luma] with
       shadows = true
       background = black
   }
