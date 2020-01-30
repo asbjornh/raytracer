@@ -58,7 +58,7 @@ let luma =
 
 let light = pointLight (point -10. 10. -10.) (color 1. 1. 0.9)
 let cam =
-  camera 600 400 (rad32 35.f)
+  camera 300 200 (rad32 35.f)
   <| (point 0. 2. -12.) <| (point 0. 2. 0.)
   
 let w = 
@@ -81,5 +81,12 @@ let options =
       ambientOcclusion = None
   }
 
+let FX image =
+  let blurred = Blur.boxBlur 30 image
+  let depth =
+    renderDepth 11. 14. cam w |> Canvas.mapC invert
+  let glow = Canvas.blendLayers Multiply blurred depth
+  Canvas.blendLayers Lighten image glow
+
 let run () =
-  render options cam w
+  renderFX options cam w FX
