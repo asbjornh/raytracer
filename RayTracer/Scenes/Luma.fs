@@ -24,7 +24,7 @@ let body =
 
 let eyeMat =
   materialRaw
-    (gray 0.1) (mix 0.4 black blue) white 10.
+    (gray 0.1) (mix 0.3 black blue) white 10.
 
 let leftEye =
   importObj "../models/luma/eye-left.obj"
@@ -39,9 +39,12 @@ let rightEye =
 let luma =
   groupT [body; leftEye; rightEye]
   <| chain [
+    translateX 0.4f
     translateY 0.3f
-    uniformScale 0.5f
+    rotateX (rad32 -5.f)
+    rotateZ (rad32 10.f)
     rotateY (rad32 180.f)
+    uniformScale 0.5f
   ]
 
 let light = pointLight (point -10. 10. -10.) (color 1. 1. 0.9)
