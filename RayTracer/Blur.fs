@@ -1,18 +1,29 @@
 module Blur
 
 open System
+open ShellProgressBar
 
 open Color
 open Util
 
+let withProgress len txt fn =
+  let bar = new ProgressBar (len, txt, ConsoleColor.Yellow)
+  let result = fn (fun _ -> bar.Tick ())
+  printfn "\n" // To avoid CLI glitch after rendering
+  result
+
 let boxBlur size (image: Color[][]) =
-  image
-  |> map2diParallel (fun x y c ->
+  let len = Array.length image * (Array.length image.[0])
+  withProgress len "Blurring" (fun tick ->
     image
-    |> subGrid x y size |> Array.concat
-    |> flip appendTo c
-    |> Array.toList
-    |> Color.average
+    |> map2diParallel (fun x y c ->
+      tick ()
+      image
+      |> subGrid x y size |> Array.concat
+      |> flip appendTo c
+      |> Array.toList
+      |> Color.average
+    )
   )
 
 let medianFilter size (image: Color[][]) =
