@@ -23,6 +23,8 @@ F# implementation of [The Ray Tracer Challenge](https://pragprog.com/book/jbtrac
 
 Some scenes use textures. None of the textures are included in this repo, but some of them can be downloaded from [3dtextures.me](https://3dtextures.me/).
 
+Other scenes use external 3D models which are also not included in the repo.
+
 ## Usage
 
 `dotnet run` in `RayTracer` directory.
