@@ -2,5 +2,5 @@
 
 [<EntryPoint>]
 let main argv =
-  Mario.run ()
+  Luma.run ()
   0

@@ -55,6 +55,7 @@
     <Compile Include="Scenes/SphereRoom.fs" />
     <Compile Include="Scenes/TeapotScene.fs" />
     <Compile Include="Scenes/Mario.fs" />
+    <Compile Include="Scenes/Luma.fs" />
 
     <Compile Include="Program.fs" />
   </ItemGroup>
