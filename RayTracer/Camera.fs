@@ -78,17 +78,21 @@ let defaultOptions = {
   renderType = Normal
 }
 
-let render options camera world =
-  let image =
-    renderImage options camera world
-    |> Canvas.toPpm
-
+let outputFile path canvas =
   let path =
-    match options.path with
+    match path with
     | None -> ("../render/" + (Util.nowStr ()) + ".ppm")
     | Some path -> path
+  Util.writeFile path (Canvas.toPpm canvas)
 
-  Util.writeFile path image
+let render options camera world =
+  outputFile options.path (renderImage options camera world)
+
+let renderFX options camera world fn =
+  let image =
+    renderImage options camera world
+  outputFile options.path (fn image)
+  
 
 let renderImage o c w =
   let canv = canvas c.hSize c.vSize
@@ -155,6 +159,19 @@ let withProgress len txt fn =
   let result = fn (fun _ -> bar.Tick ())
   printfn "\n" // To avoid CLI glitch after rendering
   result
+
+let renderDepth minDepth maxDepth c w =
+  let canv = canvas c.hSize c.vSize
+  withProgress (length canv) "Rendering depth" <| (fun tick ->
+    canv |> Canvas.render (fun x y ->
+      tick ()
+      match rayForPixel x y c |> depthAt w with
+      | Some d ->
+        float d |> clamp minDepth maxDepth
+        |> rangeMap (minDepth, maxDepth) (1., 0.) |> flip Color.scale white
+      | None -> black
+    )
+  )
 
 let renderOcclusion options section c w =
   let canv = canvas c.hSize c.vSize

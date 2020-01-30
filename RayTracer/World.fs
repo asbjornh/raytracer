@@ -223,6 +223,11 @@ let textureOptionAt texture comps uvTransform =
     | None -> white
     | Some tex -> textureAt comps uvTransform tex
 
+let depthAt world ray =
+  match intersect ray world |> hit with
+  | Some i -> Some i.t
+  | None -> None
+
 let occlusionAt numSamples threshold world r =
   let is = intersect r world
   match (is |> hit) with

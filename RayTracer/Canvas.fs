@@ -29,24 +29,36 @@ let flatten a =
   |> Array.fold (fun acc (y, row) ->
     let r =
       Array.indexed row
-      |> Array.map (fun (x, col) -> (x, y))
+      |> Array.map (fun (x, color) -> (x, y, color))
     Array.concat [acc; r]
   ) Array.empty
 
+// TODO: Rename to init
 let map fn (a: Canvas) =
   a
   |> flatten
-  |> Array.Parallel.map (fun (x, y) -> fn x y)
+  |> Array.Parallel.map (fun (x, y, _) -> fn x y)
   |> Array.chunkBySize (width a)
 
+// TODO: Rename to map
+let mapC fn (a: Canvas) =
+  a
+  |> flatten
+  |> Array.Parallel.map (fun (x, y, c) -> fn c)
+  |> Array.chunkBySize (width a)
+
+// TODO: Remove?
 let render (fn: int -> int -> Color) (a: Canvas) =
   let pixels =
     a
     |> flatten
-    |> Array.Parallel.map (fun (x, y) -> (x, y, fn x y))
+    |> Array.Parallel.map (fun (x, y, _) -> (x, y, fn x y))
   for (x, y, result) in pixels do
     a.[y].[x] <- result
   a
+
+let blendLayers mode a b =
+  map2d2 (blend mode) a b
 
 let to256 = clamp 0.0 1.0 >> (*) 255.0 >> Math.Round
 
