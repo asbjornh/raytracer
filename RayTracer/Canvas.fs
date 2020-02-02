@@ -30,9 +30,8 @@ let mapi fn (canvas: Canvas) =
 let map fn (canvas: Canvas) =
   map2dParallel fn canvas
 
-// TODO: Parallel?
 let blendLayers mode a b =
-  map2d2 (blend mode) a b
+  map2d2Parallel (blend mode) a b
 
 let to256 = clamp 0.0 1.0 >> (*) 255.0 >> Math.Round
 

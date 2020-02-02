@@ -84,6 +84,11 @@ let map2di fn =
 let map2d2 fn arr1 arr2 =
   Array.map2 (Array.map2 fn) arr1 arr2
 
+let map2d2Parallel fn arr1 (arr2: 'b[][]) : 'c[][] =
+  arr1 |> Array.Parallel.mapi (fun y row ->
+    row |> Array.mapi (fun x col -> fn col arr2.[y].[x])
+  )
+
 let get2d x y (arr: 'a [][]) =
   try
     let row = arr.[y]
