@@ -215,7 +215,7 @@ let colorAt world ray remaining =
   | None -> world.background
 
 let textureAt comps uvTransform tex =
-  let (u, v) = uvAt comps.object comps.overPoint
+  let (u, v) = uvAt comps.object comps.overPoint comps.triangleUV
   Texture.colorAt u v uvTransform tex
 
 let textureOptionAt texture comps uvTransform =

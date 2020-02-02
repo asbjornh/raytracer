@@ -33,6 +33,7 @@ let parse mat (t: string list) =
   let mutable objects = [("DefaultObject", [])]
   let mutable groups = [("DefaultGroup", [])]
   let mutable vertices = []
+  let mutable uvs = []
   let mutable normals = []
 
   t
@@ -49,12 +50,18 @@ let parse mat (t: string list) =
     | Normal (x, y, z) ->
       normals <- (vector x y z) :: normals
 
+    | UV uv ->
+      uvs <- uv :: uvs
+
     | Face f ->
       let g = getFaces mat (List.rev vertices) f
       groups <- addChild groups g
 
     | FaceNormal f ->
-      let g = getSmoothFaces mat (List.rev vertices) (List.rev normals) f
+      let indices = f |> List.map (fun (v, n) -> (v, int64 0, n))
+      let g =
+        getSmoothFaces mat (List.rev vertices)
+          (List.rev normals) (List.rev uvs) indices
       groups <- addChild groups g
     
     | FaceTex f ->
@@ -62,8 +69,9 @@ let parse mat (t: string list) =
       groups <- addChild groups g
 
     | FaceTexNormal f ->
-      let normalIds = f |> List.map (fun (v, t, n) -> (v, n))
-      let g = getSmoothFaces mat (List.rev vertices) (List.rev normals) normalIds
+      let g =
+        getSmoothFaces mat (List.rev vertices)
+          (List.rev normals) (List.rev uvs) f
       groups <- addChild groups g
 
     | Group name ->
@@ -107,14 +115,15 @@ let parseResult vertices normals objects =
 let getFaces mat vertices =
   List.map (int >> flip (-) 1) >> polys mat vertices
 
-let getSmoothFaces mat vertices normals =
-  List.map (fun (v, n) ->
-    (int v - 1, int n - 1)
-  ) >> smoothPolys mat vertices normals
+let getSmoothFaces mat vertices normals uvs =
+  List.map (fun (v, uv, n) ->
+    (int v - 1, int uv - 1, int n - 1)
+  ) >> smoothPolys mat vertices normals uvs
 
 type LineResult =
   | Vertex of (float * float * float)
   | Normal of (float * float * float)
+  | UV of (float * float)
   | Face of int64 list
   | FaceNormal of (int64 * int64) list
   | FaceTex of (int64 * int64) list
@@ -129,6 +138,7 @@ let parseOne parser typ str =
 
 let parseLine str =
   [ parseOne vertex Vertex
+    parseOne uv UV
     parseOne normal Normal
     parseOne faceTexNormal FaceTexNormal
     parseOne faceNormal FaceNormal
@@ -144,6 +154,7 @@ let coord = pfloat .>> (opt space)
 let vertexCoords = tuple3 coord coord coord
 let vertex = pchar 'v' >>. spaces >>. vertexCoords
 let normal = str "vn" >>. spaces >>. vertexCoords
+let uv = str "vt" >>. spaces >>. (tuple2 coord coord)
 let group = pchar 'g' >>. spaces >>. restOfLine false
 let obj = pchar 'o' >>. spaces >>. restOfLine false
 

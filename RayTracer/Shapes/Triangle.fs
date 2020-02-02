@@ -24,6 +24,9 @@ type SmoothTriangle = {
   n1: Vector4
   n2: Vector4
   n3: Vector4
+  uv1: Vector2
+  uv2: Vector2
+  uv3: Vector2
 }
 
 let make p1 p2 p3 =
@@ -32,10 +35,15 @@ let make p1 p2 p3 =
   let normal = cross e1 e2 |> normalize
   { p1=p1; p2=p2; p3=p3; e1=e1; e2=e2; normal=normal }
 
-let smoothMake p1 p2 p3 n1 n2 n3 =
+let smoothMake p1 p2 p3 n1 n2 n3 uv1 uv2 uv3 =
   let e1 = p2 - p1
   let e2 = p3 - p1
-  { p1=p1; p2=p2; p3=p3; e1=e1; e2=e2; n1=n1; n2=n2; n3=n3 }
+  {
+    p1=p1; p2=p2; p3=p3;
+    e1=e1; e2=e2;
+    n1=n1; n2=n2; n3=n3
+    uv1=uv1; uv2=uv2; uv3=uv3
+  }
 
 let boundsRaw p1 p2 p3 =
   let (xs, ys, zs) =
@@ -81,3 +89,10 @@ let normalAtSmooth t (u,v) =
   u * t.n2 +
   v * t.n3 +
   (1.f - u - v) * t.n1
+
+let uvAtSmooth (u, v) t =
+  let uv =
+    u * t.uv2 +
+    v * t.uv3 +
+    (1.f - u - v) * t.uv1
+  (uv.X, uv.Y)

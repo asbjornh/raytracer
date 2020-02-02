@@ -92,6 +92,7 @@ type Computation = {
   n1: float32
   n2: float32
   ray: Ray
+  triangleUV: (float32 * float32) option
 }
 
 let prepareComputations (is: Intersection list) (hit: Intersection) r =
@@ -120,6 +121,7 @@ let prepareComputations (is: Intersection list) (hit: Intersection) r =
     n1 = n1
     n2 = n2
     ray = r
+    triangleUV = hit.triangleUV
   }
 
 let intersect (ray: Ray) (s: Shape) =

@@ -68,7 +68,7 @@ let shapeIntersect ray (shape: Shape) =
   <| Ray.transform (inverse shape.transform) ray
   <| shape
 
-let localUvAt s p =
+let localUvAt s p triangleUV =
   match s.shape with
   | Sphere -> Sphere.uv p
   | Plane -> Plane.uv p
@@ -80,7 +80,10 @@ let localUvAt s p =
   | Cube -> failwith "Missing UV implementation for Cube"
   | Group _ -> failwith "Missing UV implementation for Group"
   | Triangle _ -> failwith "Missing UV implementation for Poly"
-  | SmoothTriangle _ -> failwith "Missing UV implementation for Poly"
+  | SmoothTriangle t ->
+    match triangleUV with
+    | Some uv -> Triangle.uvAtSmooth uv t
+    | None -> (0.f, 0.f)
 
 let uvAt shape =
   worldToObject shape
@@ -97,7 +100,7 @@ let localNormal (s: Shape) p =
   | DoubleCone -> Cone.normal -1.f 1.f p
   | Cube -> Cube.normal p
   | Triangle p -> p.normal
-  | SmoothTriangle t -> normalAtSmooth t (0.2f, 0.2f)
+  | SmoothTriangle t -> normalAtSmooth t (0.2f, 0.2f) // Fallback
   | Group _ -> failwith "Missing localNormal implementation for Group"
 
 let localNormalUV s p uv =
@@ -213,8 +216,8 @@ let triangle p1 p2 p3 =
 let triangleM mat p1 p2 p3 =
   triangle p1 p2 p3 identity mat
 
-let smoothTriangle p1 p2 p3 n1 n2 n3 =
-  let t = Triangle.smoothMake p1 p2 p3 n1 n2 n3
+let smoothTriangle p1 p2 p3 n1 n2 n3 uv1 uv2 uv3 =
+  let t = Triangle.smoothMake p1 p2 p3 n1 n2 n3 uv1 uv2 uv3
   shape (SmoothTriangle t)
 
 let unitSphere () = defaultShape Sphere
@@ -253,11 +256,24 @@ let polys mat (vs: Vector4 list) indices =
   |> fanTriangulation (triangleM mat)
   |> maybeGroup "Poly"
 
-let smoothPolys mat (vs: Vector4 list) (ns: Vector4 list) indices =
-  indices
-  |> fanTriangulation (fun (p1, n1) (p2, n2) (p3, n3) ->
-      smoothTriangle vs.[p1] vs.[p2] vs.[p3] ns.[n1] ns.[n2] ns.[n3]
-      <| identity
-      <| mat
-    )
-  |> maybeGroup "SmoothPoly"
+let getUV index uvs =
+  match List.tryItem index uvs with
+  | Some (u, v) -> Vector2 (float32 u, float32 v)
+  | None -> Vector2 (0.f, 0.f)
+
+let smoothPolys
+  mat
+  (vs: Vector4 list)
+  (ns: Vector4 list)
+  (uvs: (float * float) list)
+  indices =
+    indices
+    |> fanTriangulation (fun (p1, uv1, n1) (p2, uv2, n2) (p3, uv3, n3) ->
+        smoothTriangle
+          vs.[p1] vs.[p2] vs.[p3]
+          ns.[n1] ns.[n2] ns.[n3]
+          (getUV uv1 uvs) (getUV uv2 uvs) (getUV uv3 uvs)
+        <| identity
+        <| mat
+      )
+    |> maybeGroup "SmoothPoly"
