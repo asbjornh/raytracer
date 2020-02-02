@@ -36,7 +36,7 @@ let run () =
   let bar = new ProgressBar (Canvas.length c, "Rendering", ConsoleColor.Yellow)
 
   c
-  |> Canvas.render (fun x y ->
+  |> Canvas.mapi (fun x y _ ->
     bar.Tick (progressMsg y x)
     let origin = (point (float x) (float y) 200.)
     let direction = vector 0. 0. -1.

@@ -24,39 +24,13 @@ let read x y (canvas: Canvas) =
   | Some (row, col) -> Some col
   | None -> None
 
-let flatten a =
-  Array.indexed a
-  |> Array.fold (fun acc (y, row) ->
-    let r =
-      Array.indexed row
-      |> Array.map (fun (x, color) -> (x, y, color))
-    Array.concat [acc; r]
-  ) Array.empty
+let mapi fn (canvas: Canvas) =
+  map2diParallel fn canvas
 
-// TODO: Rename to init
-let map fn (a: Canvas) =
-  a
-  |> flatten
-  |> Array.Parallel.map (fun (x, y, _) -> fn x y)
-  |> Array.chunkBySize (width a)
+let map fn (canvas: Canvas) =
+  map2dParallel fn canvas
 
-// TODO: Rename to map
-let mapC fn (a: Canvas) =
-  a
-  |> flatten
-  |> Array.Parallel.map (fun (x, y, c) -> fn c)
-  |> Array.chunkBySize (width a)
-
-// TODO: Remove?
-let render (fn: int -> int -> Color) (a: Canvas) =
-  let pixels =
-    a
-    |> flatten
-    |> Array.Parallel.map (fun (x, y, _) -> (x, y, fn x y))
-  for (x, y, result) in pixels do
-    a.[y].[x] <- result
-  a
-
+// TODO: Parallel?
 let blendLayers mode a b =
   map2d2 (blend mode) a b
 

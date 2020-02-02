@@ -36,7 +36,7 @@ let frame (bar: ProgressBar) l fileName =
   let childBar = bar.Spawn (len, "Rendering")
 
   c
-  |> Canvas.render (fun x y ->
+  |> Canvas.mapi (fun x y _ ->
     childBar.Tick (progressMsg y x)
     let origin = (point (float x) (float y) 200.)
     let direction = vector 0. 0. -1.

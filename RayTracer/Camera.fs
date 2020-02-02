@@ -111,7 +111,7 @@ let renderImage o c w =
       (fun () -> bar.Tick ())
     | false -> ignore
 
-  let colors = canv |> Canvas.render (fun x y ->
+  let colors = canv |> Canvas.mapi (fun x y _ ->
     tick ()
     match shouldRender o.section x y c with
     | true ->
@@ -164,7 +164,7 @@ let withProgress len txt fn =
 let renderDepth minDepth maxDepth c w =
   let canv = canvas c.hSize c.vSize
   withProgress (length canv) "Rendering depth" <| (fun tick ->
-    canv |> Canvas.render (fun x y ->
+    canv |> Canvas.mapi (fun x y _ ->
       tick ()
       match rayForPixel x y c |> depthAt w with
       | Some d ->
@@ -179,7 +179,7 @@ let renderOcclusion options section c w =
   let len = 3 * Canvas.length canv
 
   withProgress len "Rendering AO" <| (fun tick ->
-    canv |> Canvas.map (fun x y ->
+    canv |> Canvas.mapi (fun x y _ ->
       tick ()
       match shouldRender section x y c with
       | true ->
