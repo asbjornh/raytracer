@@ -144,14 +144,15 @@ let rayForPixel x y c =
   rayForPixel32 (float32 x) (float32 y) c
 
 let aaOffsets offset =
-  [ (0.f, offset); (0.f, -offset)
-    (offset, 0.f); (-offset, 0.f) ]
+  [| (0.f, offset); (0.f, -offset);
+    (offset, 0.f); (-offset, 0.f) |]
 
 let renderAA x y c w renderFn =
   aaOffsets 0.35f
-  |> List.map (fun (dx, dy) ->
+  |> Array.map (fun (dx, dy) ->
     rayForPixel32 (float32 x + dx) (float32 y + dy) c
     |> renderFn w <| 4
+    |> toRGB
   ) |> Color.average
 
 let withProgress len txt fn =

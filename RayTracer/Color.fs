@@ -33,6 +33,8 @@ let intensity (c: Color) =
 
 let color r g b = Color (r, g, b)
 
+let toRGB (c: Color) = c.Return
+
 let toList (r, g, b) = [r; g; b]
 
 let toString transform sep =
@@ -69,8 +71,18 @@ let mix amount a b =
   subtract b a |> scale amount |> add a
 
 let average colors =
-  let len = List.length colors |> float
-  colors |> List.reduce add |> divide len
+  let factor = 1. / (Array.length colors |> float)
+  let mutable r = 0.
+  let mutable g = 0.
+  let mutable b = 0.
+  colors |> Array.iter (fun c ->
+    let (cr, cg, cb) = c
+    r <- r + cr * factor
+    g <- g + cg * factor
+    b <- b + cb * factor
+  )
+  color r g b
+
 
 type BlendingMode =
   | Add

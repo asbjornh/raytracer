@@ -251,11 +251,12 @@ let reflectedColor mat world comps remaining =
       let r = ray comps.overPoint comps.reflectV
       colorAt world r (remaining - 1)
     | Some blurOptions ->
-      [0..blurOptions.samples]
-      |> List.map (fun _ ->
+      [|0..blurOptions.samples|]
+      |> Array.map (fun _ ->
         let t = randomRotate <| blurOptions.angle
         let r = ray comps.overPoint (transform t comps.reflectV)
         colorAt world r (remaining - 1)
+        |> toRGB
       )
       |> Color.average
 

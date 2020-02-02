@@ -66,6 +66,11 @@ let filteri fn m =
 let map2d fn arr =
   arr |> Array.map (Array.map fn)
 
+let map2dParallel fn =
+  Array.Parallel.map (fun row ->
+    row |> Array.map fn
+  )
+
 let map2diParallel fn =
   Array.Parallel.mapi (fun y row ->
     row |> Array.mapi (fun x col -> fn x y col)
@@ -100,6 +105,10 @@ let rec sub from To arr =
 let subGrid x y size arr =
   sub (y - size) (y + size) arr
   |> Array.map (sub (x - size) (x + size))
+
+let neighbors x y size arr =
+  sub (y - size) (y + size) arr
+  |> Array.collect (sub (x - size) (x + size))
 
 // IO
 let writeFile (path: string) content =

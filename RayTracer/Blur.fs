@@ -12,17 +12,14 @@ let withProgress len txt fn =
   printfn "\n" // To avoid CLI glitch after rendering
   result
 
-let boxBlur size (image: Color[][]) =
+let boxBlur radius (image: Color[][]) =
   let len = Array.length image * (Array.length image.[0])
   withProgress len "Blurring" (fun tick ->
-    image
-    |> map2diParallel (fun x y c ->
+    let colors = image |> map2dParallel toRGB
+    colors
+    |> map2diParallel (fun x y _ ->
       tick ()
-      image
-      |> subGrid x y size |> Array.concat
-      |> flip appendTo c
-      |> Array.toList
-      |> Color.average
+      colors |> neighbors x y radius |> average
     )
   )
 
