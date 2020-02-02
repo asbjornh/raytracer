@@ -83,18 +83,21 @@ let renderFX options camera world fn =
   outputFile options.path (fn image)
   
 
-let renderImage o c w =
+let renderImage options c w =
   let canv = canvas c.hSize c.vSize
   let len = Canvas.length canv
+
+  let renderFn x y =
+    rayForPixel32 x y c |> colorAndAmbientAt w <| 4
 
   withProgress len (sprintf "Rendering %i pixels" len) (fun tick ->
     canv |> Canvas.mapi (fun x y _ ->
       tick ()
-      match shouldRender o.section x y c with
-      | true ->
-        if o.antiAliasing then renderAA x y c w colorAndAmbientAt
-        else rayForPixel x y c |> colorAndAmbientAt w <| 4
-      | false -> white
+      if shouldRender options.section x y c then
+        if options.antiAliasing
+        then renderAA x y renderFn
+        else renderFn (float32 x) (float32 y)
+      else white
     )
   )
 
@@ -115,24 +118,31 @@ let aaOffsets offset =
   [| (0.f, offset); (0.f, -offset);
     (offset, 0.f); (-offset, 0.f) |]
 
-let renderAA x y c w renderFn =
+let renderAA x y renderFn =
   aaOffsets 0.35f
   |> Array.map (fun (dx, dy) ->
-    rayForPixel32 (float32 x + dx) (float32 y + dy) c
-    |> renderFn w <| 4
+    renderFn (float32 x + dx) (float32 y + dy)
     |> toRGB
   ) |> Color.average
 
-let renderDepth minDepth maxDepth c w =
+let renderDepth options minDepth maxDepth c w =
   let canv = canvas c.hSize c.vSize
+
+  let renderFn x y =
+    match rayForPixel32 x y c |> depthAt w with
+    | Some d ->
+      float d |> clamp minDepth maxDepth
+      |> rangeMap (minDepth, maxDepth) (1., 0.) |> flip Color.scale white
+    | None -> black
+
   withProgress (length canv) "Rendering depth" <| (fun tick ->
     canv |> Canvas.mapi (fun x y _ ->
       tick ()
-      match rayForPixel x y c |> depthAt w with
-      | Some d ->
-        float d |> clamp minDepth maxDepth
-        |> rangeMap (minDepth, maxDepth) (1., 0.) |> flip Color.scale white
-      | None -> black
+      if shouldRender options.section x y c then
+        if options.antiAliasing
+        then renderAA x y renderFn
+        else renderFn (float32 x) (float32 y)
+      else black
     )
   )
 

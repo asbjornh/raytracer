@@ -63,7 +63,7 @@ let cam =
   
 let w = 
   { world [light] [backDrop; luma] with
-      shadows = true
+      shadows = false
       background = black
   }
 
@@ -74,7 +74,8 @@ let options =
 
 let FX image =
   let blurred = Blur.boxBlur 30 image
-  let depth = renderDepth 11. 14. cam w |> Canvas.map invert
+  let depth =
+    renderDepth options 11. 14. cam w |> Canvas.map invert
   let glow = Canvas.blendLayers Multiply blurred depth
   Canvas.blendLayers Lighten image glow
 
