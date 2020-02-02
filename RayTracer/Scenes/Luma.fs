@@ -73,7 +73,7 @@ let options =
   }
 
 let FX image =
-  let blurred = Blur.boxBlur 30 image
+  let blurred = Blur.boxBlur 60 image
   let depth =
     renderDepth options 11. 14. cam w |> Canvas.map invert
   let glow = Canvas.blendLayers Multiply blurred depth
