@@ -65,14 +65,13 @@ let w =
       ambientLight = Some (darkBlue, Add)
       shadows = false }
 
-let aoOptions =
-  { color = mix 0.1 darkBlue white
-    samples = 24
-    opacity = 0.8
-    threshold = 8.f }
 let options = 
   { defaultOptions with
-      ambientOcclusion = Some aoOptions }
+      antiAliasing = false }
+
+let FX image =
+  renderOcclusion options 24 8.f cam w
+  |> applyOcclusion 0.8 (mix 0.1 darkBlue white) image
 
 let run () =
-  render options cam w
+  renderFX options cam w FX

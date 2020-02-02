@@ -44,16 +44,13 @@ let w = {
     ambientLight = Some (Color.scale 0.1 blue, Add)
 }
 
-let aoOptions = {
-  samples = 8
-  opacity = 1.
-  color = black
-  threshold = 500.f
-}
 let options =
   { defaultOptions with 
-      antiAliasing = true 
-      ambientOcclusion = Some aoOptions }
+      antiAliasing = true }
+
+let FX image =
+  renderOcclusion options 8 500.f cam w
+  |> applyOcclusion 1. black image
 
 let run () =
-  render options cam w
+  renderFX options cam w FX

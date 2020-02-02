@@ -146,19 +146,14 @@ let w =
       background = black
   }
 
-let aoOptions =
-  {
-    samples = 8
-    color = black
-    opacity = 0.7
-    threshold = 0.1f
-  }
-
 let options =
   { defaultOptions with 
       antiAliasing = false 
-      ambientOcclusion = None
   }
+
+let FX image =
+  renderOcclusion options 8 0.1f cam w
+  |> applyOcclusion 0.7 black image
 
 let run () =
   render options cam w

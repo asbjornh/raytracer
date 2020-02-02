@@ -45,45 +45,34 @@ let camera hSize vSize fov position target =
   viewTransform position target (vector32 0.f 1.f 0.f)
   |> cameraT hSize vSize fov
 
-type SectionType =
-  | Quad of int
-  | Section of int * int * int * int
-
-type AmbientOcclusionOptions = {
-  samples: int
-  color: Color
-  opacity: float
-  threshold: float32
-}
-
-type RenderType =
-  | Normal
-  | ColoredNormals of (Color * Color * Color * bool)
-
-type RenderOptions = {
-  ambientOcclusion: AmbientOcclusionOptions option
-  antiAliasing: bool
-  progressBar: bool
-  path: string option
-  section: SectionType option
-  renderType: RenderType
-}
-
-let defaultOptions = {
-  ambientOcclusion = None
-  antiAliasing = false
-  progressBar = true
-  path = None
-  section = None
-  renderType = Normal
-}
-
 let outputFile path canvas =
   let path =
     match path with
     | None -> ("../render/" + (Util.nowStr ()) + ".ppm")
     | Some path -> path
   Util.writeFile path (Canvas.toPpm canvas)
+
+let withProgress len txt fn =
+  let bar = new ProgressBar (len, txt, ConsoleColor.Yellow)
+  let result = fn (fun _ -> bar.Tick ())
+  printfn "\n" // To avoid CLI glitch after rendering
+  result
+
+type SectionType =
+  | Quad of int
+  | Section of int * int * int * int
+
+type RenderOptions = {
+  antiAliasing: bool
+  path: string option
+  section: SectionType option
+}
+
+let defaultOptions = {
+  antiAliasing = false
+  path = None
+  section = None
+}
 
 let render options camera world =
   outputFile options.path (renderImage options camera world)
@@ -98,37 +87,16 @@ let renderImage o c w =
   let canv = canvas c.hSize c.vSize
   let len = Canvas.length canv
 
-  let renderFn =
-    match o.renderType with
-    | Normal -> colorAndAmbientAt
-    | ColoredNormals c -> ExperimentalRender.coloredNormals c
-
-  let tick =
-    match o.progressBar with
-    | true ->
-      let txt = sprintf "Rendering %i pixels" len
-      let bar = new ProgressBar (len, txt, ConsoleColor.Yellow)
-      (fun () -> bar.Tick ())
-    | false -> ignore
-
-  let colors = canv |> Canvas.mapi (fun x y _ ->
-    tick ()
-    match shouldRender o.section x y c with
-    | true ->
-      if o.antiAliasing then renderAA x y c w renderFn
-      else rayForPixel x y c |> renderFn w <| 4
-    | false -> white
+  withProgress len (sprintf "Rendering %i pixels" len) (fun tick ->
+    canv |> Canvas.mapi (fun x y _ ->
+      tick ()
+      match shouldRender o.section x y c with
+      | true ->
+        if o.antiAliasing then renderAA x y c w colorAndAmbientAt
+        else rayForPixel x y c |> colorAndAmbientAt w <| 4
+      | false -> white
+    )
   )
-
-  if o.progressBar then printfn "\n"
-
-  match o.ambientOcclusion with
-  | Some options ->
-    renderOcclusion options o.section c w
-    |> map2d2 (fun color occlusion ->
-      mix occlusion options.color color
-    ) colors
-  | None -> colors
 
 let rayForPixel32 x y c =
   let xOffset = (x + 0.5f) * c.pixelSize
@@ -155,12 +123,6 @@ let renderAA x y c w renderFn =
     |> toRGB
   ) |> Color.average
 
-let withProgress len txt fn =
-  let bar = new ProgressBar (len, txt, ConsoleColor.Yellow)
-  let result = fn (fun _ -> bar.Tick ())
-  printfn "\n" // To avoid CLI glitch after rendering
-  result
-
 let renderDepth minDepth maxDepth c w =
   let canv = canvas c.hSize c.vSize
   withProgress (length canv) "Rendering depth" <| (fun tick ->
@@ -174,24 +136,27 @@ let renderDepth minDepth maxDepth c w =
     )
   )
 
-let renderOcclusion options section c w =
+let applyOcclusion opacity color image occlusion =
+  map2d2Parallel (fun imageColor ao ->
+    let mixAmt = rangeMap (0., 1.) (1., (1. - opacity)) ao
+    mix mixAmt color imageColor
+  ) image occlusion
+
+let renderOcclusion options samples threshold c w =
   let canv = canvas c.hSize c.vSize
   let len = 3 * Canvas.length canv
 
   withProgress len "Rendering AO" <| (fun tick ->
     canv |> Canvas.mapi (fun x y _ ->
       tick ()
-      match shouldRender section x y c with
+      match shouldRender options.section x y c with
       | true ->
-        occlusionAt options.samples options.threshold w
+        occlusionAt samples threshold w
         <| rayForPixel x y c
       | false -> 0.
     )
     |> bilateralFilter 8 50. 0.15 tick
     |> bilateralFilter 3 10. 0.15 tick
-    |> map2d (fun i ->
-      rangeMap (0., 1.) (1., (1. - options.opacity)) i
-    )
   )
 
 let shouldRender section x y c =
