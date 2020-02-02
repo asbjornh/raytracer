@@ -29,18 +29,27 @@ let rec wrapAround max n =
   else if (n >= 0) then n
   else ((n - max) % max) + max
 
+let textureCoord (num: float) max =
+  Math.Round num |> int |> wrapAround (max - 1)
+
+let interpolatedColor (cs: Color list list) (u: float) (v: float) =
+  let w = List.length cs.[0]
+  let h = List.length cs
+  let x = u * float w
+  let y = v * float h
+  let xRound = Math.Floor x
+  let yRound = Math.Floor y
+  let color = cs.[textureCoord y h].[textureCoord x w]
+  let colorRound = cs.[textureCoord yRound h].[textureCoord xRound w]
+  mix 0.5 colorRound color
 
 let colorAt (u: float32) (v: float32) (uScale, vScale, uOffset, vOffset) (cs: Color list list) =
   if List.length cs = 1 then
     cs.[0].[0]
   else
-    let u2 = float u / uScale + uOffset
-    let v2 = float v / vScale + vOffset
-    let w = List.length cs.[0]
-    let h = List.length cs
-    let x = Math.Floor (u2 * float w) |> int |> wrapAround (w - 1)
-    let y = Math.Floor (v2 * float h) |> int |> wrapAround (h - 1)
-    cs.[y].[x]
+    interpolatedColor cs
+      (float u / uScale + uOffset)
+      (float v / vScale + vOffset)
 
 let normalFromColor (normalV: Vector4) (color: Color) =
   let t = cross (vector 0. 1. 0.) normalV // tangent
