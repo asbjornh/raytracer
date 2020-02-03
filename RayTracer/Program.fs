@@ -2,5 +2,5 @@
 
 [<EntryPoint>]
 let main argv =
-  Luma.run ()
+  Yoshi.run ()
   0
