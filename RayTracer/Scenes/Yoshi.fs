@@ -25,14 +25,10 @@ let backDrop =
 // TODO: Figure out why Y scale is negative
 let tex ambient diffuse =
   Fresnel {
-    a = NormalMap {
-      mat = Textured {
-        textureRaw "../models/yoshi/body-albedo.png" (1., -1., 0., 0.) with
-          ambient = ambient
-          diffuse = diffuse
-      }
-      tex = Texture.read "../models/yoshi/body-normal.png"
-      uvTransform = (1., -1., 0., 0.)
+    a = Textured {
+      textureRaw "../models/yoshi/body-albedo.png" (1., -1., 0., 0.) with
+        ambient = ambient
+        diffuse = diffuse
     }
     blend = BlendingMode.SoftLight
     b = Luminance (Color.scale 2.5 white)
