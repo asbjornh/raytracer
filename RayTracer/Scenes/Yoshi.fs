@@ -31,8 +31,8 @@ let tex ambient diffuse =
         diffuse = diffuse
     }
     blend = BlendingMode.SoftLight
-    b = Luminance (Color.scale 2.5 white)
-    power = 2.5
+    b = Luminance (Color.scale 2.2 white)
+    power = 2.
     mixInner = 1.
     mixOuter = 1.
   }
@@ -43,8 +43,8 @@ let eyesTex uOffset vOffset =
       mode = Multiply
       a = Textured {
         textureRaw "../models/yoshi/eye-background.png" (1., -1., 0., 0.) with
-          ambient = 0.6
-          diffuse = 0.6
+          ambient = 0.7
+          diffuse = 0.5
       }
       b = luminanceTex "../models/yoshi/eye-pupil.png" (1., -1., uOffset, vOffset)
     }
@@ -67,6 +67,13 @@ let hair =
   importObj "../models/yoshi/hair.obj" identity (tex 0.9 0.5)
 let head =
   importObj "../models/yoshi/head.obj" identity (tex 0.9 0.5)
+let mouth =
+  importObj "../models/yoshi/mouth.obj" identity
+  <| Textured {
+      textureRaw "../models/yoshi/body-albedo.png" (1., -1., 0., 0.) with
+        ambient = 1.
+        diffuse = 1.
+    }
 
 let yoshi =
   group [
@@ -76,8 +83,10 @@ let yoshi =
     jaw
     head
     hair
+    mouth
   ]
   <| chain [
+    translateY 0.05f
     rotateX (rad32 5.f)
     rotateY (rad32 120.f)
   ]
