@@ -57,6 +57,7 @@
     <Compile Include="Scenes/Mario.fs" />
     <Compile Include="Scenes/Luma.fs" />
     <Compile Include="Scenes/Yoshi.fs" />
+    <Compile Include="Scenes/CaptainToad.fs" />
 
     <Compile Include="Program.fs" />
   </ItemGroup>

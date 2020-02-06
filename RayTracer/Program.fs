@@ -2,5 +2,5 @@
 
 [<EntryPoint>]
 let main argv =
-  Yoshi.run ()
+  CaptainToad.run ()
   0
