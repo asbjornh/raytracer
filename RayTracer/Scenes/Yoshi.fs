@@ -22,20 +22,8 @@ let backDrop =
   ]
   <| luminanceTex "../models/yoshi/background.jpg" (0.07, 0.05, 0.45, 0.5)
 
-// TODO: Figure out why Y scale is negative
 let tex ambient diffuse =
-  Fresnel {
-    a = Textured {
-      textureRaw "../models/yoshi/body-albedo.png" (1., -1., 0., 0.) with
-        ambient = ambient
-        diffuse = diffuse
-    }
-    blend = BlendingMode.SoftLight
-    b = Luminance (Color.scale 2.2 white)
-    power = 2.
-    mixInner = 1.
-    mixOuter = 1.
-  }
+  nintendoTex "../models/yoshi/body-albedo.png" ambient diffuse 2. (Color.scale 2.2 white)
 
 let eyesTex uOffset vOffset =
   Fresnel {
@@ -94,7 +82,7 @@ let yoshi =
 
 let light = pointLight (point -7. 10. -10.) (color 1. 1. 0.9)
 let cam =
-  camera 600 400 (rad32 20.f)
+  camera 300 200 (rad32 20.f)
   <| (point 0. 1. -14.) <| (point 0.25 0.9 0.)
   
 let w = 
@@ -106,7 +94,7 @@ let w =
 
 let options =
   { defaultOptions with 
-      antiAliasing = true
+      antiAliasing = false
   }
 
 let run () =

@@ -39,6 +39,21 @@ let nintendo ambient diffuse specular rim =
     mixInner = 1.
   }
 
+// TODO: Figure out why Y scale is negative
+let nintendoTex path ambient diffuse power rim =
+  Fresnel {
+    a = Textured {
+      textureRaw path (1., -1., 0., 0.) with
+        ambient = ambient
+        diffuse = diffuse
+    }
+    blend = BlendingMode.SoftLight
+    b = Luminance rim
+    power = power
+    mixInner = 1.
+    mixOuter = 1.
+  }
+
 let luminanceTex texturePath uvTransform =
   LuminanceTexture {
     tex = Texture.read texturePath
