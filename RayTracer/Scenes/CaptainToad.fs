@@ -25,22 +25,26 @@ let backDrop =
   <| luminanceTex "../models/captain-toad/background.png" (0.15, 0.06, 0.6, 0.35)
 
 let scarfMat =
-  nintendoTex "../models/captain-toad/body-color.png" 0.5 0.5 2.
-    (mix 0.5 white cyan |> Color.scale 3.5)
+  nintendoTex "../models/captain-toad/body-color.png" 0.4 0.8 2.
+    (mix 0.5 white cyan |> Color.scale 4.5)
 let bandMat =
-  nintendoTex "../models/captain-toad/body-color.png" 0.5 0.5 2. (Color.scale 2. white)
+  nintendoTex "../models/captain-toad/body-color.png" 0.7 0.4 2. (Color.scale 2. white)
 
 let mouthMat =
-  nintendoTex "../models/captain-toad/face-color.png" 0.5 0.5 2. (Color.scale 2. white)
+  nintendoTex "../models/captain-toad/face-color.png" 0.7 0.5 2. white
 
 let hatMat =
   nintendoTex "../models/captain-toad/hat-color.png" 0.7 0.5 3.
     (mix 0.5 blue cyan |> mix 0.5 white |> Color.scale 2.5)
 
 let lampMat =
-  nintendoTex "../models/captain-toad/lamp-color.png" 0.5 0.5 2. (Color.scale 2. white)
+  nintendoTex "../models/captain-toad/lamp-color.png" 0.7 0.4 1.5 (Color.scale 2. white)
 
-let lightMat = luminanceTex "../models/captain-toad/lamp-color.png" uvTransform
+let lightMat = Blend {
+  mode = Add
+  a = luminanceTex "../models/captain-toad/lamp-color.png" uvTransform
+  b = Luminance (Color.scale 0.1 white)
+}
 
 let eyeMat = Textured {
   textureRaw "../models/captain-toad/eye-color.png" uvTransform with
@@ -71,6 +75,12 @@ let lamp =
 let lightBulb =
   importObj "../models/captain-toad/light.obj" identity lightMat
 
+let groupT = chain [
+  rotateY (rad32 190.f)
+  rotateZ (rad32 10.f)
+  rotateX (rad32 -6.f)
+  uniformScale 0.02f
+]
 let toad =
   group [
     face
@@ -82,15 +92,11 @@ let toad =
     lamp
     lightBulb
   ]
-  <| chain [
-    rotateY (rad32 190.f)
-    rotateZ (rad32 10.f)
-    rotateX (rad32 -6.f)
-    uniformScale 0.02f
-  ]
+  <| groupT
   <| defaultMaterial
 
 let light = pointLight (point -7. 10. -8.) (color 1. 1. 0.9)
+// let light = softLight (point -7. 10. -8.) (point 0. 0.7 0.) (color 1. 1. 0.9) 2 2.f
 let cam =
   camera 300 200 (rad32 20.f)
   <| (point 0. 1. -14.) <| (point 0. 0.7 0.)
@@ -106,6 +112,24 @@ let options =
   { defaultOptions with 
       antiAliasing = false
   }
+
+let lightWorld =
+  { w with objects = [group [lightBulb] groupT defaultMaterial]; shadows = false}
+let mouthWorld =
+  { w with objects = [group [mouth] groupT defaultMaterial]; shadows = false }
+
+let FX image =
+  let withAO =
+    renderOcclusion defaultOptions 16 0.5f cam w
+    |> applyOcclusion 0.8 (mix 0.3 black blue) image
+  let mouthPass =
+    renderImage defaultOptions cam mouthWorld
+  let glow =
+    renderImage defaultOptions cam lightWorld
+    |> Blur.boxBlur 20
+
+  Canvas.blendLayers Lighten mouthPass withAO
+  |> Canvas.blendLayers Screen glow
 
 let run () =
   render options cam w
